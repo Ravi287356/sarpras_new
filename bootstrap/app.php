@@ -12,9 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function ($middleware) {
     $middleware->alias([
-        'role.admin' => \App\Http\Middleware\RoleAdmin::class,
+        'role' => \App\Http\Middleware\RoleMiddleware::class,
     ]);
 })
+
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();
