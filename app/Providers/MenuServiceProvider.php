@@ -8,7 +8,9 @@ use Illuminate\Support\ServiceProvider;
 
 class MenuServiceProvider extends ServiceProvider
 {
-    public function register(): void {}
+    public function register(): void
+    {
+    }
 
     public function boot(): void
     {
@@ -28,63 +30,139 @@ class MenuServiceProvider extends ServiceProvider
                     default => 'Dashboard',
                 };
 
-                // ✅ PROFIL TIDAK MASUK MENU (untuk semua role)
                 if ($roleName === 'admin') {
                     $menus = [
                         [
-                            'label'  => 'Dashboard',
-                            'route'  => route('admin.dashboard'),
+                            'label' => 'Dashboard',
+                            'route' => route('admin.dashboard'),
                             'active' => 'admin',
                         ],
                         [
-                            'label'  => 'Manajemen User',
+                            'label' => 'Sarpras Tersedia',
+                            'route' => route('sarpras.available'),
+                            'active' => 'sarpras-tersedia*',
+                        ],
+
+                        // ✅ MENU PEMINJAMAN (ADMIN)
+                        [
+                            'label' => 'Manajemen Peminjaman',
+                            'active' => 'admin/peminjaman*',
+                            'children' => [
+                                [
+                                    'label' => 'Permintaan Peminjaman',
+                                    'route' => route('admin.peminjaman.permintaan'),
+                                    'active' => 'admin/peminjaman-permintaan*',
+                                ],
+                                [
+                                    'label' => 'Peminjaman Aktif',
+                                    'route' => route('admin.peminjaman.aktif'),
+                                    'active' => 'admin/peminjaman-aktif*',
+                                ],
+                            ],
+                        ],
+
+                        [
+                            'label' => 'Manajemen User',
                             'active' => 'admin/manage_user*',
                             'children' => [
                                 [
-                                    'label'  => 'Daftar User',
-                                    'route'  => url('/admin/manage_user'),
+                                    'label' => 'Daftar User',
+                                    'route' => route('admin.users.index'),
                                     'active' => 'admin/manage_user*',
                                 ],
                                 [
-                                    'label'  => 'Tambah User',
-                                    'route'  => url('/admin/create_user'),
+                                    'label' => 'Tambah User',
+                                    'route' => route('admin.users.create'),
                                     'active' => 'admin/create_user*',
                                 ],
                             ],
                         ],
                         [
-                            'label'  => 'Kategori Sarpras',
-                            'route'  => route('admin.kategori_sarpras.index'),
+                            'label' => 'Kategori Sarpras',
+                            'route' => route('admin.kategori_sarpras.index'),
                             'active' => 'admin/kategori_sarpras*',
                         ],
-                    ];
-                }
-
-                if ($roleName === 'operator') {
-                    $menus = [
                         [
-                            'label'  => 'Dashboard',
-                            'route'  => route('operator.dashboard'),
-                            'active' => 'operator',
+                            'label' => 'Lokasi',
+                            'route' => route('admin.lokasi.index'),
+                            'active' => 'admin/lokasi*',
+                        ],
+                        [
+                            'label' => 'Data Sarpras',
+                            'route' => route('admin.sarpras.index'),
+                            'active' => 'admin/sarpras*',
+                        ],
+
+                        // (Kalau activity log mau dihiraukan, boleh dihapus dari sini)
+                        [
+                            'label' => 'Activity Log',
+                            'route' => route('admin.activity_logs.index'),
+                            'active' => 'admin/activity-logs*',
                         ],
                     ];
-                }
-
-                if ($roleName === 'user') {
+                } elseif ($roleName === 'operator') {
                     $menus = [
                         [
-                            'label'  => 'Dashboard',
-                            'route'  => route('user.dashboard'),
+                            'label' => 'Dashboard',
+                            'route' => route('operator.dashboard'),
+                            'active' => 'operator',
+                        ],
+                        [
+                            'label' => 'Sarpras Tersedia',
+                            'route' => route('sarpras.available'),
+                            'active' => 'sarpras-tersedia*',
+                        ],
+
+                        // ✅ MENU PEMINJAMAN (OPERATOR)
+                        [
+                            'label' => 'Manajemen Peminjaman',
+                            'active' => 'operator/peminjaman*',
+                            'children' => [
+                                [
+                                    'label' => 'Permintaan Peminjaman',
+                                    'route' => route('operator.peminjaman.permintaan'),
+                                    'active' => 'operator/peminjaman-permintaan*',
+                                ],
+                                [
+                                    'label' => 'Peminjaman Aktif',
+                                    'route' => route('operator.peminjaman.aktif'),
+                                    'active' => 'operator/peminjaman-aktif*',
+                                ],
+                            ],
+                        ],
+                    ];
+                } elseif ($roleName === 'user') {
+                    $menus = [
+                        [
+                            'label' => 'Dashboard',
+                            'route' => route('user.dashboard'),
                             'active' => 'user',
+                        ],
+                        [
+                            'label' => 'Sarpras Tersedia',
+                            'route' => route('sarpras.available'),
+                            'active' => 'sarpras-tersedia*',
+                        ],
+
+                        // ✅ MENU USER PEMINJAMAN
+                        [
+                            'label' => 'Sarpras Bisa Dipinjam',
+                            'route' => route('user.peminjaman.available'),
+                            'active' => 'user/sarpras-bisa-dipinjam*',
+                        ],
+                        [
+                            'label' => 'Riwayat Peminjaman',
+                            'route' => route('user.peminjaman.riwayat'),
+                            'active' => 'user/riwayat-peminjaman*',
                         ],
                     ];
                 }
             }
 
             $view->with([
-                'menus'      => $menus,
+                'menus' => $menus,
                 'panelTitle' => $panelTitle,
-                'roleName'   => $roleName,
+                'roleName' => $roleName,
             ]);
         });
     }

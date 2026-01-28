@@ -3,7 +3,7 @@
 @section('content')
 <div class="max-w-2xl">
     <h1 class="text-2xl font-semibold mb-1">Tambah User</h1>
-    <p class="text-slate-300 text-sm mb-6">Buat akun baru untuk sistem.</p>
+    <p class="text-slate-300 text-sm mb-6">Buat akun baru.</p>
 
     @if ($errors->any())
         <div class="mb-4 rounded-xl border border-rose-500/40 bg-rose-500/10 p-4 text-rose-200">

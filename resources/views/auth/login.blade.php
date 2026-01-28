@@ -59,9 +59,7 @@
         </button>
       </form>
 
-      <p class="text-xs text-slate-500 mt-6 text-center">
-        © {{ date('Y') }} SARPRAS
-      </p>
+    
     </div>
   </div>
 

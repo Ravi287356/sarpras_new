@@ -7,44 +7,29 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Sarpras extends Model
+class Lokasi extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'sarpras';
+    protected $table = 'lokasi';
 
     public $incrementing = false;
     protected $keyType = 'string';
 
+    // ✅ pastikan soft delete pakai kolom default Laravel
+    const DELETED_AT = 'deleted_at';
+
     protected $fillable = [
         'id',
-        'kode',
         'nama',
-        'kategori_id',
-        'lokasi_id',
-        'jumlah_stok',
-        'kondisi_saat_ini',
-        // ✅ deleted_at tidak wajib ditaruh fillable (lebih aman tidak ditaruh)
     ];
 
-    protected static function boot()
+    protected static function booted()
     {
-        parent::boot();
-
         static::creating(function ($model) {
             if (empty($model->id)) {
                 $model->id = (string) Str::uuid();
             }
         });
-    }
-
-    public function kategori()
-    {
-        return $this->belongsTo(KategoriSarpras::class, 'kategori_id');
-    }
-
-    public function lokasi()
-    {
-        return $this->belongsTo(Lokasi::class, 'lokasi_id');
     }
 }

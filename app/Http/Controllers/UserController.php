@@ -11,11 +11,12 @@ class UserController extends Controller
 {
     public function index()
     {
-        // urutan: paling lama di atas, paling baru di bawah
+        // WAJIB with('role') supaya $u->role?->nama muncul
         $users = User::with('role')
-            ->orderBy('created_at', 'asc')
+            ->orderBy('created_at', 'desc')
             ->get();
 
+        // ✅ ini sesuai file kamu: pages/admin/datauser.blade.php
         return view('pages.admin.datauser', [
             'title' => 'Daftar User',
             'users' => $users,
@@ -26,6 +27,7 @@ class UserController extends Controller
     {
         $roles = Role::orderBy('nama', 'asc')->get();
 
+        // ✅ ini sesuai file kamu: pages/admin/create.blade.php
         return view('pages.admin.create', [
             'title' => 'Tambah User',
             'roles' => $roles,
@@ -35,30 +37,31 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'username' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
-            'role_id' => ['required', 'exists:roles,id'],
-            'password' => ['required', 'min:6', 'confirmed'],
+            'username' => 'required|string|max:255|unique:users,username',
+            'email'    => 'required|email|max:255|unique:users,email',
+            'role_id'  => 'required|exists:roles,id',
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
         User::create([
             'username' => $request->username,
-            'email' => $request->email,
-            'role_id' => $request->role_id,
+            'email'    => $request->email,
+            'role_id'  => $request->role_id,
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan.');
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan ✅');
     }
 
     public function edit($id)
     {
-        $user = User::findOrFail($id);
+        $user  = User::findOrFail($id);
         $roles = Role::orderBy('nama', 'asc')->get();
 
+        // ✅ ini sesuai file kamu: pages/admin/edit.blade.php
         return view('pages.admin.edit', [
             'title' => 'Edit User',
-            'user' => $user,
+            'user'  => $user,
             'roles' => $roles,
         ]);
     }
@@ -68,15 +71,15 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $request->validate([
-            'username' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
-            'role_id' => ['required', 'exists:roles,id'],
-            'password' => ['nullable', 'min:6', 'confirmed'],
+            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'email'    => 'required|email|max:255|unique:users,email,' . $user->id,
+            'role_id'  => 'required|exists:roles,id',
+            'password' => 'nullable|string|min:6|confirmed',
         ]);
 
         $user->username = $request->username;
-        $user->email = $request->email;
-        $user->role_id = $request->role_id;
+        $user->email    = $request->email;
+        $user->role_id  = $request->role_id;
 
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
@@ -84,12 +87,13 @@ class UserController extends Controller
 
         $user->save();
 
-        return redirect()->route('admin.users.index')->with('success', 'User berhasil diupdate.');
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil diupdate ✅');
     }
 
     public function destroy($id)
     {
-        User::where('id', $id)->delete();
-        return redirect()->route('admin.users.index')->with('success', 'User berhasil dihapus.');
+        User::findOrFail($id)->delete();
+
+        return back()->with('success', 'User berhasil dihapus ✅');
     }
 }

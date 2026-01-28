@@ -3,80 +3,94 @@
 namespace App\Http\Controllers;
 
 use App\Models\KategoriSarpras;
+use App\Models\Lokasi;
+use App\Models\Sarpras;
 use Illuminate\Http\Request;
 
 class SarprasController extends Controller
 {
-    // LIST
     public function index()
     {
-        $kategoris = KategoriSarpras::orderBy('id', 'asc')->get(); // lama di atas
+        $items = Sarpras::with(['kategori', 'lokasi'])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        return view('pages.admin.kategori_sarpras.index', [
-            'title' => 'Kategori Sarpras',
-            'kategoris' => $kategoris
+        return view('pages.sarpras.index', [
+            'title' => 'Data Sarpras',
+            'items' => $items,
         ]);
     }
 
-    // FORM CREATE
     public function create()
     {
-        return view('pages.admin.kategori_sarpras.create', [
-            'title' => 'Tambah Kategori Sarpras',
+        return view('pages.sarpras.create', [
+            'title'     => 'Tambah Sarpras',
+            'kategoris' => KategoriSarpras::orderBy('nama', 'asc')->get(),
+            'lokasis'   => Lokasi::orderBy('nama', 'asc')->get(),
         ]);
     }
 
-    // SIMPAN
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:255|unique:kategori_sarpras,nama',
-            'deskripsi' => 'nullable|string',
+            'kode'             => 'required|string|max:255|unique:sarpras,kode',
+            'nama'             => 'required|string|max:255',
+            'kategori_id'      => 'required|exists:kategori_sarpras,id',
+            'lokasi_id'        => 'required|exists:lokasi,id',
+            'jumlah_stok'      => 'required|integer|min:0',
+            'kondisi_saat_ini' => 'nullable|string|max:255',
         ]);
 
-        KategoriSarpras::create([
-            'nama' => $request->nama,
-            'deskripsi' => $request->deskripsi,
+        Sarpras::create([
+            'kode'             => $request->kode,
+            'nama'             => $request->nama,
+            'kategori_id'      => $request->kategori_id,
+            'lokasi_id'        => $request->lokasi_id,
+            'jumlah_stok'      => $request->jumlah_stok,
+            'kondisi_saat_ini' => $request->kondisi_saat_ini,
         ]);
 
-        return redirect()->route('admin.kategori_sarpras.index')->with('success', 'Kategori berhasil ditambahkan.');
+        return redirect()->route('admin.sarpras.index')->with('success', 'Sarpras berhasil ditambahkan ✅');
     }
 
-    // FORM EDIT
-    public function edit($id)
+    public function edit(Sarpras $sarpras)
     {
-        $kategori = KategoriSarpras::findOrFail($id);
-
-        return view('pages.admin.kategori_sarpras.edit', [
-            'title' => 'Edit Kategori Sarpras',
-            'kategori' => $kategori
+        return view('pages.sarpras.edit', [
+            'title'     => 'Edit Sarpras',
+            'sarpras'   => $sarpras,
+            'kategoris' => KategoriSarpras::orderBy('nama', 'asc')->get(),
+            'lokasis'   => Lokasi::orderBy('nama', 'asc')->get(),
         ]);
     }
 
-    // UPDATE
-    public function update(Request $request, $id)
+    public function update(Request $request, Sarpras $sarpras)
     {
-        $kategori = KategoriSarpras::findOrFail($id);
-
         $request->validate([
-            'nama' => 'required|string|max:255|unique:kategori_sarpras,nama,' . $kategori->id,
-            'deskripsi' => 'nullable|string',
+            'kode'             => 'required|string|max:255|unique:sarpras,kode,' . $sarpras->id,
+            'nama'             => 'required|string|max:255',
+            'kategori_id'      => 'required|exists:kategori_sarpras,id',
+            'lokasi_id'        => 'required|exists:lokasi,id',
+            'jumlah_stok'      => 'required|integer|min:0',
+            'kondisi_saat_ini' => 'nullable|string|max:255',
         ]);
 
-        $kategori->update([
-            'nama' => $request->nama,
-            'deskripsi' => $request->deskripsi,
+        $sarpras->update([
+            'kode'             => $request->kode,
+            'nama'             => $request->nama,
+            'kategori_id'      => $request->kategori_id,
+            'lokasi_id'        => $request->lokasi_id,
+            'jumlah_stok'      => $request->jumlah_stok,
+            'kondisi_saat_ini' => $request->kondisi_saat_ini,
         ]);
 
-        return redirect()->route('admin.kategori_sarpras.index')->with('success', 'Kategori berhasil diupdate.');
+        return redirect()->route('admin.sarpras.index')->with('success', 'Sarpras berhasil diupdate ✅');
     }
 
-    // HAPUS (soft delete)
-    public function destroy($id)
+    public function destroy(Sarpras $sarpras)
     {
-        $kategori = KategoriSarpras::findOrFail($id);
-        $kategori->delete();
+        // ✅ ini akan mengisi deleted_at
+        $sarpras->delete();
 
-        return redirect()->route('admin.kategori_sarpras.index')->with('success', 'Kategori berhasil dihapus.');
+        return back()->with('success', 'Sarpras berhasil dihapus ✅');
     }
 }
