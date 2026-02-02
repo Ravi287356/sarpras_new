@@ -61,6 +61,6 @@ class LokasiController extends Controller
     public function destroy(Lokasi $lokasi)
     {
         $lokasi->delete();
-        return back()->with('success', 'Lokasi berhasil dihapus ✅');
+        return back()->with('success', 'Lokasi berhasil dihapus ');
     }
 }

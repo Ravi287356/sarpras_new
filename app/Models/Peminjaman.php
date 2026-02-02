@@ -35,9 +35,8 @@ class Peminjaman extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
-            }
+            $model->id = Str::uuid();
+            $model->kode_peminjaman = 'PMJ-' . now()->format(format:'Ymd') . '-' . strtoupper(Str::random(6));
         });
     }
 

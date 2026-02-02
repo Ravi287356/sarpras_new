@@ -4,20 +4,36 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
 {
-public function handle(Request $request, Closure $next, ...$roles): Response{
-    if (!Auth::check()) {
-        return redirect()->route('login');}
+    /**
+     * Middleware: role:admin / role:operator / role:user
+     * + BONUS: pisahkan session cookie per area (admin/operator/user)
+     */
+    public function handle(Request $request, Closure $next, string $role): Response
+    {
+        
+        $area = $request->segment(1); // admin/operator/user
 
-        $user = Auth::user();
-        $userRole = $user->role->nama;
+        if (in_array($area, ['admin', 'operator', 'user'], true)) {
+            config(['session.cookie' => "sarpras_{$area}_session"]);
+        } else {
 
-        if (!in_array($userRole, $roles)) {
-            abort(403, 'Anda tidak memiliki akses');
+            config(['session.cookie' => "sarpras_session"]);
+        }
+
+        if (!Auth::check()) {
+            return redirect()->route('login.form');
+        }
+
+
+        $userRole = Auth::user()?->role?->nama;
+
+        if ($userRole !== $role) {
+            abort(403, 'Akses ditolak.');
         }
 
         return $next($request);

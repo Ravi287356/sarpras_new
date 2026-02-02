@@ -71,7 +71,7 @@ class KategoriSarprasController extends Controller
     $kategori = KategoriSarpras::findOrFail($id);
     $kategori->delete(); // <- ini yang benar untuk soft delete
 
-    return back()->with('success', 'Kategori berhasil dihapus ✅');
+    return back()->with('success', 'Kategori berhasil dihapus ');
 }
 
 }

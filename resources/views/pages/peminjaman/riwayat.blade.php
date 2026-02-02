@@ -49,7 +49,7 @@
                                 <span class="px-3 py-1 rounded-full text-xs ring-1
                                     {{ $row->status === 'dikembalikan'
                                         ? 'bg-emerald-500/10 text-emerald-200 ring-emerald-500/30'
-                                        : 'bg-sky-500/10 text-sky-200 ring-sky-500/30' }}">
+                                        : 'bg-red-800 text-red-200 ring-red-500' }}">
                                     {{ strtoupper($row->status) }}
                                 </span>
                             </td>

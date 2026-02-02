@@ -29,10 +29,10 @@ Route::middleware('auth')->group(function () {
         $role = auth()->user()?->role?->nama;
 
         return match ($role) {
-            'admin'    => redirect()->route('admin.dashboard'),
+            'admin' => redirect()->route('admin.dashboard'),
             'operator' => redirect()->route('operator.dashboard'),
-            'user'     => redirect()->route('user.dashboard'),
-            default    => abort(403),
+            'user' => redirect()->route('user.dashboard'),
+            default => abort(403),
         };
     })->name('dashboard');
 
@@ -96,7 +96,11 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/peminjaman-aktif', [PeminjamanController::class, 'indexAktif'])->name('peminjaman.aktif');
         Route::put('/peminjaman/{peminjaman}/kembalikan', [PeminjamanController::class, 'kembalikan'])->name('peminjaman.kembalikan');
+
+        Route::get('/peminjaman/{id}/cetak', [PeminjamanController::class, 'cetak'])->name('peminjaman.cetak');
+
     });
+
 
     // =========================
     // OPERATOR
@@ -117,6 +121,8 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/peminjaman-aktif', [PeminjamanController::class, 'indexAktif'])->name('peminjaman.aktif');
         Route::put('/peminjaman/{peminjaman}/kembalikan', [PeminjamanController::class, 'kembalikan'])->name('peminjaman.kembalikan');
+        Route::get('/peminjaman/{id}/cetak', [PeminjamanController::class, 'cetak'])->name('peminjaman.cetak');
+
     });
 
     // =========================

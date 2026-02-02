@@ -6,6 +6,7 @@ use App\Models\Peminjaman;
 use App\Models\Sarpras;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Str;
 
 class PeminjamanController extends Controller
 {
@@ -129,6 +130,9 @@ class PeminjamanController extends Controller
             if ((int) $peminjaman->jumlah > (int) $sarpras->jumlah_stok) {
                 abort(422, 'Stok tidak cukup untuk menyetujui peminjaman.');
             }
+            if (!$peminjaman->kode_peminjaman) {
+                $peminjaman->kode_peminjaman = 'PMN-' .now()->format('Ymd') . '-' . strtoupper(Str::random(6));
+            }
 
             $sarpras->update([
                 'jumlah_stok' => (int) $sarpras->jumlah_stok - (int) $peminjaman->jumlah,
@@ -142,7 +146,7 @@ class PeminjamanController extends Controller
             ]);
         });
 
-        return back()->with('success', 'Peminjaman berhasil disetujui ✅');
+        return back()->with('success', 'Peminjaman berhasil disetujui ');
     }
 
     public function tolak(Request $request, Peminjaman $peminjaman)
@@ -162,7 +166,7 @@ class PeminjamanController extends Controller
             'alasan_penolakan' => $request->alasan_penolakan,
         ]);
 
-        return back()->with('success', 'Peminjaman berhasil ditolak ✅');
+        return back()->with('success', 'Peminjaman berhasil ditolak ');
     }
 
     public function kembalikan(Peminjaman $peminjaman)
@@ -183,6 +187,40 @@ class PeminjamanController extends Controller
             ]);
         });
 
-        return back()->with('success', 'Peminjaman berhasil dikembalikan ✅');
+        return back()->with('success', 'Peminjaman berhasil dikembalikan ');
+
+
+
+
+
+
+        }
+        public function cetak(string $id)
+{
+    $peminjaman = Peminjaman::with([
+            'user',
+            'user.role',
+            'sarpras.kategori',
+            'sarpras.lokasi'
+        ])
+        ->findOrFail($id);
+
+    // 🔒 Proteksi: hanya admin & operator
+    if (!in_array(auth()->user()?->role?->nama, ['admin', 'operator'])) {
+        abort(403, 'Tidak punya akses mencetak peminjaman');
     }
+
+    // 🔒 hanya boleh cetak yang disetujui / dikembalikan
+    if (!in_array($peminjaman->status, ['disetujui', 'dikembalikan'])) {
+        return back()->withErrors([
+            'status' => 'Peminjaman belum disetujui, tidak bisa dicetak.'
+        ]);
+    }
+
+    return view('pages.peminjaman.cetak', [
+        'title'      => 'Bukti Peminjaman',
+        'peminjaman' => $peminjaman,
+    ]);
+}
+
 }
