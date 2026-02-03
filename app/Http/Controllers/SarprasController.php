@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\KategoriSarpras;
 use App\Models\Lokasi;
 use App\Models\Sarpras;
+use App\Helpers\CodeGenerator;
 use Illuminate\Http\Request;
 
 class SarprasController extends Controller
@@ -30,10 +31,39 @@ class SarprasController extends Controller
         ]);
     }
 
+    /**
+     * Generate preview kode untuk form
+     */
+    public function generateCode(Request $request)
+    {
+        $request->validate([
+            'kategori_id' => 'required|exists:kategori_sarpras,id',
+            'lokasi_id'   => 'required|exists:lokasi,id',
+            'nama'        => 'required|string|max:255',
+        ]);
+
+        try {
+            $code = CodeGenerator::generate(
+                $request->kategori_id,
+                $request->lokasi_id,
+                $request->nama
+            );
+
+            return response()->json([
+                'success' => true,
+                'code'    => $code,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 400);
+        }
+    }
+
     public function store(Request $request)
     {
         $request->validate([
-            'kode'             => 'required|string|max:255|unique:sarpras,kode',
             'nama'             => 'required|string|max:255',
             'kategori_id'      => 'required|exists:kategori_sarpras,id',
             'lokasi_id'        => 'required|exists:lokasi,id',
@@ -41,8 +71,8 @@ class SarprasController extends Controller
             'kondisi_saat_ini' => 'nullable|string|max:255',
         ]);
 
+        // Kode akan di-generate otomatis di Model Sarpras boot method
         Sarpras::create([
-            'kode'             => $request->kode,
             'nama'             => $request->nama,
             'kategori_id'      => $request->kategori_id,
             'lokasi_id'        => $request->lokasi_id,

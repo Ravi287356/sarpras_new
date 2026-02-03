@@ -7,6 +7,7 @@ use App\Models\Sarpras;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Str;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class PeminjamanController extends Controller
 {
@@ -82,6 +83,22 @@ class PeminjamanController extends Controller
         ]);
     }
 
+    public function riwayat()
+    {
+        // ❌ ERROR sebelumnya biasanya: pakai ->get() lalu di blade dipanggil ->links()
+        // ✅ FIX: pakai paginate() + kirim variabel "logs" sesuai blade kamu
+        $logs = Peminjaman::query()
+            ->with(['sarpras.kategori', 'sarpras.lokasi'])
+            ->latest('created_at')
+            ->paginate(10);
+
+        // ✅ sesuai file kamu: resources/views/pages/peminjaman/riwayat.blade.php
+        return view('pages.peminjaman.riwayat_semua', [
+            'title' => 'Riwayat Peminjaman',
+            'logs' => $logs,
+        ]);
+    }
+
     public function indexPermintaan()
     {
         $items = Peminjaman::query()
@@ -96,7 +113,6 @@ class PeminjamanController extends Controller
             'items' => $items,
         ]);
     }
-
 
     public function indexAktif()
     {
@@ -131,7 +147,7 @@ class PeminjamanController extends Controller
                 abort(422, 'Stok tidak cukup untuk menyetujui peminjaman.');
             }
             if (!$peminjaman->kode_peminjaman) {
-                $peminjaman->kode_peminjaman = 'PMN-' .now()->format('Ymd') . '-' . strtoupper(Str::random(6));
+                $peminjaman->kode_peminjaman = 'PMN-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
             }
 
             $sarpras->update([
@@ -188,39 +204,43 @@ class PeminjamanController extends Controller
         });
 
         return back()->with('success', 'Peminjaman berhasil dikembalikan ');
+    }
 
-
-
-
-
-
-        }
-        public function cetak(string $id)
-{
-    $peminjaman = Peminjaman::with([
+    /**
+     * Menampilkan struk peminjaman dengan QR code
+     */
+    public function struk(string $id)
+    {
+        $peminjaman = Peminjaman::with([
             'user',
             'user.role',
             'sarpras.kategori',
-            'sarpras.lokasi'
-        ])
-        ->findOrFail($id);
+            'sarpras.lokasi',
+            'approver'
+        ])->findOrFail($id);
 
-    // 🔒 Proteksi: hanya admin & operator
-    if (!in_array(auth()->user()?->role?->nama, ['admin', 'operator'])) {
-        abort(403, 'Tidak punya akses mencetak peminjaman');
-    }
+        // 🔒 Proteksi: hanya admin, operator, atau user yang membuat peminjaman
+        $isAuthorized = auth()->user()->id === $peminjaman->user_id ||
+            in_array(auth()->user()?->role?->nama, ['admin', 'operator']);
 
-    // 🔒 hanya boleh cetak yang disetujui / dikembalikan
-    if (!in_array($peminjaman->status, ['disetujui', 'dikembalikan'])) {
-        return back()->withErrors([
-            'status' => 'Peminjaman belum disetujui, tidak bisa dicetak.'
+        if (!$isAuthorized) {
+            abort(403, 'Tidak punya akses melihat struk peminjaman');
+        }
+
+        // 🔒 hanya boleh lihat yang disetujui / dikembalikan
+        if (!in_array($peminjaman->status, ['disetujui', 'dikembalikan'])) {
+            return back()->withErrors([
+                'status' => 'Peminjaman belum disetujui, tidak bisa melihat struk.'
+            ]);
+        }
+
+        // Generate QR code
+        $qrCode = QrCode::size(200)->generate($peminjaman->kode_peminjaman);
+
+        return view('pages.peminjaman.struk', [
+            'title' => 'Struk Peminjaman',
+            'peminjaman' => $peminjaman,
+            'qrCode' => $qrCode,
         ]);
     }
-
-    return view('pages.peminjaman.cetak', [
-        'title'      => 'Bukti Peminjaman',
-        'peminjaman' => $peminjaman,
-    ]);
-}
-
 }

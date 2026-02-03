@@ -17,20 +17,21 @@
     @endif
 
     <form action="{{ route(name:'admin.sarpras.store') }}" method="POST"
-          class="mt-6 rounded-2xl bg-slate-900/40 ring-1 ring-slate-800 p-6 space-y-5">
+          class="mt-6 rounded-2xl bg-slate-900/40 ring-1 ring-slate-800 p-6 space-y-5" id="formSarpras">
         @csrf
 
         <div class="grid md:grid-cols-2 gap-4">
             <div>
-                <label class="text-sm text-slate-300">Kode</label>
-                <input type="text" name="kode" value="{{ old('kode') }}" required
-                       class="mt-2 w-full rounded-xl bg-slate-950/60 text-white ring-1 ring-slate-800 px-4 py-3
-                              focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
+                <label class="text-sm text-slate-300">Kode (Auto-Generate)</label>
+                <div id="kodeDisplay" class="mt-2 w-full rounded-xl bg-slate-950/60 text-slate-400 ring-1 ring-slate-800 px-4 py-3 min-h-12 flex items-center">
+                    <span class="text-slate-500 text-sm">Pilih kategori, lokasi, dan ketik nama untuk generate kode</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-1">Kode otomatis dari 3 char kategori, 3 char lokasi, 5 char nama, + increment</p>
             </div>
 
             <div>
                 <label class="text-sm text-slate-300">Nama</label>
-                <input type="text" name="nama" value="{{ old('nama') }}" required
+                <input type="text" name="nama" id="inputNama" value="{{ old('nama') }}" required
                        class="mt-2 w-full rounded-xl bg-slate-950/60 text-white ring-1 ring-slate-800 px-4 py-3
                               focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
             </div>
@@ -39,7 +40,7 @@
         <div class="grid md:grid-cols-2 gap-4">
             <div>
                 <label class="text-sm text-slate-300">Kategori</label>
-                <select name="kategori_id" required
+                <select name="kategori_id" id="selectKategori" required
                         class="mt-2 w-full rounded-xl bg-slate-950/60 text-white ring-1 ring-slate-800 px-4 py-3
                                focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
                     <option value="">-- Pilih Kategori --</option>
@@ -51,7 +52,7 @@
 
             <div>
                 <label class="text-sm text-slate-300">Lokasi</label>
-                <select name="lokasi_id" required
+                <select name="lokasi_id" id="selectLokasi" required
                 class="mt-2 w-full rounded-xl bg-slate-950/60 text-white ring-1 ring-slate-800 px-4 py-3">
 
                 <option value="">-- Pilih Lokasi --</option>
@@ -98,4 +99,59 @@
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectKategori = document.getElementById('selectKategori');
+    const selectLokasi = document.getElementById('selectLokasi');
+    const inputNama = document.getElementById('inputNama');
+    const kodeDisplay = document.getElementById('kodeDisplay');
+
+    async function generateCode() {
+        const kategoriId = selectKategori.value;
+        const lokasiId = selectLokasi.value;
+        const nama = inputNama.value.trim();
+
+        if (!kategoriId || !lokasiId || !nama) {
+            kodeDisplay.innerHTML = '<span class="text-slate-500 text-sm">Pilih kategori, lokasi, dan ketik nama untuk generate kode</span>';
+            return;
+        }
+
+        try {
+            const response = await fetch('{{ route("admin.sarpras.generate-code") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                },
+                body: JSON.stringify({
+                    kategori_id: kategoriId,
+                    lokasi_id: lokasiId,
+                    nama: nama
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                kodeDisplay.innerHTML = `<span class="text-emerald-200 font-semibold text-lg">${data.code}</span>`;
+            } else {
+                kodeDisplay.innerHTML = `<span class="text-red-200 text-sm">${data.message || 'Error generate code'}</span>`;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            kodeDisplay.innerHTML = '<span class="text-red-200 text-sm">Error generating code</span>';
+        }
+    }
+
+    selectKategori.addEventListener('change', generateCode);
+    selectLokasi.addEventListener('change', generateCode);
+    inputNama.addEventListener('input', generateCode);
+
+    // Generate kode jika ada old value
+    if (selectKategori.value && selectLokasi.value && inputNama.value) {
+        generateCode();
+    }
+});
+</script>
 @endsection

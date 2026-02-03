@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use App\Helpers\CodeGenerator;
 
 class Sarpras extends Model
 {
@@ -34,6 +35,15 @@ class Sarpras extends Model
         static::creating(function ($model) {
             if (empty($model->id)) {
                 $model->id = (string) Str::uuid();
+            }
+
+            // Auto-generate kode jika belum ada atau kosong
+            if (empty($model->kode)) {
+                $model->kode = CodeGenerator::generate(
+                    $model->kategori_id,
+                    $model->lokasi_id,
+                    $model->nama
+                );
             }
         });
     }

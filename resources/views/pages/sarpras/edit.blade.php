@@ -23,10 +23,11 @@
 
         <div class="grid md:grid-cols-2 gap-4">
             <div>
-                <label class="text-sm text-slate-300">Kode</label>
-                <input type="text" name="kode" value="{{ old('kode', $sarpras->kode) }}" required
-                       class="mt-2 w-full rounded-xl bg-slate-950/60 text-white ring-1 ring-slate-800 px-4 py-3
-                              focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
+                <label class="text-sm text-slate-300">Kode (Auto-Generate)</label>
+                <div class="mt-2 w-full rounded-xl bg-slate-950/60 text-slate-400 ring-1 ring-slate-800 px-4 py-3">
+                    {{ $sarpras->kode }}
+                </div>
+                <p class="text-xs text-slate-500 mt-1">Kode dihasilkan otomatis dari kategori, lokasi, dan nama</p>
             </div>
 
             <div>

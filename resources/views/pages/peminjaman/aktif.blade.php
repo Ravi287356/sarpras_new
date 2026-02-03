@@ -60,15 +60,22 @@
                         </td>
 
                         <td class="px-4 py-3 text-center">
-                            <form method="POST"
-                                action="{{ route((auth()->user()->role->nama === 'admin' ? 'admin' : 'operator').'.peminjaman.kembalikan', $row->id) }}"
-                                onsubmit="return confirm('Tandai sebagai dikembalikan?')">
-                                @csrf
-                                @method('PUT')
-                                <button class="px-3 py-2 rounded-xl border border-white/10 hover:bg-white/5 transition">
-                                    Kembalikan
-                                </button>
-                            </form>
+                            <div class="flex flex-col gap-2">
+                                <a href="{{ route((auth()->user()->role->nama === 'admin' ? 'admin' : 'operator').'.peminjaman.struk', $row->id) }}"
+                                   class="px-3 py-2 rounded-xl border border-blue-400/50 bg-blue-500/10 hover:bg-blue-500/20 transition text-blue-300 text-xs">
+                                    📄 Struk
+                                </a>
+                                <form method="POST"
+                                    action="{{ route((auth()->user()->role->nama === 'admin' ? 'admin' : 'operator').'.peminjaman.kembalikan', $row->id) }}"
+                                    onsubmit="return confirm('Tandai sebagai dikembalikan?')"
+                                    class="m-0">
+                                    @csrf
+                                    @method('PUT')
+                                    <button class="w-full px-3 py-2 rounded-xl border border-white/10 hover:bg-white/5 transition text-sm">
+                                        ✓ Kembalikan
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 @empty

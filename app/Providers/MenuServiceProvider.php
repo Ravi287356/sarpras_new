@@ -58,6 +58,11 @@ class MenuServiceProvider extends ServiceProvider
                                     'route' => route('admin.peminjaman.aktif'),
                                     'active' => 'admin/peminjaman-aktif*',
                                 ],
+                                [
+                                    'label' => 'Riwayat Peminjaman',
+                                    'route' => route('admin.peminjaman.riwayat'),
+                                    'active' => 'admin/peminjaman-riwayat*',
+                                ],
                             ],
                         ],
 
@@ -127,6 +132,11 @@ class MenuServiceProvider extends ServiceProvider
                                     'label' => 'Peminjaman Aktif',
                                     'route' => route('operator.peminjaman.aktif'),
                                     'active' => 'operator/peminjaman-aktif*',
+                                ],
+                                 [
+                                    'label' => 'Riwayat Peminjaman',
+                                    'route' => route('operator.peminjaman.riwayat'),
+                                    'active' => 'operator/peminjaman-riwayat*',
                                 ],
                             ],
                         ],

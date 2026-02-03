@@ -75,6 +75,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/sarpras', [SarprasController::class, 'index'])->name('sarpras.index');
         Route::get('/sarpras/create', [SarprasController::class, 'create'])->name('sarpras.create');
         Route::post('/sarpras', [SarprasController::class, 'store'])->name('sarpras.store');
+        Route::post('/sarpras/generate-code', [SarprasController::class, 'generateCode'])->name('sarpras.generate-code');
         Route::get('/sarpras/{sarpras}/edit', [SarprasController::class, 'edit'])->name('sarpras.edit');
         Route::put('/sarpras/{sarpras}', [SarprasController::class, 'update'])->name('sarpras.update');
         Route::delete('/sarpras/{sarpras}', [SarprasController::class, 'destroy'])->name('sarpras.destroy');
@@ -96,8 +97,8 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/peminjaman-aktif', [PeminjamanController::class, 'indexAktif'])->name('peminjaman.aktif');
         Route::put('/peminjaman/{peminjaman}/kembalikan', [PeminjamanController::class, 'kembalikan'])->name('peminjaman.kembalikan');
-
-        Route::get('/peminjaman/{id}/cetak', [PeminjamanController::class, 'cetak'])->name('peminjaman.cetak');
+        Route::get('/peminjaman/{id}/struk', [PeminjamanController::class, 'struk'])->name('peminjaman.struk');
+        Route::get('/riwayat-peminjaman', [PeminjamanController::class, 'riwayat'])->name('peminjaman.riwayat');
 
     });
 
@@ -121,7 +122,8 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/peminjaman-aktif', [PeminjamanController::class, 'indexAktif'])->name('peminjaman.aktif');
         Route::put('/peminjaman/{peminjaman}/kembalikan', [PeminjamanController::class, 'kembalikan'])->name('peminjaman.kembalikan');
-        Route::get('/peminjaman/{id}/cetak', [PeminjamanController::class, 'cetak'])->name('peminjaman.cetak');
+        Route::get('/peminjaman/{id}/struk', [PeminjamanController::class, 'struk'])->name('peminjaman.struk');
+        Route::get('/riwayat-peminjaman', [PeminjamanController::class, 'riwayat'])->name('peminjaman.riwayat');
 
     });
 
@@ -140,5 +142,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/peminjaman/create/{sarpras_id}', [PeminjamanController::class, 'create'])->name('peminjaman.create');
         Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');
         Route::get('/riwayat-peminjaman', [PeminjamanController::class, 'riwayatUser'])->name('peminjaman.riwayat');
+        Route::get('/peminjaman/{id}/struk', [PeminjamanController::class, 'struk'])->name('peminjaman.struk');
     });
 });
