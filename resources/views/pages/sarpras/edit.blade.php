@@ -59,7 +59,7 @@
                                focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
                     @foreach($lokasis as $l)
                         <option value="{{ $l->id }}" @selected(old('lokasi_id', $sarpras->lokasi_id) == $l->id)>
-                            {{ $l->name }}
+                            {{ $l->nama }}
                         </option>
                     @endforeach
                 </select>

@@ -93,34 +93,42 @@ class SarprasController extends Controller
         ]);
     }
 
-    public function update(Request $request, Sarpras $sarpras)
-    {
-        $request->validate([
-            'kode'             => 'required|string|max:255|unique:sarpras,kode,' . $sarpras->id,
-            'nama'             => 'required|string|max:255',
-            'kategori_id'      => 'required|exists:kategori_sarpras,id',
-            'lokasi_id'        => 'required|exists:lokasi,id',
-            'jumlah_stok'      => 'required|integer|min:0',
-            'kondisi_saat_ini' => 'nullable|string|max:255',
-        ]);
+   public function update(Request $request, Sarpras $sarpras)
+{
+    $request->validate([
+        'nama'             => 'required|string|max:255',
+        'kategori_id'      => 'required|exists:kategori_sarpras,id',
+        'lokasi_id'        => 'required|exists:lokasi,id',
+        'jumlah_stok'      => 'required|integer|min:0',
+        'kondisi_saat_ini' => 'nullable|string|max:255',
+    ]);
 
-        $sarpras->update([
-            'kode'             => $request->kode,
-            'nama'             => $request->nama,
-            'kategori_id'      => $request->kategori_id,
-            'lokasi_id'        => $request->lokasi_id,
-            'jumlah_stok'      => $request->jumlah_stok,
-            'kondisi_saat_ini' => $request->kondisi_saat_ini,
-        ]);
+    $kodeBaru = \App\Helpers\CodeGenerator::generate(
+        $request->kategori_id,
+        $request->lokasi_id,
+        $request->nama
+    );
 
-        return redirect()->route('admin.sarpras.index')->with('success', 'Sarpras berhasil diupdate ✅');
-    }
+    $sarpras->update([
+        'kode'             => $kodeBaru,
+        'nama'             => $request->nama,
+        'kategori_id'      => $request->kategori_id,
+        'lokasi_id'        => $request->lokasi_id,
+        'jumlah_stok'      => $request->jumlah_stok,
+        'kondisi_saat_ini' => $request->kondisi_saat_ini,
+    ]);
+
+    return redirect()
+        ->route('admin.sarpras.index')
+        ->with('success', 'Sarpras berhasil diupdate & kode diperbarui otomatis ✅');
+}
+
 
     public function destroy(Sarpras $sarpras)
     {
         // ✅ ini akan mengisi deleted_at
         $sarpras->delete();
-
+    
         return back()->with('success', 'Sarpras berhasil dihapus ✅');
     }
 }

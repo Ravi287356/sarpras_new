@@ -20,6 +20,12 @@
         </div>
     @endif
 
+    @if(session('error'))
+        <div class="mb-5 rounded-xl bg-red-500/10 ring-1 ring-red-500/30 p-4 text-red-200">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div class="rounded-2xl bg-slate-900/40 ring-1 ring-slate-800 overflow-hidden">
         <table class="w-full text-sm">
             <thead class="bg-slate-950/40 text-slate-200">

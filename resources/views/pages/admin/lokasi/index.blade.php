@@ -21,6 +21,12 @@
         </div>
     @endif
 
+    @if (session('error'))
+        <div class="mb-4 rounded-xl border border-red-400/30 bg-red-500/10 p-4 text-red-200">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
         <table class="w-full text-sm">
             <thead class="bg-white/5 text-slate-200">

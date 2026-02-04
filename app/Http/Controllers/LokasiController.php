@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lokasi;
+use App\Models\Sarpras;
 use Illuminate\Http\Request;
 
 class LokasiController extends Controller
 {
     public function index()
     {
-        $items = Lokasi::orderBy('nama', 'asc')->get();
+        $items = Lokasi::orderBy('nama')->get();
 
         return view('pages.admin.lokasi.index', [
             'title' => 'Lokasi',
@@ -34,7 +35,9 @@ class LokasiController extends Controller
             'nama' => $request->nama,
         ]);
 
-        return redirect()->route('admin.lokasi.index')->with('success', 'Lokasi berhasil ditambahkan ✅');
+        return redirect()
+            ->route('admin.lokasi.index')
+            ->with('success', 'Lokasi berhasil ditambahkan ✅');
     }
 
     public function edit(Lokasi $lokasi)
@@ -55,12 +58,27 @@ class LokasiController extends Controller
             'nama' => $request->nama,
         ]);
 
-        return redirect()->route('admin.lokasi.index')->with('success', 'Lokasi berhasil diupdate ✅');
+        return redirect()
+            ->route('admin.lokasi.index')
+            ->with('success', 'Lokasi berhasil diupdate ✅');
     }
 
     public function destroy(Lokasi $lokasi)
     {
+        // CEK DULU apakah lokasi dipakai sarpras
+        $sarprasAktif = Sarpras::where('lokasi_id', $lokasi->id)
+            ->whereNull('deleted_at')
+            ->count();
+
+        if ($sarprasAktif > 0) {
+            return back()->with(
+                'error',
+                'Lokasi tidak bisa dihapus karena masih digunakan oleh ' . $sarprasAktif . ' sarpras.'
+            );
+        }
+
         $lokasi->delete();
-        return back()->with('success', 'Lokasi berhasil dihapus ');
+
+        return back()->with('success', 'Lokasi berhasil dihapus ✅');
     }
 }

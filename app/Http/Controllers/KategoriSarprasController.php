@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\KategoriSarpras;
+use App\Models\Sarpras;
 use Illuminate\Http\Request;
 
 class KategoriSarprasController extends Controller
 {
     public function index()
     {
-        $kategoris = KategoriSarpras::orderBy('id', 'asc')->get();
+        $kategoris = KategoriSarpras::orderBy('nama')->get();
 
         return view('pages.admin.kategori_sarpras.index', [
             'title' => 'Kategori Sarpras',
@@ -36,23 +37,21 @@ class KategoriSarprasController extends Controller
             'deskripsi' => $request->deskripsi,
         ]);
 
-        return redirect()->route('admin.kategori_sarpras.index')->with('success', 'Kategori berhasil ditambahkan ✅');
+        return redirect()
+            ->route('admin.kategori_sarpras.index')
+            ->with('success', 'Kategori berhasil ditambahkan ✅');
     }
 
-    public function edit($id)
+    public function edit(KategoriSarpras $kategori)
     {
-        $kategori = KategoriSarpras::findOrFail($id);
-
         return view('pages.admin.kategori_sarpras.edit', [
             'title' => 'Edit Kategori Sarpras',
             'kategori' => $kategori,
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, KategoriSarpras $kategori)
     {
-        $kategori = KategoriSarpras::findOrFail($id);
-
         $request->validate([
             'nama' => 'required|string|max:255|unique:kategori_sarpras,nama,' . $kategori->id,
             'deskripsi' => 'nullable|string',
@@ -63,15 +62,27 @@ class KategoriSarprasController extends Controller
             'deskripsi' => $request->deskripsi,
         ]);
 
-        return redirect()->route('admin.kategori_sarpras.index')->with('success', 'Kategori berhasil diupdate ✅');
+        return redirect()
+            ->route('admin.kategori_sarpras.index')
+            ->with('success', 'Kategori berhasil diupdate ✅');
     }
 
-   public function destroy($id)
-{
-    $kategori = KategoriSarpras::findOrFail($id);
-    $kategori->delete(); // <- ini yang benar untuk soft delete
+    public function destroy(KategoriSarpras $kategori)
+    {
+        // CEK DULU apakah kategori dipakai sarpras
+        $sarprasAktif = Sarpras::where('kategori_id', $kategori->id)
+            ->whereNull('deleted_at')
+            ->count();
 
-    return back()->with('success', 'Kategori berhasil dihapus ');
-}
+        if ($sarprasAktif > 0) {
+            return back()->with(
+                'error',
+                'Kategori tidak bisa dihapus karena masih digunakan oleh ' . $sarprasAktif . ' sarpras.'
+            );
+        }
 
+        $kategori->delete();
+
+        return back()->with('success', 'Kategori berhasil dihapus ✅');
+    }
 }

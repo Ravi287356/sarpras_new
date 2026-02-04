@@ -3,13 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 
 class Peminjaman extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $table = 'peminjaman';
 
@@ -18,6 +17,7 @@ class Peminjaman extends Model
 
     protected $fillable = [
         'id',
+        'kode_peminjaman',
         'user_id',
         'sarpras_id',
         'jumlah',
@@ -30,29 +30,37 @@ class Peminjaman extends Model
         'alasan_penolakan',
     ];
 
+    // ✅ FIX BOOT
     protected static function boot()
     {
         parent::boot();
 
         static::creating(function ($model) {
-            $model->id = Str::uuid();
-            $model->kode_peminjaman = 'PMJ-' . now()->format(format:'Ymd') . '-' . strtoupper(Str::random(6));
+            if (!$model->id) {
+                $model->id = (string) Str::uuid();
+            }
+
+            if (!$model->kode_peminjaman) {
+                $model->kode_peminjaman = 'PMJ-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
+            }
         });
     }
 
+    // ✅ FIX RELASI USER (INI KUNCI)
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
+    // ✅ SARPRAS
     public function sarpras()
     {
-        return $this->belongsTo(Sarpras::class, 'sarpras_id');
+        return $this->belongsTo(Sarpras::class, 'sarpras_id', 'id');
     }
 
-    // admin/operator yang menyetujui
+    // ✅ APPROVER (ADMIN / OPERATOR)
     public function approver()
     {
-        return $this->belongsTo(User::class, 'approved_by');
+        return $this->belongsTo(User::class, 'approved_by', 'id');
     }
 }

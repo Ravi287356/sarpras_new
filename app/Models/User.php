@@ -8,33 +8,39 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 use Illuminate\Notifications\Notifiable;
+
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
-    use SoftDeletes;
+    use HasFactory, Notifiable, SoftDeletes;
+
     protected $fillable = [
         'role_id',
         'username',
         'email',
         'password',
     ];
-    public $increments = false;
-    public $keyType = 'string';
+
+    // ✅ FIX PENTING
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected static function boot()
     {
         parent::boot();
+
         static::creating(function ($model) {
             if (empty($model->id)) {
-                $model->id = (string)Str::uuid();
+                $model->id = (string) Str::uuid();
             }
         });
     }
+
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
+    // ✅ relasi role (SUDAH BENAR)
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class, 'role_id');
