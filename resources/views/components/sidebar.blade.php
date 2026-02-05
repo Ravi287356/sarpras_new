@@ -1,10 +1,32 @@
-<div class="fixed left-0 top-0 w-72 h-screen bg-gradient-to-b from-slate-950 to-slate-900 border-r border-white/10 flex flex-col">
+<style>
+    /* ===============================
+       HIDE SCROLLBAR (SCROLL TETAP ADA)
+       =============================== */
+    .hide-scrollbar {
+        -ms-overflow-style: none;  /* IE & Edge */
+        scrollbar-width: none;     /* Firefox */
+    }
+
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;             /* Chrome, Safari */
+    }
+</style>
+
+<div class="fixed left-0 top-0 w-72 h-screen
+            bg-gradient-to-b from-slate-950 to-slate-900
+            border-r border-white/10
+            flex flex-col">
+
+    {{-- HEADER --}}
     <div class="p-6 border-b border-white/10">
         <div class="text-xl font-bold tracking-wide">SARPRAS</div>
-        <div class="text-sm text-slate-400 mt-1">{{ $panelTitle ?? 'Dashboard' }}</div>
+        <div class="text-sm text-slate-400 mt-1">
+            {{ $panelTitle ?? 'Dashboard' }}
+        </div>
     </div>
 
-    <nav class="p-3 space-y-2 overflow-y-auto flex-1">
+    {{-- MENU --}}
+    <nav class="p-3 space-y-2 flex-1 overflow-y-auto hide-scrollbar">
         @foreach ($menus as $key => $menu)
 
             @php
@@ -22,6 +44,7 @@
                 }
             @endphp
 
+            {{-- MENU DENGAN SUBMENU --}}
             @if (isset($menu['children']))
                 <div
                     x-data="{
@@ -33,10 +56,13 @@
                     }"
                     class="space-y-1"
                 >
-                    <button type="button" @click="toggle"
+                    <button type="button"
+                        @click="toggle"
                         class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm
                                border border-white/10 hover:bg-white/5 transition
-                               {{ $isActiveMenu || $isActiveChild ? 'bg-emerald-500/10 border-emerald-400/30 text-emerald-200' : 'text-slate-200' }}">
+                               {{ $isActiveMenu || $isActiveChild
+                                    ? 'bg-emerald-500/10 border-emerald-400/30 text-emerald-200'
+                                    : 'text-slate-200' }}">
                         <span class="font-medium">{{ $menu['label'] }}</span>
                         <span class="text-xs transition" :class="open ? 'rotate-180' : ''">▼</span>
                     </button>
@@ -45,22 +71,31 @@
                         @foreach ($menu['children'] as $child)
                             @php
                                 $childHref = $child['route'] ?? '#';
-                                $isActiveThisChild = isset($child['active']) ? request()->is($child['active']) : false;
+                                $isActiveThisChild = isset($child['active'])
+                                    ? request()->is($child['active'])
+                                    : false;
                             @endphp
 
                             <a href="{{ $childHref }}"
-                               class="block px-4 py-2 rounded-xl text-sm border border-transparent
-                                      hover:bg-white/5 transition
-                                      {{ $isActiveThisChild ? 'bg-emerald-500/10 text-emerald-200 border-emerald-400/30' : 'text-slate-300' }}">
+                               class="block px-4 py-2 rounded-xl text-sm
+                                      border border-transparent hover:bg-white/5 transition
+                                      {{ $isActiveThisChild
+                                            ? 'bg-emerald-500/10 text-emerald-200 border-emerald-400/30'
+                                            : 'text-slate-300' }}">
                                 • {{ $child['label'] }}
                             </a>
                         @endforeach
                     </div>
                 </div>
+
+            {{-- MENU TANPA SUBMENU --}}
             @else
                 <a href="{{ $menuHref }}"
-                   class="block px-4 py-3 rounded-xl text-sm border border-white/10 hover:bg-white/5 transition
-                          {{ $isActiveMenu ? 'bg-emerald-500/10 border-emerald-400/30 text-emerald-200' : 'text-slate-200' }}">
+                   class="block px-4 py-3 rounded-xl text-sm
+                          border border-white/10 hover:bg-white/5 transition
+                          {{ $isActiveMenu
+                                ? 'bg-emerald-500/10 border-emerald-400/30 text-emerald-200'
+                                : 'text-slate-200' }}">
                     <span class="font-medium">{{ $menu['label'] }}</span>
                 </a>
             @endif

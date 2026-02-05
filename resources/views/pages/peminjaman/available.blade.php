@@ -4,7 +4,6 @@
 <div class="max-w-6xl">
     <div class="mb-6">
         <h1 class="text-2xl font-semibold tracking-tight">Sarpras Bisa Dipinjam</h1>
-        <p class="text-slate-300 text-sm mt-1">Hanya menampilkan sarpras dengan stok > 0.</p>
     </div>
 
     @if(session('success'))

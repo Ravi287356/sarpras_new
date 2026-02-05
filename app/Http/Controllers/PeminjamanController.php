@@ -85,19 +85,23 @@ class PeminjamanController extends Controller
 
     public function riwayat()
     {
-        // ❌ ERROR sebelumnya biasanya: pakai ->get() lalu di blade dipanggil ->links()
-        // ✅ FIX: pakai paginate() + kirim variabel "logs" sesuai blade kamu
         $logs = Peminjaman::query()
-            ->with(['sarpras.kategori', 'sarpras.lokasi'])
-            ->latest('created_at')
+            ->with([
+                'user.role',
+                'sarpras.kategori',
+                'sarpras.lokasi',
+                'approver'
+            ])
+            ->whereIn('status', ['disetujui', 'dikembalikan']) // ✅ FILTER PENTING
+            ->latest('approved_at')
             ->paginate(10);
 
-        // ✅ sesuai file kamu: resources/views/pages/peminjaman/riwayat.blade.php
         return view('pages.peminjaman.riwayat_semua', [
-            'title' => 'Riwayat Peminjaman',
+            'title' => 'Riwayat Peminjaman (Semua User)',
             'logs' => $logs,
         ]);
     }
+
 
     public function indexPermintaan()
     {
