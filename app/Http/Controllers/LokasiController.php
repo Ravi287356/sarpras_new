@@ -35,6 +35,12 @@ class LokasiController extends Controller
             'nama' => $request->nama,
         ]);
 
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'LOKASI_BUAT',
+            deskripsi: 'Buat lokasi: ' . $request->nama
+        );
+
         return redirect()
             ->route('admin.lokasi.index')
             ->with('success', 'Lokasi berhasil ditambahkan ✅');
@@ -58,6 +64,12 @@ class LokasiController extends Controller
             'nama' => $request->nama,
         ]);
 
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'LOKASI_UPDATE',
+            deskripsi: 'Update lokasi: ' . $request->nama
+        );
+
         return redirect()
             ->route('admin.lokasi.index')
             ->with('success', 'Lokasi berhasil diupdate ✅');
@@ -76,6 +88,12 @@ class LokasiController extends Controller
                 'Lokasi tidak bisa dihapus karena masih digunakan oleh ' . $sarprasAktif . ' sarpras.'
             );
         }
+
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'LOKASI_HAPUS',
+            deskripsi: 'Hapus lokasi: ' . $lokasi->nama
+        );
 
         $lokasi->delete();
 

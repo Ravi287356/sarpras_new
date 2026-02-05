@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('peminjaman', callback: function (Blueprint $table): void {
-            $table->id();
-            $table->foreignId(column: 'user_id')
+            $table->uuid('id')->primary();
+            $table->foreignUuid(column: 'user_id')
                     ->constrained(table: 'users')
                     ->cascadeOnDelete();
-            $table->foreignId(column: 'sarpras_id')
+            $table->foreignUuid(column: 'sarpras_id')
                     ->constrained(table: 'sarpras')
                     ->cascadeOnDelete();
             $table->integer(column: 'jumlah')->default(value: 0);

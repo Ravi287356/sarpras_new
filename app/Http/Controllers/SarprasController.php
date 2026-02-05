@@ -72,13 +72,19 @@ class SarprasController extends Controller
         ]);
 
         // Kode akan di-generate otomatis di Model Sarpras boot method
-        Sarpras::create([
+        $sarpras = Sarpras::create([
             'nama'             => $request->nama,
             'kategori_id'      => $request->kategori_id,
             'lokasi_id'        => $request->lokasi_id,
             'jumlah_stok'      => $request->jumlah_stok,
             'kondisi_saat_ini' => $request->kondisi_saat_ini,
         ]);
+
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'SARPRAS_BUAT',
+            deskripsi: 'Buat sarpras: ' . $request->nama . ' (stok: ' . $request->jumlah_stok . ')'
+        );
 
         return redirect()->route('admin.sarpras.index')->with('success', 'Sarpras berhasil ditambahkan ✅');
     }
@@ -118,6 +124,12 @@ class SarprasController extends Controller
         'kondisi_saat_ini' => $request->kondisi_saat_ini,
     ]);
 
+    // ✅ Log activity
+    $this->logActivity(
+        aksi: 'SARPRAS_UPDATE',
+        deskripsi: 'Update sarpras: ' . $request->nama . ' (stok: ' . $request->jumlah_stok . ')'
+    );
+
     return redirect()
         ->route('admin.sarpras.index')
         ->with('success', 'Sarpras berhasil diupdate & kode diperbarui otomatis ✅');
@@ -126,6 +138,12 @@ class SarprasController extends Controller
 
     public function destroy(Sarpras $sarpras)
     {
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'SARPRAS_HAPUS',
+            deskripsi: 'Hapus sarpras: ' . $sarpras->nama
+        );
+
         // ✅ ini akan mengisi deleted_at
         $sarpras->delete();
     

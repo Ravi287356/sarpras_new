@@ -15,7 +15,7 @@ class ActivityLog extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    const CREATED_AT = 'timesatamp'; // ✅ sesuai DB
+    const CREATED_AT = 'timestamp';
     const UPDATED_AT = null;
 
     protected $fillable = [
@@ -28,12 +28,14 @@ class ActivityLog extends Model
     protected static function booted()
     {
         static::creating(function ($model) {
-            if (!$model->id) $model->id = (string) Str::uuid();
+            if (!$model->id) {
+                $model->id = (string) Str::uuid();
+            }
         });
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 }

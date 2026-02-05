@@ -28,47 +28,51 @@ return new class extends Migration
             }
         });
 
-        // 2) Ubah ENUM ke versi SEMENTARA (biar nilai lama + baru valid)
-        DB::statement("
-            ALTER TABLE peminjaman
-            MODIFY status ENUM(
-                'dipinjam',
-                'menunggu',
-                'disetujui',
-                'ditolak',
-                'dikembalikan'
-            ) NOT NULL DEFAULT 'menunggu'
-        ");
+        // 2) Ubah ENUM - hanya untuk MySQL (SQLite tidak support MODIFY)
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("
+                ALTER TABLE peminjaman
+                MODIFY status ENUM(
+                    'dipinjam',
+                    'menunggu',
+                    'disetujui',
+                    'ditolak',
+                    'dikembalikan'
+                ) NOT NULL DEFAULT 'menunggu'
+            ");
 
-        // 3) Konversi data lama (sekarang 'disetujui' sudah valid)
-        DB::statement("
-            UPDATE peminjaman
-            SET status = 'disetujui'
-            WHERE status = 'dipinjam'
-        ");
+            // 3) Konversi data lama (sekarang 'disetujui' sudah valid)
+            DB::statement("
+                UPDATE peminjaman
+                SET status = 'disetujui'
+                WHERE status = 'dipinjam'
+            ");
 
-        // 4) Ubah ENUM ke versi FINAL (hapus 'dipinjam')
-        DB::statement("
-            ALTER TABLE peminjaman
-            MODIFY status ENUM(
-                'menunggu',
-                'disetujui',
-                'ditolak',
-                'dikembalikan'
-            ) NOT NULL DEFAULT 'menunggu'
-        ");
+            // 4) Ubah ENUM ke versi FINAL (hapus 'dipinjam')
+            DB::statement("
+                ALTER TABLE peminjaman
+                MODIFY status ENUM(
+                    'menunggu',
+                    'disetujui',
+                    'ditolak',
+                    'dikembalikan'
+                ) NOT NULL DEFAULT 'menunggu'
+            ");
+        }
     }
 
     public function down(): void
     {
-        // 1) Kembalikan enum supaya bisa nampung nilai 'dipinjam' lagi
-        DB::statement("
-            ALTER TABLE peminjaman
-            MODIFY status ENUM(
-                'dipinjam',
-                'dikembalikan'
-            ) NOT NULL DEFAULT 'dipinjam'
-        ");
+        if (DB::getDriverName() === 'mysql') {
+            // 1) Kembalikan enum supaya bisa nampung nilai 'dipinjam' lagi
+            DB::statement("
+                ALTER TABLE peminjaman
+                MODIFY status ENUM(
+                    'dipinjam',
+                    'dikembalikan'
+                ) NOT NULL DEFAULT 'dipinjam'
+            ");
+        }
 
         // 2) Hapus kolom tambahan
         Schema::table('peminjaman', function (Blueprint $table) {
@@ -79,4 +83,3 @@ return new class extends Migration
         });
     }
 };
-

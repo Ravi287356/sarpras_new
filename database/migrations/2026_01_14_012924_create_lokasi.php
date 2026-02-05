@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('lokasi', function (Blueprint $table) {
-            $table->id();
-            $table->string(column: 'name')->unique();
-            $table->date(column: 'deleted_at')->nullable();
+            $table->uuid('id')->primary();
+            $table->string(column: 'nama')->unique();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

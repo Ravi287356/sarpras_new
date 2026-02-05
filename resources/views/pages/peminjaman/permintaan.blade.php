@@ -69,7 +69,7 @@
                             </td>
 
                             <td class="px-5 py-4">
-                                {{ \Carbon\Carbon::parse($row->tanggal_kembali)->format('d-m-Y') }}
+                                {{ \Carbon\Carbon::parse($row->tanggal_kembali_rencana)->format('d-m-Y') }}
                             </td>
 
                             <td class="px-5 py-4">

@@ -35,6 +35,12 @@ class ProfileController extends Controller
 
         $user->save();
 
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'PROFIL_UPDATE',
+            deskripsi: 'Update profil: ' . $request->username
+        );
+
         return back()->with('success', 'Profil berhasil diperbarui ✅');
     }
 }

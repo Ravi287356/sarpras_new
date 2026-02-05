@@ -103,7 +103,7 @@
             <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
                 <p class="text-xs text-gray-600 font-semibold">EST. KEMBALI</p>
                 <p class="text-lg font-bold text-orange-600 mt-2">
-                    {{ $peminjaman->tanggal_kembali ? \Carbon\Carbon::parse($peminjaman->tanggal_kembali)->format('d-m-Y') : '-' }}
+                    {{ $peminjaman->tanggal_kembali_rencana ? \Carbon\Carbon::parse($peminjaman->tanggal_kembali_rencana)->format('d-m-Y') : '-' }}
                 </p>
             </div>
         </div>

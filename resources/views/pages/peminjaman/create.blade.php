@@ -52,9 +52,9 @@
 
                     <div>
                         <label class="text-sm text-slate-200">Estimasi Tanggal Kembali</label>
-                        <input type="date" name="tanggal_kembali" value="{{ old('tanggal_kembali') }}"
+                        <input type="date" name="tanggal_kembali_rencana" value="{{ old('tanggal_kembali_rencana') }}"
                             class="mt-2 w-full rounded-xl bg-slate-950/40 border border-white/10 px-4 py-3 text-slate-100 outline-none">
-                        @error('tanggal_kembali')
+                        @error('tanggal_kembali_rencana')
                             <div class="text-rose-300 text-sm mt-1">{{ $message }}</div>
                         @enderror
                     </div>

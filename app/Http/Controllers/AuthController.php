@@ -31,9 +31,9 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             // ✅ log login
-            $this->writeLog(
+            $this->logActivity(
                 aksi: 'LOGIN',
-                deskripsi: $this->whoText('Login')
+                deskripsi: $this->whoPrefixed('Login')
             );
 
             $role = auth()->user()?->role?->nama;
@@ -47,7 +47,7 @@ class AuthController extends Controller
         }
 
         // ✅ opsional: catat login gagal (tanpa user_id karena belum login)
-        $this->writeLog(
+        $this->logActivity(
             aksi: 'LOGIN_GAGAL',
             deskripsi: 'Login gagal untuk username: ' . ($request->username ?? '-')
         );
@@ -59,9 +59,9 @@ class AuthController extends Controller
 
     private function forceLogoutWithError(Request $request, string $message)
     {
-        $this->writeLog(
+        $this->logActivity(
             aksi: 'LOGIN_GAGAL_ROLE',
-            deskripsi: $message . ' | ' . $this->whoText('Login')
+            deskripsi: $message . ' | ' . $this->whoPrefixed('Login')
         );
 
         Auth::logout();
@@ -74,9 +74,9 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         // ✅ log logout sebelum Auth::logout()
-        $this->writeLog(
+        $this->logActivity(
             aksi: 'LOGOUT',
-            deskripsi: $this->whoText('Logout')
+            deskripsi: $this->whoPrefixed('Logout')
         );
 
         Auth::logout();
@@ -91,9 +91,7 @@ class AuthController extends Controller
      */
     private function whoText(string $prefix): string
     {
-        $username = auth()->user()?->username ?? '-';
-        $role     = auth()->user()?->role?->nama ?? '-';
-        return "{$prefix} oleh {$username} ({$role})";
+        return $this->whoPrefixed($prefix);
     }
 
     /**
@@ -101,15 +99,6 @@ class AuthController extends Controller
      */
     private function writeLog(string $aksi, ?string $deskripsi = null): void
     {
-        try {
-            ActivityLog::create([
-                'user_id'   => auth()->check() ? auth()->id() : null,
-                'aksi'      => $aksi,
-                'deskripsi' => $deskripsi,
-                // timestamp otomatis oleh DB (CURRENT_TIMESTAMP)
-            ]);
-        } catch (\Throwable $e) {
-            // jangan crash aplikasi
-        }
+        $this->logActivity($aksi, $deskripsi);
     }
 }

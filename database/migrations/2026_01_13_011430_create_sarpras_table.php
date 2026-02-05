@@ -12,15 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('sarpras', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string(column: 'kode')->unique();
             $table->string(column: 'nama');
-            $table->foreignId(column: 'kategori_id')
-                    ->constrained(table: 'kategori_sarpras')
+            $table->uuid(column: 'kategori_id');
+            $table->foreign('kategori_id')
+                    ->references('id')
+                    ->on('kategori_sarpras')
                     ->cascadeOnDelete();
-            $table->string(column: 'lokasi')->nullable();
+            $table->uuid(column: 'lokasi_id')->nullable();
             $table->integer(column: 'jumlah_stok')->default(value: 0);
             $table->string(column: 'kondisi_saat_ini')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

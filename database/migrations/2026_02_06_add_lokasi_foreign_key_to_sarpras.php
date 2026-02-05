@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string(column: 'nama')->unique();
-            $table->timestamp(column: 'deleted_at')->nullable();
-            $table->timestamps();
+        Schema::table('sarpras', function (Blueprint $table) {
+            $table->foreign('lokasi_id')
+                    ->references('id')
+                    ->on('lokasi')
+                    ->cascadeOnDelete();
         });
     }
 
@@ -24,6 +24,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::table('sarpras', function (Blueprint $table) {
+            $table->dropForeign(['lokasi_id']);
+        });
     }
 };

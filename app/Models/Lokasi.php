@@ -16,16 +16,15 @@ class Lokasi extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    // ✅ pastikan soft delete pakai kolom default Laravel
-    const DELETED_AT = 'deleted_at';
-
     protected $fillable = [
         'id',
         'nama',
     ];
 
-    protected static function booted()
+    protected static function boot()
     {
+        parent::boot();
+
         static::creating(function ($model) {
             if (empty($model->id)) {
                 $model->id = (string) Str::uuid();

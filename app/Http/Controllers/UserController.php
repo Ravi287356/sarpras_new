@@ -50,6 +50,12 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'USER_BUAT',
+            deskripsi: 'Buat user: ' . $request->username . ' (' . $request->email . ')'
+        );
+
         return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan ✅');
     }
 
@@ -87,12 +93,27 @@ class UserController extends Controller
 
         $user->save();
 
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'USER_UPDATE',
+            deskripsi: 'Update user: ' . $request->username . ' (' . $request->email . ')'
+        );
+
         return redirect()->route('admin.users.index')->with('success', 'User berhasil diupdate ✅');
     }
 
     public function destroy($id)
     {
-        User::findOrFail($id)->delete();
+        $user = User::findOrFail($id);
+        $username = $user->username;
+
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'USER_HAPUS',
+            deskripsi: 'Hapus user: ' . $username
+        );
+
+        $user->delete();
 
         return back()->with('success', 'User berhasil dihapus ✅');
     }

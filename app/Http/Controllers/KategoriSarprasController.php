@@ -37,6 +37,12 @@ class KategoriSarprasController extends Controller
             'deskripsi' => $request->deskripsi,
         ]);
 
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'KATEGORI_SARPRAS_BUAT',
+            deskripsi: 'Buat kategori sarpras: ' . $request->nama
+        );
+
         return redirect()
             ->route('admin.kategori_sarpras.index')
             ->with('success', 'Kategori berhasil ditambahkan ✅');
@@ -62,6 +68,12 @@ class KategoriSarprasController extends Controller
             'deskripsi' => $request->deskripsi,
         ]);
 
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'KATEGORI_SARPRAS_UPDATE',
+            deskripsi: 'Update kategori sarpras: ' . $request->nama
+        );
+
         return redirect()
             ->route('admin.kategori_sarpras.index')
             ->with('success', 'Kategori berhasil diupdate ✅');
@@ -80,6 +92,12 @@ class KategoriSarprasController extends Controller
                 'Kategori tidak bisa dihapus karena masih digunakan oleh ' . $sarprasAktif . ' sarpras.'
             );
         }
+
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'KATEGORI_SARPRAS_HAPUS',
+            deskripsi: 'Hapus kategori sarpras: ' . $kategori->nama
+        );
 
         $kategori->delete();
 

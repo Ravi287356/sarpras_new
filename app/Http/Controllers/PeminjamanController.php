@@ -6,7 +6,7 @@ use App\Models\Peminjaman;
 use App\Models\Sarpras;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Str;
+use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class PeminjamanController extends Controller
@@ -44,7 +44,7 @@ class PeminjamanController extends Controller
             'jumlah' => ['required', 'integer', 'min:1'],
             'tujuan' => ['nullable', 'string'],
             'tanggal_pinjam' => ['required', 'date'],
-            'tanggal_kembali' => ['required', 'date', 'after_or_equal:tanggal_pinjam'],
+            'tanggal_kembali_rencana' => ['required', 'date', 'after_or_equal:tanggal_pinjam'],
         ]);
 
         $sarpras = Sarpras::whereNull('deleted_at')->findOrFail($request->sarpras_id);
@@ -59,7 +59,7 @@ class PeminjamanController extends Controller
             'jumlah' => (int) $request->jumlah,
             'tujuan' => $request->tujuan,
             'tanggal_pinjam' => $request->tanggal_pinjam,
-            'tanggal_kembali' => $request->tanggal_kembali,
+            'tanggal_kembali_rencana' => $request->tanggal_kembali_rencana,
             'status' => 'menunggu',
         ]);
 

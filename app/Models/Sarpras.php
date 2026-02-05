@@ -25,7 +25,6 @@ class Sarpras extends Model
         'lokasi_id',
         'jumlah_stok',
         'kondisi_saat_ini',
-        // ✅ deleted_at tidak wajib ditaruh fillable (lebih aman tidak ditaruh)
     ];
 
     protected static function boot()

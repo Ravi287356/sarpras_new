@@ -12,6 +12,7 @@ use App\Http\Controllers\SarprasAvailableController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\PeminjamanController;
+use App\Http\Controllers\PengaduanController;
 
 Route::get('/', function () {
     return redirect()->route('login.form');
@@ -99,6 +100,14 @@ Route::middleware('auth')->group(function () {
         Route::put('/peminjaman/{peminjaman}/kembalikan', [PeminjamanController::class, 'kembalikan'])->name('peminjaman.kembalikan');
         Route::get('/peminjaman/{id}/struk', [PeminjamanController::class, 'struk'])->name('peminjaman.struk');
         Route::get('/riwayat-peminjaman', [PeminjamanController::class, 'riwayat'])->name('peminjaman.riwayat');
+        // =========================
+        // PENGADUAN (ADMIN)
+        // =========================
+        Route::get('/pengaduan', [PengaduanController::class, 'index'])
+            ->name('pengaduan.index');
+
+        Route::put('/pengaduan/{pengaduan}', [PengaduanController::class, 'updateStatus'])
+            ->name('pengaduan.updateStatus');
 
     });
 
@@ -125,6 +134,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/peminjaman/{id}/struk', [PeminjamanController::class, 'struk'])->name('peminjaman.struk');
         Route::get('/riwayat-peminjaman', [PeminjamanController::class, 'riwayat'])->name('peminjaman.riwayat');
 
+        // =========================
+        // PENGADUAN (OPERATOR)
+        // =========================
+        Route::get('/pengaduan', [PengaduanController::class, 'index'])
+            ->name('pengaduan.index');
+
+        Route::put('/pengaduan/{pengaduan}', [PengaduanController::class, 'updateStatus'])
+            ->name('pengaduan.updateStatus');
+
     });
 
     // =========================
@@ -143,5 +161,18 @@ Route::middleware('auth')->group(function () {
         Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');
         Route::get('/riwayat-peminjaman', [PeminjamanController::class, 'riwayatUser'])->name('peminjaman.riwayat');
         Route::get('/peminjaman/{id}/struk', [PeminjamanController::class, 'struk'])->name('peminjaman.struk');
+
+        // =========================
+        // PENGADUAN (USER)
+        // =========================
+        Route::get('/pengaduan/create', [PengaduanController::class, 'create'])
+            ->name('pengaduan.create');
+
+        Route::post('/pengaduan', [PengaduanController::class, 'store'])
+            ->name('pengaduan.store');
+
+        Route::get('/pengaduan/riwayat', [PengaduanController::class, 'riwayatUser'])
+            ->name('pengaduan.riwayat');
+
     });
 });

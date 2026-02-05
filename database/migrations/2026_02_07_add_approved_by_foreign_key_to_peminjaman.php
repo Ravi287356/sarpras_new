@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Add foreign key constraint for approved_by
         Schema::table('peminjaman', function (Blueprint $table) {
-           $table->string('kode_peminjaman')->unique()->nullable()->after('id');
+            $table->foreign('approved_by')
+                    ->references('id')
+                    ->on('users')
+                    ->nullOnDelete();
         });
     }
 
@@ -22,7 +26,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('peminjaman', function (Blueprint $table) {
-            $table->dropColumn('kode_peminjaman');
+            $table->dropForeign(['approved_by']);
         });
     }
 };

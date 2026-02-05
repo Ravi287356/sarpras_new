@@ -43,7 +43,7 @@
                                 {{ \Carbon\Carbon::parse($row->tanggal_pinjam)->format('d-m-Y') }}
                             </td>
                             <td class="px-5 py-4">
-                                {{ $row->tanggal_kembali ? \Carbon\Carbon::parse($row->tanggal_kembali)->format('d-m-Y') : '-' }}
+                                {{ $row->tanggal_kembali_rencana ? \Carbon\Carbon::parse($row->tanggal_kembali_rencana)->format('d-m-Y') : '-' }}
                             </td>
                             <td class="px-5 py-4">
                                 <span class="px-3 py-1 rounded-full text-xs ring-1

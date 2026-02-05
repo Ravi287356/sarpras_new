@@ -56,7 +56,7 @@
                         </td>
 
                         <td class="px-4 py-3">
-                            {{ $row->tanggal_kembali ? \Carbon\Carbon::parse($row->tanggal_kembali)->format('d-m-Y') : '-' }}
+                            {{ $row->tanggal_kembali_rencana ? \Carbon\Carbon::parse($row->tanggal_kembali_rencana)->format('d-m-Y') : '-' }}
                         </td>
 
                         <td class="px-4 py-3 text-center">

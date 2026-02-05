@@ -15,17 +15,16 @@ class KategoriSarpras extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    // ✅ pakai default Laravel
-    const DELETED_AT = 'deleted_at';
-
     protected $fillable = [
         'id',
         'nama',
         'deskripsi',
     ];
 
-    protected static function booted()
+    protected static function boot()
     {
+        parent::boot();
+
         static::creating(function ($model) {
             if (empty($model->id)) {
                 $model->id = (string) Str::uuid();

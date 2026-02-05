@@ -2,10 +2,25 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Pengaduan extends Model
 {
-    //
+    use HasFactory;
+
+    protected $table = 'pengaduan';
+
+    protected $fillable = [
+        'user_id',
+        'judul',
+        'deskripsi',
+        'lokasi',
+        'status',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

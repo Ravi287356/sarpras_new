@@ -8,9 +8,8 @@ class ActivityLogController extends Controller
 {
     public function index()
     {
-        $logs = ActivityLog::query()
-            ->with(['user.role'])
-            ->orderByDesc('timesatamp')  // ✅ sesuai DB
+        $logs = ActivityLog::with(['user.role'])
+            ->orderByDesc('timestamp')
             ->paginate(20);
 
         return view('pages.admin.activity_logs.index', [
