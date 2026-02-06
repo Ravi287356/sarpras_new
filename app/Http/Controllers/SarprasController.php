@@ -146,7 +146,7 @@ class SarprasController extends Controller
 
         // ✅ ini akan mengisi deleted_at
         $sarpras->delete();
-    
+
         return back()->with('success', 'Sarpras berhasil dihapus ✅');
     }
 }

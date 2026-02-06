@@ -1,93 +1,112 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <!-- Header -->
-            <div class="mb-5">
-                <h2 class="fw-bold mb-2">📋 Ajukan Pengaduan</h2>
-                <p class="text-muted">Laporkan masalah atau kerusakan pada sarpras yang Anda temukan</p>
-            </div>
+<div class="max-w-3xl mx-auto">
 
-            <!-- Error Alert -->
-            @if ($errors->any())
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h6 class="alert-heading">⚠️ Ada Kesalahan</h6>
-                    <ul class="mb-0 small">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
+    <!-- Header -->
+    <h1 class="text-2xl font-semibold tracking-tight text-white">
+        📋 Ajukan Pengaduan
+    </h1>
+    <p class="text-slate-400 text-sm mt-1">
+        Laporkan masalah atau kerusakan pada sarana prasarana
+    </p>
 
-            <!-- Form Card -->
-            <div class="card shadow-sm border-0">
-                <div class="card-body p-4">
-                    <form action="{{ route('user.pengaduan.store') }}" method="POST" novalidate>
-                        @csrf
-
-                        <!-- Judul Field -->
-                        <div class="mb-4">
-                            <label for="judul" class="form-label fw-semibold">Judul Pengaduan <span class="text-danger">*</span></label>
-                            <input type="text" id="judul" name="judul" 
-                                   class="form-control form-control-lg @error('judul') is-invalid @enderror" 
-                                   placeholder="Contoh: Projector di ruang 101 tidak berfungsi" 
-                                   required value="{{ old('judul') }}">
-                            <small class="text-muted d-block mt-2">Jelaskan judul masalah secara singkat dan jelas</small>
-                            @error('judul')
-                                <div class="invalid-feedback d-block mt-2">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Deskripsi Field -->
-                        <div class="mb-4">
-                            <label for="deskripsi" class="form-label fw-semibold">Deskripsi Masalah <span class="text-danger">*</span></label>
-                            <textarea id="deskripsi" name="deskripsi" 
-                                      class="form-control @error('deskripsi') is-invalid @enderror" 
-                                      rows="6" placeholder="Jelaskan masalah secara detail:&#10;- Apa yang terjadi?&#10;- Kapan masalah terjadi?&#10;- Dampak dari masalah ini" 
-                                      required>{{ old('deskripsi') }}</textarea>
-                            <small class="text-muted d-block mt-2">Tuliskan deskripsi sedetail mungkin agar petugas dapat menangani dengan baik</small>
-                            @error('deskripsi')
-                                <div class="invalid-feedback d-block mt-2">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Lokasi Field -->
-                        <div class="mb-4">
-                            <label for="lokasi" class="form-label fw-semibold">Lokasi Barang <span class="text-danger">*</span></label>
-                            <input type="text" id="lokasi" name="lokasi" 
-                                   class="form-control form-control-lg @error('lokasi') is-invalid @enderror" 
-                                   placeholder="Contoh: Ruang 101, Lantai 2" 
-                                   required value="{{ old('lokasi') }}">
-                            <small class="text-muted d-block mt-2">Sebutkan lokasi barang yang bermasalah</small>
-                            @error('lokasi')
-                                <div class="invalid-feedback d-block mt-2">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Buttons -->
-                        <div class="d-flex gap-2 pt-3">
-                            <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
-                                <i class="bi bi-check-circle"></i> Kirim Pengaduan
-                            </button>
-                            <a href="{{ route('user.pengaduan.riwayat') }}" class="btn btn-outline-secondary btn-lg">
-                                Batal
-                            </a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Info Box -->
-            <div class="alert alert-info-light border-start border-info border-4 mt-4" style="background-color: #e7f3ff;">
-                <p class="mb-0 small">
-                    <strong>💡 Tips:</strong> Cantumkan informasi sedetail mungkin agar petugas dapat merespons dengan cepat dan akurat.
-                </p>
-            </div>
+    <!-- Error -->
+    @if ($errors->any())
+        <div class="mt-5 rounded-xl bg-red-500/10 ring-1 ring-red-500/30 p-4 text-red-200 text-sm">
+            <b>Gagal:</b>
+            <ul class="list-disc list-inside mt-2 space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
+    @endif
+
+    <!-- Form -->
+    <form action="{{ route('user.pengaduan.store') }}"
+          method="POST"
+          class="mt-6 rounded-2xl bg-slate-900/40 ring-1 ring-slate-800 p-6 space-y-6">
+        @csrf
+
+        <!-- Judul -->
+        <div>
+            <label class="text-sm text-slate-300">Judul Pengaduan</label>
+            <input type="text"
+                   name="judul"
+                   value="{{ old('judul') }}"
+                   required
+                   placeholder="Contoh: Proyektor ruang 101 rusak"
+                   class="mt-2 w-full rounded-xl bg-slate-950/60 text-white
+                          ring-1 ring-slate-800 px-4 py-3
+                          placeholder:text-slate-500
+                          focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
+        </div>
+
+        <!-- Deskripsi -->
+        <div>
+            <label class="text-sm text-slate-300">Deskripsi Masalah</label>
+            <textarea name="deskripsi"
+                      rows="5"
+                      required
+                      placeholder="Jelaskan masalah secara detail"
+                      class="mt-2 w-full rounded-xl bg-slate-950/60 text-white
+                             ring-1 ring-slate-800 px-4 py-3
+                             placeholder:text-slate-500
+                             focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">{{ old('deskripsi') }}</textarea>
+        </div>
+
+        <!-- Lokasi -->
+        <div>
+                <label class="text-sm text-slate-300">Lokasi Barang</label>
+
+                <!-- Optional select dari daftar lokasi yang ada -->
+                @if(isset($lokasis) && $lokasis->count())
+                    <select name="lokasi_id" class="mt-2 w-full rounded-xl bg-slate-950/60 text-white ring-1 ring-slate-800 px-4 py-3" required>
+                        <option value="">Pilih lokasi dari daftar</option>
+                        @foreach($lokasis as $l)
+                            <option value="{{ $l->id }}" {{ old('lokasi_id') == $l->id ? 'selected' : '' }}>{{ $l->nama }}</option>
+                        @endforeach
+                    </select>
+                @endif
+
+        </div>
+
+        <!-- Kategori (opsional) -->
+        <div>
+            <label class="text-sm text-slate-300">Kategori Sarpras</label>
+            @if(isset($kategoris) && $kategoris->count())
+                <select name="kategori_id" class="mt-2 w-full rounded-xl bg-slate-950/60 text-white ring-1 ring-slate-800 px-4 py-3">
+                    <option value="">Pilih kategori (opsional)</option>
+                    @foreach($kategoris as $k)
+                        <option value="{{ $k->id }}" {{ old('kategori_id') == $k->id ? 'selected' : '' }}>{{ $k->nama }}</option>
+                    @endforeach
+                </select>
+            @endif
+        </div>
+
+        <!-- Action -->
+        <div class="flex items-center gap-3 pt-4 border-t border-slate-800">
+            <button type="submit"
+                    class="px-5 py-3 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30
+                           text-emerald-200 ring-1 ring-emerald-500/30
+                           transition font-medium">
+                <i class="bi bi-send"></i> Kirim Pengaduan
+            </button>
+
+            <a href="{{ route('user.pengaduan.riwayat') }}"
+               class="px-5 py-3 rounded-xl bg-slate-800/40 hover:bg-slate-800/60
+                      ring-1 ring-slate-700 text-slate-100 transition">
+                Batal
+            </a>
+        </div>
+    </form>
+
+    <!-- Info -->
+    <div class="mt-6 rounded-xl bg-emerald-500/10 ring-1 ring-emerald-500/20
+                p-4 text-emerald-200 text-sm">
+        💡 Isi pengaduan dengan jelas agar dapat ditindaklanjuti dengan cepat
     </div>
+
 </div>
 @endsection

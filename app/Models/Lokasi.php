@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 
 class Lokasi extends Model
 {
+    
     use HasFactory, SoftDeletes;
 
     protected $table = 'lokasi';

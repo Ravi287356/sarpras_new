@@ -100,16 +100,20 @@ Route::middleware('auth')->group(function () {
         Route::put('/peminjaman/{peminjaman}/kembalikan', [PeminjamanController::class, 'kembalikan'])->name('peminjaman.kembalikan');
         Route::get('/peminjaman/{id}/struk', [PeminjamanController::class, 'struk'])->name('peminjaman.struk');
         Route::get('/riwayat-peminjaman', [PeminjamanController::class, 'riwayat'])->name('peminjaman.riwayat');
-        // =========================
-        // PENGADUAN (ADMIN)
-        // =========================
+        // PENGADUAN
         Route::get('/pengaduan', [PengaduanController::class, 'index'])
-            ->name('pengaduan.index');
+            ->name('pengaduan.index'); // list semua pengaduan
 
         Route::put('/pengaduan/{pengaduan}', [PengaduanController::class, 'updateStatus'])
-            ->name('pengaduan.updateStatus');
+            ->name('pengaduan.updateStatus'); // update status
 
+        Route::get('/pengaduan/{pengaduan}', [PengaduanController::class, 'show'])
+            ->name('pengaduan.show'); // detail pengaduan (opsional)
+
+        Route::get('/pengaduan/{pengaduan}/respond', [PengaduanController::class, 'respond'])
+            ->name('pengaduan.respond'); // halaman respond
     });
+
 
 
     // =========================
@@ -134,14 +138,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/peminjaman/{id}/struk', [PeminjamanController::class, 'struk'])->name('peminjaman.struk');
         Route::get('/riwayat-peminjaman', [PeminjamanController::class, 'riwayat'])->name('peminjaman.riwayat');
 
-        // =========================
-        // PENGADUAN (OPERATOR)
-        // =========================
+        // PENGADUAN
         Route::get('/pengaduan', [PengaduanController::class, 'index'])
-            ->name('pengaduan.index');
-
+            ->name('pengaduan.index'); // list semua pengaduan
+        Route::get('/pengaduan/{pengaduan}/respond', [PengaduanController::class, 'respond'])
+            ->name('pengaduan.respond'); // halaman respond
         Route::put('/pengaduan/{pengaduan}', [PengaduanController::class, 'updateStatus'])
-            ->name('pengaduan.updateStatus');
+            ->name('pengaduan.updateStatus'); // update status
+
+        Route::get('/pengaduan/{pengaduan}', [PengaduanController::class, 'show'])
+            ->name('pengaduan.show'); // detail pengaduan (opsional)
 
     });
 
