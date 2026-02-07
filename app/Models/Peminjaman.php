@@ -20,13 +20,13 @@ class Peminjaman extends Model
         'id',
         'kode_peminjaman',
         'user_id',
-        'sarpras_id',
-        'jumlah',
+        // items moved to peminjaman_items
         'tujuan',
         'tanggal_pinjam',
         'tanggal_kembali_rencana',
         'tanggal_kembali_actual',
         'status',
+        'status_peminjaman_id',
         'approved_by',
         'approved_at',
         'alasan_penolakan',
@@ -47,13 +47,41 @@ class Peminjaman extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function sarpras()
+    /**
+     * Accessor for 'sarpras' to maintain backward compatibility with views.
+     * Retrieving the sarpras from the first item.
+     * Note: This assumes all items in a peminjaman belong to the same sarpras (which is enforcing in current controller logic).
+     */
+    public function getSarprasAttribute()
     {
-        return $this->belongsTo(Sarpras::class);
+        return $this->items->first()?->sarprasItem?->sarpras;
+    }
+
+    /**
+     * Accessor for 'jumlah' to maintain backward compatibility.
+     */
+    public function getJumlahAttribute()
+    {
+        return $this->items->count();
+    }
+
+    public function items()
+    {
+        return $this->hasMany(PeminjamanItem::class, 'peminjaman_id', 'id');
+    }
+
+    public function statusPeminjaman()
+    {
+        return $this->belongsTo(StatusPeminjaman::class, 'status_peminjaman_id');
     }
 
     public function approver()
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function pengembalian()
+    {
+        return $this->hasOne(Pengembalian::class);
     }
 }

@@ -7,12 +7,14 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriSarprasController;
 use App\Http\Controllers\SarprasController;
+use App\Http\Controllers\SarprasItemController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SarprasAvailableController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\PengaduanController;
+use App\Http\Controllers\PengembalianController;
 
 Route::get('/', function () {
     return redirect()->route('login.form');
@@ -40,6 +42,18 @@ Route::middleware('auth')->group(function () {
     // SARPRAS TERSEDIA (semua role)
     Route::get('/sarpras-tersedia', [SarprasAvailableController::class, 'index'])
         ->name('sarpras.available');
+
+    // =========================
+    // PENGEMBALIAN (ADMIN & OPERATOR)
+    // =========================
+    Route::middleware('role:admin|operator')->group(function () {
+        Route::get('/pengembalian', [PengembalianController::class, 'index'])->name('pengembalian.index');
+        Route::post('/pengembalian/search', [PengembalianController::class, 'searchPeminjaman'])->name('pengembalian.search');
+        Route::get('/pengembalian/riwayat', [PengembalianController::class, 'riwayat'])->name('pengembalian.riwayat');
+        Route::get('/pengembalian/{pengembalian}/detail', [PengembalianController::class, 'detail'])->name('pengembalian.detail');
+        Route::get('/pengembalian/{id}', [PengembalianController::class, 'show'])->name('pengembalian.show');
+        Route::post('/pengembalian/store', [PengembalianController::class, 'store'])->name('pengembalian.store');
+    });
 
     // =========================
     // ADMIN
@@ -76,10 +90,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/sarpras', [SarprasController::class, 'index'])->name('sarpras.index');
         Route::get('/sarpras/create', [SarprasController::class, 'create'])->name('sarpras.create');
         Route::post('/sarpras', [SarprasController::class, 'store'])->name('sarpras.store');
-        Route::post('/sarpras/generate-code', [SarprasController::class, 'generateCode'])->name('sarpras.generate-code');
         Route::get('/sarpras/{sarpras}/edit', [SarprasController::class, 'edit'])->name('sarpras.edit');
         Route::put('/sarpras/{sarpras}', [SarprasController::class, 'update'])->name('sarpras.update');
         Route::delete('/sarpras/{sarpras}', [SarprasController::class, 'destroy'])->name('sarpras.destroy');
+        Route::get('/sarpras/{sarpras}/items', [SarprasController::class, 'items'])->name('sarpras.items');
+
+        // sarpras items
+        Route::get('/sarpras/{sarpras}/items/create', [SarprasItemController::class, 'create'])->name('sarpras_item.create');
+        Route::post('/sarpras/{sarpras}/items', [SarprasItemController::class, 'store'])->name('sarpras_item.store');
+        Route::get('/sarpras-item/{sarprasItem}/edit', [SarprasItemController::class, 'edit'])->name('sarpras_item.edit');
+        Route::put('/sarpras-item/{sarprasItem}', [SarprasItemController::class, 'update'])->name('sarpras_item.update');
+        Route::delete('/sarpras-item/{sarprasItem}', [SarprasItemController::class, 'destroy'])->name('sarpras_item.destroy');
 
         // lokasi
         Route::get('/lokasi', [LokasiController::class, 'index'])->name('lokasi.index');
@@ -100,6 +121,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/peminjaman/{peminjaman}/kembalikan', [PeminjamanController::class, 'kembalikan'])->name('peminjaman.kembalikan');
         Route::get('/peminjaman/{id}/struk', [PeminjamanController::class, 'struk'])->name('peminjaman.struk');
         Route::get('/riwayat-peminjaman', [PeminjamanController::class, 'riwayat'])->name('peminjaman.riwayat');
+
         // PENGADUAN
         Route::get('/pengaduan', [PengaduanController::class, 'index'])
             ->name('pengaduan.index'); // list semua pengaduan

@@ -55,10 +55,10 @@
                                 <div class="text-xs text-slate-400">
                                     {{ $row->sarpras?->kategori?->nama ?? '-' }}
                                     •
-                                    {{ $row->sarpras?->lokasi?->nama ?? '-' }}
+                                    {{ $row->sarpras?->items->first()?->lokasi?->nama ?? '-' }}
                                 </div>
                                 <div class="text-xs text-slate-400 mt-1">
-                                    Kode: {{ $row->sarpras?->kode ?? '-' }}
+                                    Kode: {{ $row->sarpras?->items->first()?->kode ?? '-' }}
                                 </div>
                             </td>
 

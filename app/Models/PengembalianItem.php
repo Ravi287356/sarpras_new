@@ -7,21 +7,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Pengembalian extends Model
+class PengembalianItem extends Model
 {
     use SoftDeletes;
     use HasFactory;
 
-    protected $table = 'pengembalian';
+    protected $table = 'pengembalian_items';
     public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = [
         'id',
-        'peminjaman_id',
-        'tanggal_pengembalian',
-        'catatan_petugas',
-        'approved_by',
+        'pengembalian_id',
+        'sarpras_item_id',
+        'kondisi_alat_id',
+        'foto_url',
+        'deskripsi_kerusakan',
     ];
 
     protected static function boot()
@@ -35,18 +36,18 @@ class Pengembalian extends Model
         });
     }
 
-    public function peminjaman()
+    public function pengembalian()
     {
-        return $this->belongsTo(Peminjaman::class);
+        return $this->belongsTo(Pengembalian::class);
     }
 
-    public function approvedBy()
+    public function sarprasItem()
     {
-        return $this->belongsTo(User::class, 'approved_by');
+        return $this->belongsTo(SarprasItem::class);
     }
 
-    public function items()
+    public function kondisiAlat()
     {
-        return $this->hasMany(PengembalianItem::class);
+        return $this->belongsTo(KondisiAlat::class, 'kondisi_alat_id');
     }
 }

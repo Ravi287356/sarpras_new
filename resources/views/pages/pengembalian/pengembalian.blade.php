@@ -26,7 +26,6 @@
                     );
 
                     const onScanSuccess = (decodedText) => {
-                        console.log('QR Detected:', decodedText);
                         this.kode_peminjaman = decodedText.trim();
                         this.stopScanner();
                         setTimeout(() => this.searchPeminjaman(), 300);
@@ -39,8 +38,7 @@
                     this.qrScanner.render(onScanSuccess, onScanError);
                     this.scannerActive = true;
                 } catch (error) {
-                    console.error('Scanner Error:', error);
-                    alert('Tidak bisa akses kamera. Silakan gunakan upload file atau input manual.');
+                    alert('Tidak bisa akses kamera.');
                     this.showCamera = false;
                 }
             });
@@ -76,12 +74,12 @@
                             this.kode_peminjaman = code.data.trim();
                             await this.searchPeminjaman();
                         } else {
-                            alert('QR Code tidak ditemukan di gambar');
+                            alert('QR Code tidak ditemukan');
                         }
                     };
                     image.src = e.target.result;
                 } catch (error) {
-                    alert('Error membaca file: ' + error.message);
+                    alert('Error: ' + error.message);
                 }
             };
             reader.readAsDataURL(file);
@@ -109,9 +107,9 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    window.location.href = '{{ url('/pengembalian') }}/' + result.data.id + '/form';
+                    window.location.href = '{{ url('/pengembalian') }}/' + result.data.id;
                 } else {
-                    alert(result.error || 'Peminjaman tidak ditemukan');
+                    alert(result.error || 'Data tidak ditemukan');
                     this.kode_peminjaman = '';
                     this.showCamera = false;
                 }
@@ -122,79 +120,74 @@
                 this.loading = false;
             }
         }
-    }" class="space-y-6">
+    }" class="min-h-[80vh] flex flex-col items-center justify-center p-6">
 
-        <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-800">Pengembalian Sarpras</h1>
-                <p class="text-sm text-gray-500">Masukkan kode peminjaman atau scan QR untuk memproses pengembalian</p>
+        <div class="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl shadow-xl overflow-hidden">
+            <!-- Header -->
+            <div class="bg-slate-800 p-6 text-center border-b border-white/5">
+                <div class="mx-auto w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4">
+                    <i class="fa-solid fa-box-open text-2xl text-white"></i>
+                </div>
+                <h1 class="text-xl font-bold text-white">Pengembalian Barang</h1>
+                <p class="text-sm text-slate-400 mt-1">Scan QR atau input manual kode peminjaman</p>
             </div>
-        </div>
 
-        <div class="bg-white rounded-xl shadow p-8">
-            <div class="max-w-md mx-auto space-y-6">
-
+            <!-- Content -->
+            <div class="p-6 space-y-6">
+                
                 <!-- Input Manual -->
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-3">Kode Peminjaman</label>
-                    <div class="space-y-3">
+                     <label class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wide">Input Kode Manual</label>
+                    <div class="flex gap-2">
                         <input
                             type="text"
                             x-model="kode_peminjaman"
                             @keyup.enter="searchPeminjaman()"
-                            placeholder="Masukkan kode peminjaman..."
-                            autofocus
-                            class="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Contoh: PMJ-ABC123"
+                            class="flex-1 px-4 py-3 bg-slate-950 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
                         <button
                             @click="searchPeminjaman()"
                             :disabled="loading"
-                            class="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition">
-                            <span x-show="!loading">
-                                <i class="fa-solid fa-search mr-2"></i>Cari Peminjaman
-                            </span>
-                            <span x-show="loading">
-                                <i class="fa-solid fa-spinner animate-spin mr-2"></i>Mencari...
-                            </span>
+                            class="px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 transition">
+                             <i class="fa-solid fa-search" x-show="!loading"></i>
+                             <i class="fa-solid fa-spinner animate-spin" x-show="loading"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- Scan Options -->
-                <div class="border-t pt-6">
-                    <p class="text-sm font-bold text-gray-700 mb-3">Atau Scan QR Code</p>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button
-                            @click="initScanner()"
-                            type="button"
-                            :disabled="loading || showCamera"
-                            class="px-4 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 disabled:bg-gray-400 transition text-sm">
-                            <i class="fa-solid fa-camera mr-2"></i>Buka Kamera
-                        </button>
-                        <label class="cursor-pointer">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                @change="handleFileUpload"
-                                class="hidden"
-                            />
-                            <div class="px-4 py-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition text-sm text-center block">
-                                <i class="fa-solid fa-image mr-2"></i>Upload Foto
-                            </div>
-                        </label>
-                    </div>
+                <div class="relative flex py-2 items-center">
+                    <div class="flex-grow border-t border-white/10"></div>
+                    <span class="flex-shrink-0 mx-4 text-slate-500 text-xs">ATAU</span>
+                    <div class="flex-grow border-t border-white/10"></div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="grid grid-cols-2 gap-4">
+                    <button
+                        @click="initScanner()"
+                        type="button"
+                        :disabled="loading || showCamera"
+                        class="flex flex-col items-center justify-center gap-2 p-4 bg-slate-800 hover:bg-slate-700 border border-white/5 rounded-xl transition group">
+                        <i class="fa-solid fa-qrcode text-2xl text-emerald-400"></i>
+                        <span class="text-sm font-medium text-slate-300">Scan QR Code</span>
+                    </button>
+
+                    <label class="flex flex-col items-center justify-center gap-2 p-4 bg-slate-800 hover:bg-slate-700 border border-white/5 rounded-xl transition cursor-pointer group">
+                        <input type="file" accept="image/*" @change="handleFileUpload" class="hidden" />
+                        <i class="fa-solid fa-image text-2xl text-purple-400"></i>
+                        <span class="text-sm font-medium text-slate-300">Upload Foto</span>
+                    </label>
                 </div>
 
                 <!-- Camera Preview -->
-                <div x-show="showCamera" x-transition class="space-y-3 border-t pt-6">
-                    <div class="bg-gray-900 rounded-lg overflow-hidden border-2 border-green-400">
-                        <div id="qr-reader" style="width:100%; min-height: 350px;"></div>
-                    </div>
+                <div x-show="showCamera" class="bg-black rounded-lg overflow-hidden border border-white/10">
+                    <div id="qr-reader" style="width:100%;"></div>
                     <button
                         @click="stopScanner()"
                         type="button"
-                        class="w-full px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition">
-                        <i class="fa-solid fa-stop mr-2"></i>Tutup Kamera
+                        class="w-full py-3 bg-red-600 text-white font-semibold text-sm hover:bg-red-700 text-center">
+                        Tutup Kamera
                     </button>
                 </div>
             </div>
@@ -204,5 +197,4 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-
 @endsection

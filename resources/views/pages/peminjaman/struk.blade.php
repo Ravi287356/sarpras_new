@@ -69,7 +69,7 @@
             </tr>
             <tr>
                 <td>Lokasi</td>
-                <td>: {{ $peminjaman->sarpras->lokasi->nama ?? '-' }}</td>
+                <td>: {{ $peminjaman->sarpras->items->first()?->lokasi?->nama ?? '-' }}</td>
             </tr>
         </table>
 

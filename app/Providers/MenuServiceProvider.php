@@ -66,6 +66,24 @@ class MenuServiceProvider extends ServiceProvider
                             ],
                         ],
 
+                        // ✅ MENU PENGEMBALIAN (ADMIN)
+                        [
+                            'label' => 'Manajemen Pengembalian',
+                            'active' => 'pengembalian*',
+                            'children' => [
+                                [
+                                    'label' => 'Pengembalian Sarpras',
+                                    'route' => route('pengembalian.index'),
+                                    'active' => 'pengembalian*',
+                                ],
+                                [
+                                    'label' => 'Riwayat Pengembalian',
+                                    'route' => route('pengembalian.riwayat'),
+                                    'active' => 'pengembalian/riwayat*',
+                                ],
+                            ],
+                        ],
+
                         [
                             'label' => 'Manajemen User',
                             'active' => 'admin/manage_user*',
@@ -137,6 +155,24 @@ class MenuServiceProvider extends ServiceProvider
                                     'label' => 'Riwayat Peminjaman',
                                     'route' => route('operator.peminjaman.riwayat'),
                                     'active' => 'operator/peminjaman-riwayat*',
+                                ],
+                            ],
+                        ],
+
+                        // ✅ MENU PENGEMBALIAN (OPERATOR)
+                        [
+                            'label' => 'Manajemen Pengembalian',
+                            'active' => 'pengembalian*',
+                            'children' => [
+                                [
+                                    'label' => 'Pengembalian Sarpras',
+                                    'route' => route('pengembalian.index'),
+                                    'active' => 'pengembalian*',
+                                ],
+                                [
+                                    'label' => 'Riwayat Pengembalian',
+                                    'route' => route('pengembalian.riwayat'),
+                                    'active' => 'pengembalian/riwayat*',
                                 ],
                             ],
                         ],

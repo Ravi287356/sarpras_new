@@ -17,9 +17,9 @@
             <div class="mb-4 text-slate-200">
                 <div class="text-lg font-semibold">{{ $sarpras->nama }}</div>
                 <div class="text-sm text-slate-300 mt-1">
-                    Kode: <span class="text-slate-100">{{ $sarpras->kode }}</span> •
+                    Kode: <span class="text-slate-100">{{ $sarpras->items->first()?->kode ?? '-' }}</span> •
                     Kategori: <span class="text-slate-100">{{ $sarpras->kategori?->nama ?? '-' }}</span> •
-                    Lokasi: <span class="text-slate-100">{{ $sarpras->lokasi?->nama ?? '-' }}</span>
+                    Lokasi: <span class="text-slate-100">{{ $sarpras->items->first()?->lokasi?->nama ?? '-' }}</span>
                 </div>
                 <div class="text-sm text-slate-300 mt-1">
                     Stok tersedia: <span class="text-slate-100 font-semibold">{{ (int) $sarpras->jumlah_stok }}</span>

@@ -5,14 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\KategoriSarpras;
 use App\Models\Lokasi;
 use App\Models\Sarpras;
-use App\Helpers\CodeGenerator;
+use App\Models\SarprasItem;
+use App\Models\KondisiAlat;
+use App\Models\StatusPeminjaman;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SarprasController extends Controller
 {
     public function index()
     {
-        $items = Sarpras::with(['kategori', 'lokasi'])
+        $items = Sarpras::with('kategori', 'items')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -22,71 +25,89 @@ class SarprasController extends Controller
         ]);
     }
 
+    /**
+     * Show sarpras items (inventory) for a single sarpras
+     */
+    public function items(Sarpras $sarpras)
+    {
+        $sarpras->load(['items.lokasi', 'items.kondisi', 'items.statusPeminjaman']);
+
+        return view('pages.sarpras.items', [
+            'title' => 'Detail Inventory: ' . $sarpras->nama,
+            'sarpras' => $sarpras,
+        ]);
+    }
+
     public function create()
     {
         return view('pages.sarpras.create', [
             'title'     => 'Tambah Sarpras',
             'kategoris' => KategoriSarpras::orderBy('nama', 'asc')->get(),
             'lokasis'   => Lokasi::orderBy('nama', 'asc')->get(),
+            'kondisis'  => KondisiAlat::orderBy('nama', 'asc')->get(),
         ]);
-    }
-
-    /**
-     * Generate preview kode untuk form
-     */
-    public function generateCode(Request $request)
-    {
-        $request->validate([
-            'kategori_id' => 'required|exists:kategori_sarpras,id',
-            'lokasi_id'   => 'required|exists:lokasi,id',
-            'nama'        => 'required|string|max:255',
-        ]);
-
-        try {
-            $code = CodeGenerator::generate(
-                $request->kategori_id,
-                $request->lokasi_id,
-                $request->nama
-            );
-
-            return response()->json([
-                'success' => true,
-                'code'    => $code,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 400);
-        }
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'nama'             => 'required|string|max:255',
-            'kategori_id'      => 'required|exists:kategori_sarpras,id',
-            'lokasi_id'        => 'required|exists:lokasi,id',
-            'jumlah_stok'      => 'required|integer|min:0',
-            'kondisi_saat_ini' => 'nullable|string|max:255',
+            'nama'              => 'required|string|max:255',
+            'kategori_id'       => 'required|exists:kategori_sarpras,id',
+            'lokasi_id'         => 'required|exists:lokasi,id',
+            'kondisi_alat_id'   => 'nullable|exists:kondisi_alat,id',
+            'jumlah'            => 'required|integer|min:1|max:100',
         ]);
 
-        // Kode akan di-generate otomatis di Model Sarpras boot method
+        // Create sarpras
         $sarpras = Sarpras::create([
-            'nama'             => $request->nama,
-            'kategori_id'      => $request->kategori_id,
-            'lokasi_id'        => $request->lokasi_id,
-            'jumlah_stok'      => $request->jumlah_stok,
-            'kondisi_saat_ini' => $request->kondisi_saat_ini,
+            'nama'        => $request->nama,
+            'kategori_id' => $request->kategori_id,
         ]);
+
+        // Determine status_peminjaman_id based on kondisi
+        // Get kondisi alat yang dipilih untuk check apakah rusak atau baik
+        $kondisiAlat = $request->kondisi_alat_id ? KondisiAlat::find($request->kondisi_alat_id) : null;
+
+        // Determine status based on kondisi:
+        // - Jika kondisi rusak → "butuh maintenance"
+        // - Jika kondisi baik/normal atau tidak ada → "tersedia"
+        $statusPeminjamanId = null;
+        
+        if ($kondisiAlat && stripos($kondisiAlat->nama, 'rusak') !== false) {
+            // Kondisi rusak → set "butuh maintenance"
+            $maintenance = StatusPeminjaman::where('nama', 'butuh maintenance')->first();
+            $statusPeminjamanId = $maintenance?->id;
+        }
+        
+        // Jika tidak ada status atau kondisi normal, set ke "tersedia"
+        if (!$statusPeminjamanId) {
+            $tersedia = StatusPeminjaman::where('nama', 'tersedia')->first();
+            if (!$tersedia) {
+                return back()->withErrors(['error' => 'Status "tersedia" tidak ditemukan. Silakan jalankan seeder terlebih dahulu.']);
+            }
+            $statusPeminjamanId = $tersedia->id;
+        }
+
+        // Auto-create sarpras_items sesuai jumlah dengan transaction
+        // Pessimistic locking di generateKode() mencegah race condition
+        DB::transaction(function () use ($sarpras, $request, $statusPeminjamanId) {
+            for ($i = 1; $i <= $request->jumlah; $i++) {
+                SarprasItem::create([
+                    'sarpras_id'            => $sarpras->id,
+                    'lokasi_id'             => $request->lokasi_id,
+                    'kondisi_alat_id'       => $request->kondisi_alat_id,
+                    'status_peminjaman_id'  => $statusPeminjamanId,
+                ]);
+            }
+        });
 
         // ✅ Log activity
         $this->logActivity(
             aksi: 'SARPRAS_BUAT',
-            deskripsi: 'Buat sarpras: ' . $request->nama . ' (stok: ' . $request->jumlah_stok . ')'
+            deskripsi: 'Buat sarpras: ' . $request->nama . ' (jumlah item: ' . $request->jumlah . ')'
         );
 
-        return redirect()->route('admin.sarpras.index')->with('success', 'Sarpras berhasil ditambahkan ✅');
+        return redirect()->route('admin.sarpras.index')->with('success', 'Sarpras dan ' . $request->jumlah . ' item berhasil ditambahkan ✅');
     }
 
     public function edit(Sarpras $sarpras)
@@ -95,45 +116,31 @@ class SarprasController extends Controller
             'title'     => 'Edit Sarpras',
             'sarpras'   => $sarpras,
             'kategoris' => KategoriSarpras::orderBy('nama', 'asc')->get(),
-            'lokasis'   => Lokasi::orderBy('nama', 'asc')->get(),
         ]);
     }
 
-   public function update(Request $request, Sarpras $sarpras)
-{
-    $request->validate([
-        'nama'             => 'required|string|max:255',
-        'kategori_id'      => 'required|exists:kategori_sarpras,id',
-        'lokasi_id'        => 'required|exists:lokasi,id',
-        'jumlah_stok'      => 'required|integer|min:0',
-        'kondisi_saat_ini' => 'nullable|string|max:255',
-    ]);
+    public function update(Request $request, Sarpras $sarpras)
+    {
+        $request->validate([
+            'nama'        => 'required|string|max:255',
+            'kategori_id' => 'required|exists:kategori_sarpras,id',
+        ]);
 
-    $kodeBaru = \App\Helpers\CodeGenerator::generate(
-        $request->kategori_id,
-        $request->lokasi_id,
-        $request->nama
-    );
+        $sarpras->update([
+            'nama'        => $request->nama,
+            'kategori_id' => $request->kategori_id,
+        ]);
 
-    $sarpras->update([
-        'kode'             => $kodeBaru,
-        'nama'             => $request->nama,
-        'kategori_id'      => $request->kategori_id,
-        'lokasi_id'        => $request->lokasi_id,
-        'jumlah_stok'      => $request->jumlah_stok,
-        'kondisi_saat_ini' => $request->kondisi_saat_ini,
-    ]);
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'SARPRAS_UPDATE',
+            deskripsi: 'Update sarpras: ' . $request->nama
+        );
 
-    // ✅ Log activity
-    $this->logActivity(
-        aksi: 'SARPRAS_UPDATE',
-        deskripsi: 'Update sarpras: ' . $request->nama . ' (stok: ' . $request->jumlah_stok . ')'
-    );
-
-    return redirect()
-        ->route('admin.sarpras.index')
-        ->with('success', 'Sarpras berhasil diupdate & kode diperbarui otomatis ✅');
-}
+        return redirect()
+            ->route('admin.sarpras.index')
+            ->with('success', 'Sarpras berhasil diupdate ✅');
+    }
 
 
     public function destroy(Sarpras $sarpras)

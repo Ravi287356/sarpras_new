@@ -68,7 +68,7 @@
     @endphp
 
     {{-- MENU --}}
-    <nav class="p-3 space-y-2 flex-1 overflow-y-auto hide-scrollbar">
+    <nav id="sidebar-nav" class="p-3 space-y-2 flex-1 overflow-y-auto hide-scrollbar">
         @foreach ($menus as $key => $menu)
             @php
                 $menuHref = $menu['route'] ?? '#';
@@ -134,3 +134,19 @@
         @endforeach
     </nav>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebar = document.getElementById('sidebar-nav');
+        const pos = localStorage.getItem('sidebar-scroll');
+
+        if (pos) {
+            sidebar.scrollTop = pos;
+        }
+
+        // Simpan posisi scroll saat user klik link di sidebar atau reload
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('sidebar-scroll', sidebar.scrollTop);
+        });
+    });
+</script>

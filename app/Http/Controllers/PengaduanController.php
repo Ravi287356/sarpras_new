@@ -128,7 +128,9 @@ class PengaduanController extends Controller
                 '" menjadi ' . $request->status
         );
 
-        return back()->with('success', 'Pengaduan berhasil diperbarui ✅');
+        return redirect()
+            ->route('admin.pengaduan.index')
+            ->with('success', 'Status pengaduan berhasil diperbarui ✅');
     }
 
     /**
@@ -177,6 +179,8 @@ class PengaduanController extends Controller
             deskripsi: 'Tanggapi pengaduan "' . $pengaduan->judul . '" - oleh ' . auth()->user()->username
         );
 
-        return back()->with('success', 'Catatan tanggapan berhasil disimpan ✅');
+        return redirect()
+            ->route('admin.pengaduan.index')
+            ->with('success', 'Tanggapan berhasil disimpan ✅');
     }
 }

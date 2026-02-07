@@ -19,12 +19,9 @@ class Sarpras extends Model
 
     protected $fillable = [
         'id',
-        'kode',
         'nama',
         'kategori_id',
-        'lokasi_id',
-        'jumlah_stok',
-        'kondisi_saat_ini',
+        // inventory details moved to `sarpras_items`
     ];
 
     protected static function boot()
@@ -35,15 +32,6 @@ class Sarpras extends Model
             if (empty($model->id)) {
                 $model->id = (string) Str::uuid();
             }
-
-            // Auto-generate kode jika belum ada atau kosong
-            if (empty($model->kode)) {
-                $model->kode = CodeGenerator::generate(
-                    $model->kategori_id,
-                    $model->lokasi_id,
-                    $model->nama
-                );
-            }
         });
     }
 
@@ -52,8 +40,8 @@ class Sarpras extends Model
         return $this->belongsTo(KategoriSarpras::class, 'kategori_id');
     }
 
-    public function lokasi()
+    public function items()
     {
-        return $this->belongsTo(Lokasi::class, 'lokasi_id');
+        return $this->hasMany(SarprasItem::class, 'sarpras_id', 'id');
     }
 }

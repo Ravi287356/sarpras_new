@@ -10,6 +10,7 @@ class KategoriSarprasController extends Controller
 {
     public function index()
     {
+        // SoftDeletes trait automatically excludes soft-deleted records
         $kategoris = KategoriSarpras::orderBy('nama')->get();
 
         return view('pages.admin.kategori_sarpras.index', [
@@ -79,8 +80,10 @@ class KategoriSarprasController extends Controller
             ->with('success', 'Kategori berhasil diupdate ✅');
     }
 
-    public function destroy(KategoriSarpras $kategori)
+    public function destroy($id)
     {
+        $kategori = KategoriSarpras::findOrFail($id);
+        
         // CEK DULU apakah kategori dipakai sarpras
         $sarprasAktif = Sarpras::where('kategori_id', $kategori->id)
             ->whereNull('deleted_at')
@@ -99,6 +102,7 @@ class KategoriSarprasController extends Controller
             deskripsi: 'Hapus kategori sarpras: ' . $kategori->nama
         );
 
+        // Soft delete (data masih ada, hanya ditandai deleted_at)
         $kategori->delete();
 
         return back()->with('success', 'Kategori berhasil dihapus ✅');

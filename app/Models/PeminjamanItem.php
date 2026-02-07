@@ -4,24 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Pengembalian extends Model
+class PeminjamanItem extends Model
 {
-    use SoftDeletes;
     use HasFactory;
 
-    protected $table = 'pengembalian';
+    protected $table = 'peminjaman_items';
     public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = [
         'id',
         'peminjaman_id',
-        'tanggal_pengembalian',
-        'catatan_petugas',
-        'approved_by',
+        'sarpras_item_id',
     ];
 
     protected static function boot()
@@ -37,16 +33,11 @@ class Pengembalian extends Model
 
     public function peminjaman()
     {
-        return $this->belongsTo(Peminjaman::class);
+        return $this->belongsTo(Peminjaman::class, 'peminjaman_id');
     }
 
-    public function approvedBy()
+    public function sarprasItem()
     {
-        return $this->belongsTo(User::class, 'approved_by');
-    }
-
-    public function items()
-    {
-        return $this->hasMany(PengembalianItem::class);
+        return $this->belongsTo(SarprasItem::class, 'sarpras_item_id');
     }
 }

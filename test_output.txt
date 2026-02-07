@@ -1,0 +1,10 @@
+PHPUnit 12.5.4 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.3.29
+Configuration: D:\laragon\www\sarpras\phpunit.xml
+
+.                                                                   1 / 1 (100%)
+
+Time: 00:00.370, Memory: 44.00 MB
+
+OK (1 test, 17 assertions)

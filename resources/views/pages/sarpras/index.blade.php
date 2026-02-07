@@ -27,12 +27,9 @@
                 <thead class="text-slate-300 bg-white/5">
                     <tr>
                         <th class="text-left px-5 py-4">No</th>
-                        <th class="text-left px-5 py-4">Kode</th>
                         <th class="text-left px-5 py-4">Nama</th>
                         <th class="text-left px-5 py-4">Kategori</th>
-                        <th class="text-left px-5 py-4">Lokasi</th>
-                        <th class="text-left px-5 py-4">Stok</th>
-                        <th class="text-left px-5 py-4">Kondisi</th>
+                        <th class="text-left px-5 py-4">Jumlah Item</th>
                         <th class="text-left px-5 py-4">Aksi</th>
                     </tr>
                 </thead>
@@ -41,13 +38,15 @@
                     @forelse ($items as $i => $row)
                         <tr class="text-slate-200">
                             <td class="px-5 py-4">{{ $i+1 }}</td>
-                            <td class="px-5 py-4">{{ $row->kode }}</td>
                             <td class="px-5 py-4 font-medium">{{ $row->nama }}</td>
                             <td class="px-5 py-4">{{ $row->kategori?->nama ?? '-' }}</td>
-                            <td class="px-5 py-4">{{ $row->lokasi?->nama ?? '-' }}</td>
-                            <td class="px-5 py-4">{{ $row->jumlah_stok }}</td>
-                            <td class="px-5 py-4">{{ $row->kondisi_saat_ini ?? '-' }}</td>
+                            <td class="px-5 py-4">{{ $row->items->count() ?? 0 }}</td>
                             <td class="px-5 py-4 flex gap-2">
+                                <a href="{{ route('admin.sarpras.items', $row->id) }}"
+                                   class="px-4 py-2 rounded-xl ring-1 ring-white/10 hover:bg-white/5 transition">
+                                    Inventory
+                                </a>
+
                                 <a href="{{ route('admin.sarpras.edit', $row->id) }}"
                                    class="px-4 py-2 rounded-xl ring-1 ring-white/10 hover:bg-white/5 transition">
                                     Edit
@@ -66,7 +65,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-5 py-8 text-center text-slate-400">
+                            <td colspan="5" class="px-5 py-8 text-center text-slate-400">
                                 Belum ada data sarpras.
                             </td>
                         </tr>

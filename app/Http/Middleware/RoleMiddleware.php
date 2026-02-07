@@ -11,11 +11,12 @@ class RoleMiddleware
 {
     /**
      * Middleware: role:admin / role:operator / role:user
+     * Mendukung multiple roles: role:admin|operator
      * + BONUS: pisahkan session cookie per area (admin/operator/user)
      */
     public function handle(Request $request, Closure $next, string $role): Response
     {
-        
+
         $area = $request->segment(1); // admin/operator/user
 
         if (in_array($area, ['admin', 'operator', 'user'], true)) {
@@ -29,10 +30,12 @@ class RoleMiddleware
             return redirect()->route('login.form');
         }
 
-
         $userRole = Auth::user()?->role?->nama;
 
-        if ($userRole !== $role) {
+        // Mendukung multiple roles dengan separator |
+        $allowedRoles = explode('|', $role);
+
+        if (!in_array($userRole, $allowedRoles)) {
             abort(403, 'Akses ditolak.');
         }
 

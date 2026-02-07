@@ -1,153 +1,160 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="max-w-4xl mx-auto space-y-6">
-        <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-800">Konfirmasi Pengembalian Barang</h1>
-                <p class="text-sm text-gray-500">Kode Peminjaman: <span
-                        class="font-semibold text-gray-700">{{ $peminjaman->kode_peminjaman }}</span></p>
-            </div>
-            <a href="{{ route('pengembalian.index') }}"
-                class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">
-                <i class="fa-solid fa-arrow-left mr-2"></i>Kembali
-            </a>
-        </div>
+    <div class="max-w-4xl mx-auto pb-12">
+        <a href="{{ route('pengembalian.index') }}" class="inline-flex items-center text-sm text-slate-400 hover:text-white mb-6">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Kembali ke Pencarian
+        </a>
 
-        <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
-            <div class="grid grid-cols-4 gap-4">
-                <div>
-                    <p class="text-sm text-gray-600">Peminjam</p>
-                    <p class="font-semibold text-gray-800">{{ $peminjaman->user->username }}</p>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-600">Tanggal Pinjam</p>
-                    <p class="font-semibold text-gray-800">
-                        {{ \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format('d M Y') }}</p>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-600">Tanggal Rencana Kembali</p>
-                    <p class="font-semibold text-gray-800">
-                        {{ \Carbon\Carbon::parse($peminjaman->tanggal_kembali_rencana)->format('d M Y') }}</p>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-600">Status</p>
-                    <span class="inline-block px-3 py-1 bg-blue-200 text-blue-800 rounded-full text-xs font-semibold">
-                        {{ $peminjaman->statusPinjam->nama }}
-                    </span>
-                </div>
-            </div>
-
-            <div class="mt-6 pt-6 border-t border-blue-200">
-                <p class="text-sm font-semibold text-gray-700 mb-3">Barang yang Dipinjam:</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    @foreach ($peminjaman->peminjamanItem as $item)
-                        <div class="bg-white p-4 rounded-lg border border-blue-100">
-                            <p class="font-semibold text-gray-800">{{ optional($item->sarprasItem->sarpras)->nama ?? '-' }}
-                            </p>
-                            <p class="text-sm text-gray-600">Kode: {{ $item->sarprasItem->kode }}</p>
-                            <p class="text-sm text-gray-600">Lokasi: {{ optional($item->sarprasItem->lokasi)->nama ?? '-' }}
-                            </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- Left Panel: Information -->
+            <div class="md:col-span-1 space-y-6">
+                <!-- Main Info -->
+                <div class="bg-slate-900 border border-white/10 rounded-xl p-5">
+                    <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Informasi Pinjaman</h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="text-xs text-slate-500 mb-1">Kode Pinjam</div>
+                            <div class="text-lg font-mono font-bold text-blue-400">{{ $peminjaman->kode_peminjaman }}</div>
                         </div>
-                    @endforeach
+                        <div>
+                            <div class="text-xs text-slate-500 mb-1">Peminjam</div>
+                            <div class="text-white font-medium">{{ $peminjaman->user->username }}</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                             <div>
+                                <div class="text-xs text-slate-500 mb-1">Tanggal Pinjam</div>
+                                <div class="text-sm text-white">{{ \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format('d/m/Y') }}</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-500 mb-1">Jadwal Kembali</div>
+                                <div class="text-sm text-white">{{ \Carbon\Carbon::parse($peminjaman->tanggal_kembali_rencana)->format('d/m/Y') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Items List -->
+                <div class="bg-slate-900 border border-white/10 rounded-xl p-5">
+                     <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Barang ({{\count($peminjaman->items)}})</h2>
+                     <ul class="space-y-3">
+                        @foreach ($peminjaman->items as $item)
+                        <li class="bg-slate-800/50 p-3 rounded-lg border border-white/5">
+                            <div class="text-white font-medium text-sm">{{ $item->sarprasItem->sarpras->nama ?? '-' }}</div>
+                            <div class="text-xs text-slate-500 mt-1 font-mono">Kode: {{ $item->sarprasItem->kode }}</div>
+                        </li>
+                        @endforeach
+                     </ul>
                 </div>
             </div>
-        </div>
 
-        <div class="bg-white rounded-xl shadow p-8">
-            <h2 class="text-lg font-bold text-gray-800 mb-6">Data Pengembalian</h2>
+            <!-- Right Panel: Form -->
+            <div class="md:col-span-2">
+                <div class="bg-slate-900 border border-white/10 rounded-xl shadow-lg overflow-hidden">
+                    <div class="bg-slate-800 px-6 py-4 border-b border-white/5">
+                        <h1 class="text-lg font-bold text-white">Form Pengembalian</h1>
+                        <p class="text-sm text-slate-400">Lengkapi formulir di bawah ini untuk menyelesaikan pengembalian.</p>
+                    </div>
+                    
+                    <div class="p-6">
+                        @if ($errors->any())
+                            <div class="mb-6 p-4 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm">
+                                <ul class="list-disc pl-4 space-y-1">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
 
-            @if ($errors->any())
-                <div class="bg-red-100 border border-red-300 text-red-700 p-4 rounded-lg mb-6">
-                    <ul class="list-disc pl-5 space-y-1">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+                        <form method="POST" action="{{ route('pengembalian.store') }}" enctype="multipart/form-data" class="space-y-8">
+                            @csrf
+                            <input type="hidden" name="peminjaman_id" value="{{ $peminjaman->id }}">
+
+                            <!-- Section: Per Item Information -->
+                            <div class="space-y-6">
+                                <h3 class="text-white font-semibold flex items-center gap-2">
+                                    <span class="w-1 h-6 bg-blue-500 rounded-full"></span>
+                                    Detail Kondisi per Barang
+                                </h3>
+
+                                <div class="space-y-4">
+                                    @foreach ($peminjaman->items as $item)
+                                        <div class="p-5 bg-slate-950/50 border border-white/5 rounded-xl space-y-4">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <div class="text-white font-medium">{{ $item->sarprasItem->sarpras->nama ?? '-' }}</div>
+                                                    <div class="text-xs text-blue-400 font-mono mt-0.5">{{ $item->sarprasItem->kode }}</div>
+                                                </div>
+                                                <input type="hidden" name="items[{{ $item->sarprasItem->id }}][sarpras_item_id]" value="{{ $item->sarprasItem->id }}">
+                                            </div>
+
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <!-- Kondisi per Item -->
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Kondisi Barang</label>
+                                                    <div class="relative">
+                                                        <select name="items[{{ $item->sarprasItem->id }}][kondisi_alat_id]" required
+                                                            class="w-full pl-3 pr-8 py-2.5 bg-slate-900 border border-white/10 rounded-lg text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer">
+                                                            <option value="">-- Pilih Kondisi --</option>
+                                                            @foreach ($kondisiAlat as $kondisi)
+                                                                <option value="{{ $kondisi->id }}">{{ $kondisi->nama }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-500">
+                                                            <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Foto per Item -->
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Foto Bukti (Opsional)</label>
+                                                    <input type="file" name="items[{{ $item->sarprasItem->id }}][foto]" accept="image/*" 
+                                                        class="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700 cursor-pointer"/>
+                                                </div>
+                                            </div>
+
+                                            <!-- Deskripsi Kerusakan per Item -->
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Deskripsi Kerusakan (Jika Ada)</label>
+                                                <textarea name="items[{{ $item->sarprasItem->id }}][deskripsi_kerusakan]" rows="2" 
+                                                    class="w-full px-3 py-2 bg-slate-900 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-700 text-sm" 
+                                                    placeholder="Jelaskan detail kerusakan barang ini..."></textarea>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <hr class="border-white/5">
+
+                            <!-- Section: General Notes -->
+                            <div class="space-y-4">
+                                <h3 class="text-white font-semibold flex items-center gap-2">
+                                    <span class="w-1 h-6 bg-blue-500 rounded-full"></span>
+                                    Catatan Umum
+                                </h3>
+                                
+                                <div class="grid grid-cols-1 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Catatan Petugas <span class="text-rose-500">*</span></label>
+                                        <textarea name="catatan_petugas" required rows="2" class="w-full px-4 py-3 bg-slate-950 border border-white/10 rounded-lg text-white focus:border-blue-500 focus:outline-none placeholder-slate-700 text-sm" placeholder="Tambahkan catatan penyelesaian..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="border-white/10 mt-6 mb-6">
+
+                            <button type="submit" class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition shadow-lg text-lg">
+                                <i class="fa-solid fa-check-circle mr-2"></i> Konfirmasi Pengembalian
+                            </button>
+                        </form>
+                    </div>
                 </div>
-            @endif
-
-            <form method="POST" action="{{ route('pengembalian.store') }}" enctype="multipart/form-data"
-                class="space-y-6">
-                @csrf
-                <input type="hidden" name="peminjaman_id" value="{{ $peminjaman->id }}">
-
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Kondisi Barang Saat Kembali <span
-                            class="text-red-500">*</span></label>
-                    <select name="kondisi_alat_id" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
-                               @error('kondisi_alat_id') @enderror">
-                        <option value="">-- Pilih Kondisi --</option>
-                        @foreach ($kondisiAlat as $kondisi)
-                            <option value="{{ $kondisi->id }}">{{ $kondisi->nama }}</option>
-                        @endforeach
-                    </select>
-                    @error('kondisi_alat_id')
-                        <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Deskripsi Kerusakan / Catatan
-                        (Opsional)</label>
-                    <textarea name="deskripsi_kerusakan" placeholder="Contoh: Lensa sedikit berdebu, lampu mulai berkedip, dll"
-                        rows="3"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
-                               @error('deskripsi_kerusakan') @enderror"></textarea>
-                    @error('deskripsi_kerusakan')
-                        <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Catatan Petugas<span
-                            class="text-red-500">*</span></label>
-                    <textarea name="catatan_petugas" placeholder="Contoh: Perlu pembersihan dan penggantian lampu" rows="3" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                    @error('catatan_petugas')
-                        <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">
-                        Foto Kondisi Barang (Opsional)
-                    </label>
-
-                    <input type="file" name="foto" accept="image/*"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg
-               focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                    <p class="text-xs text-gray-500 mt-1">
-                        Format: JPG, PNG, maksimal 2MB
-                    </p>
-
-                    @error('foto')
-                        <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
-                    @enderror
-                </div>
-
-
-                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
-                    <p class="text-sm text-yellow-800">
-                        <i class="fa-solid fa-lightbulb mr-2"></i>
-                        <strong>Info:</strong> Jika kondisi adalah "Rusak Ringan" atau "Rusak Berat", status barang akan
-                        otomatis berubah menjadi "Butuh Maintenance".
-                    </p>
-                </div>
-
-                <div class="flex justify-end gap-3 pt-6 border-t">
-                    <a href="{{ route('pengembalian.index') }}"
-                        class="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition">
-                        Batal
-                    </a>
-                    <button type="submit"
-                        class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
-                        <i class="fa-solid fa-check mr-2"></i>Konfirmasi Pengembalian
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 @endsection

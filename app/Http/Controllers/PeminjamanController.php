@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Peminjaman;
 use App\Models\Sarpras;
+use App\Models\StatusPeminjaman;
+use App\Models\PeminjamanItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -13,11 +15,28 @@ class PeminjamanController extends Controller
 {
     public function available()
     {
-        $items = Sarpras::query()
+        $items = Sarpras::with(['kategori', 'items'])
             ->whereNull('deleted_at')
-            ->where('jumlah_stok', '>', 0)
             ->orderBy('nama', 'asc')
-            ->get();
+            ->get()
+            ->filter(function ($sarpras) {
+                // Count available items using the new scope logic manually or via relation
+                // Ideally we use the scope on the relation, but here we loaded all items.
+                // Let's filter the loaded items collection to minimize N+1 or reloading.
+                
+                // However, scopeAvailable() uses complex where clauses that are best executed in SQL.
+                // Re-querying might be safer for accuracy, but let's try to replicate the logic in PHP for the preloaded collection 
+                // OR better: load count with closure.
+                
+                // Let's rely on a fresh count using the scope for accuracy
+                $count = $sarpras->items()->available()->count();
+
+                // Add count to object for view
+                $sarpras->jumlah_stok = $count;
+
+                return $count > 0;
+            })
+            ->values();
 
         // ✅ sesuaikan dengan folder kamu (resources/views/pages/peminjaman/available.blade.php)
         return view('pages.peminjaman.available', [
@@ -29,6 +48,10 @@ class PeminjamanController extends Controller
     public function create(string $sarpras_id)
     {
         $sarpras = Sarpras::whereNull('deleted_at')->findOrFail($sarpras_id);
+
+        // Calculate available items using scope
+        $available_count = $sarpras->items()->available()->count();
+        $sarpras->jumlah_stok = $available_count;
 
         // ✅ sesuaikan (resources/views/pages/peminjaman/create.blade.php)
         return view('pages.peminjaman.create', [
@@ -47,31 +70,48 @@ class PeminjamanController extends Controller
             'tanggal_kembali_rencana' => ['required', 'date', 'after_or_equal:tanggal_pinjam'],
         ]);
 
-        $sarpras = Sarpras::whereNull('deleted_at')->findOrFail($request->sarpras_id);
+        DB::transaction(function () use ($request) {
+            $sarpras = Sarpras::whereNull('deleted_at')->lockForUpdate()->findOrFail($request->sarpras_id);
 
-        if ((int) $request->jumlah > (int) $sarpras->jumlah_stok) {
-            return back()->withErrors(['jumlah' => 'Stok tidak cukup.'])->withInput();
-        }
+            // Get exact available items using the scope and lock them
+            $available_items = $sarpras->items()->available()->lockForUpdate()->limit($request->jumlah)->get();
 
-        Peminjaman::create([
-            'user_id' => auth()->id(),
-            'sarpras_id' => $sarpras->id,
-            'jumlah' => (int) $request->jumlah,
-            'tujuan' => $request->tujuan,
-            'tanggal_pinjam' => $request->tanggal_pinjam,
-            'tanggal_kembali_rencana' => $request->tanggal_kembali_rencana,
-            'status' => 'menunggu',
-        ]);
+            if ($available_items->count() < $request->jumlah) {
+                // Throw validation exception manually to rollback transaction
+                throw \Illuminate\Validation\ValidationException::withMessages(['jumlah' => 'Stok tidak cukup atau sudah dipesan orang lain.']);
+            }
+
+            $peminjaman = Peminjaman::create([
+                'user_id' => auth()->id(),
+                // 'sarpras_id' => $sarpras->id, // Removed from schema
+                // 'jumlah' => (int) $request->jumlah, // Removed from schema
+                'tujuan' => $request->tujuan,
+                'tanggal_pinjam' => $request->tanggal_pinjam,
+                'tanggal_kembali_rencana' => $request->tanggal_kembali_rencana,
+                'status' => 'menunggu',
+            ]);
+
+            // Immediately Link Items
+            foreach ($available_items as $item) {
+                PeminjamanItem::create([
+                    'peminjaman_id' => $peminjaman->id,
+                    'sarpras_item_id' => $item->id,
+                ]);
+            }
+        });
 
         return redirect()->route('user.peminjaman.riwayat')->with('success', 'Peminjaman berhasil diajukan ✅');
     }
 
     public function riwayatUser()
     {
-        // ❌ ERROR sebelumnya biasanya: pakai ->get() lalu di blade dipanggil ->links()
-        // ✅ FIX: pakai paginate() + kirim variabel "logs" sesuai blade kamu
+        // Fix: Use with('items.sarprasItem') to get sarpras info via pivot if needed, 
+        // OR rely on the fact that Peminjaman usually groups items of same Sarpras? 
+        // Current design allows mixing items in theory, but UI flow implies single Sarpras type per borrowing.
+        // Let's load the items relation.
+        
         $logs = Peminjaman::query()
-            ->with(['sarpras.kategori', 'sarpras.lokasi'])
+            ->with(['items.sarprasItem.sarpras', 'items.sarprasItem.lokasi'])
             ->where('user_id', auth()->id())
             ->latest('created_at')
             ->paginate(10);
@@ -88,8 +128,8 @@ class PeminjamanController extends Controller
         $logs = Peminjaman::query()
             ->with([
                 'user.role',
-                'sarpras.kategori',
-                'sarpras.lokasi',
+                'items.sarprasItem.sarpras.kategori', 
+                'items.sarprasItem.lokasi',
                 'approver'
             ])
             ->whereIn('status', ['disetujui', 'dikembalikan']) // ✅ FILTER PENTING
@@ -106,7 +146,7 @@ class PeminjamanController extends Controller
     public function indexPermintaan()
     {
         $items = Peminjaman::query()
-            ->with(['user.role', 'sarpras.kategori', 'sarpras.lokasi'])
+            ->with(['user.role', 'items.sarprasItem.sarpras.kategori'])
             ->where('status', 'menunggu')
             ->latest('created_at')
             ->paginate(20);
@@ -121,7 +161,7 @@ class PeminjamanController extends Controller
     public function indexAktif()
     {
         $items = Peminjaman::query()
-            ->with(['user.role', 'sarpras.kategori', 'sarpras.lokasi'])
+            ->with(['user.role', 'items.sarprasItem.sarpras'])
             ->where('status', 'disetujui')
             ->latest('approved_at')
             ->get();
@@ -145,18 +185,21 @@ class PeminjamanController extends Controller
         }
 
         DB::transaction(function () use ($peminjaman) {
-            $sarpras = Sarpras::lockForUpdate()->findOrFail($peminjaman->sarpras_id);
-
-            if ((int) $peminjaman->jumlah > (int) $sarpras->jumlah_stok) {
-                abort(422, 'Stok tidak cukup untuk menyetujui peminjaman.');
-            }
+            // Items are already linked in store()
+            // We just need to mark them as 'dipinjam' in master data
+            
             if (!$peminjaman->kode_peminjaman) {
                 $peminjaman->kode_peminjaman = 'PMN-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
             }
 
-            $sarpras->update([
-                'jumlah_stok' => (int) $sarpras->jumlah_stok - (int) $peminjaman->jumlah,
-            ]);
+            $statusDipinjam = StatusPeminjaman::where('nama', 'dipinjam')->first();
+            
+            // Update all linked items
+            foreach ($peminjaman->items as $pItem) {
+                if ($pItem->sarprasItem) {
+                    $pItem->sarprasItem->update(['status_peminjaman_id' => $statusDipinjam?->id]);
+                }
+            }
 
             $peminjaman->update([
                 'status' => 'disetujui',
@@ -178,6 +221,11 @@ class PeminjamanController extends Controller
         $request->validate([
             'alasan_penolakan' => ['nullable', 'string', 'max:500'],
         ]);
+        
+        // Note: Items were pre-reserved in `store`.
+        // If rejected, we don't necessarily need to delete PeminjamanItems if we want to keep history of what was asked.
+        // But since the status is 'ditolak', the scopeAvailable() in SarprasItem will automatically see these items as free again (because scope checks for status IN ['menunggu', 'disetujui']).
+        // So no manual rollback of items needed unless we want to clean up DB.
 
         $peminjaman->update([
             'status' => 'ditolak',
@@ -196,14 +244,16 @@ class PeminjamanController extends Controller
         }
 
         DB::transaction(function () use ($peminjaman) {
-            $sarpras = Sarpras::lockForUpdate()->findOrFail($peminjaman->sarpras_id);
+            // Mark all items as 'dikembalikan'
+            $statusDikembalikan = StatusPeminjaman::where('nama', 'dikembalikan')->first();
 
-            $sarpras->update([
-                'jumlah_stok' => (int) $sarpras->jumlah_stok + (int) $peminjaman->jumlah,
-            ]);
+            foreach ($peminjaman->items as $peminjamanItem) {
+                 $peminjamanItem->sarprasItem->update(['status_peminjaman_id' => $statusDikembalikan?->id]);
+            }
 
             $peminjaman->update([
                 'status' => 'dikembalikan',
+                 'tanggal_kembali_actual' => now(),
             ]);
         });
 
@@ -216,10 +266,9 @@ class PeminjamanController extends Controller
     public function struk(string $id)
     {
         $peminjaman = Peminjaman::with([
-            'user',
             'user.role',
-            'sarpras.kategori',
-            'sarpras.lokasi',
+            'items.sarprasItem.sarpras.kategori', 
+            'items.sarprasItem.lokasi',
             'approver'
         ])->findOrFail($id);
 

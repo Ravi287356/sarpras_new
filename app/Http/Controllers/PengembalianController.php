@@ -6,8 +6,9 @@ use App\Helpers\ActivityLogger;
 use App\Models\KondisiAlat;
 use App\Models\Peminjaman;
 use App\Models\Pengembalian;
+use App\Models\PengembalianItem;
 use App\Models\SarprasItem;
-use App\Models\StatusPinjam;
+use App\Models\StatusPeminjaman;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,10 +16,11 @@ use Illuminate\Support\Facades\DB;
 
 class PengembalianController extends Controller
 {
+
     public function index()
     {
         $kondisiAlat = KondisiAlat::all();
-        return view('pages.public.pengembalian.index', [
+        return view('pages.pengembalian.pengembalian', [
             'title' => 'Pengembalian Sarpras',
             'kondisiAlat' => $kondisiAlat
         ]);
@@ -31,15 +33,16 @@ class PengembalianController extends Controller
         ]);
 
         $peminjaman = Peminjaman::where('kode_peminjaman', $request->kode_peminjaman)
-            ->with(['user', 'peminjamanItem.sarprasItem.sarpras.kategori', 'peminjamanItem.sarprasItem.lokasi', 'statusPinjam', 'pengembalian'])
+            ->with(['user', 'items.sarprasItem.sarpras.kategori', 'items.sarprasItem.lokasi', 'pengembalian'])
             ->first();
 
         if (!$peminjaman) {
             return response()->json(['error' => 'Kode peminjaman tidak ditemukan'], 404);
         }
 
-        if ($peminjaman->statusPinjam->nama !== 'Dipinjam') {
-            return response()->json(['error' => 'Peminjaman ini tidak dalam status dipinjam'], 400);
+        // Check status (must be approved/active)
+        if ($peminjaman->status !== 'disetujui') {
+            return response()->json(['error' => 'Peminjaman ini tidak dalam status dipinjam (Status: ' . $peminjaman->status . ')'], 400);
         }
 
         if ($peminjaman->pengembalian) {
@@ -51,14 +54,14 @@ class PengembalianController extends Controller
             'data' => [
                 'id' => $peminjaman->id,
                 'kode_peminjaman' => $peminjaman->kode_peminjaman,
-                'user' => $peminjaman->user->username,
-                'items' => $peminjaman->peminjamanItem->map(function ($item) {
+                'user' => $peminjaman->user->username ?? '-',
+                'items' => $peminjaman->items->map(function ($item) {
                     return [
                         'id' => $item->sarprasItem->id,
-                        'nama' => optional($item->sarprasItem->sarpras)->nama ?? '-',
+                        'nama' => $item->sarprasItem->sarpras->nama ?? '-',
                         'kode' => $item->sarprasItem->kode,
-                        'lokasi' => optional($item->sarprasItem->lokasi)->nama ?? '-',
-                        'kategori' => optional(optional($item->sarprasItem->sarpras)->kategori)->nama ?? '-'
+                        'lokasi' => $item->sarprasItem->lokasi->nama ?? '-',
+                        'kategori' => $item->sarprasItem->sarpras->kategori->nama ?? '-'
                     ];
                 })
             ]
@@ -69,13 +72,12 @@ class PengembalianController extends Controller
     {
         $peminjaman = Peminjaman::with([
             'user',
-            'peminjamanItem.sarprasItem.sarpras.kategori',
-            'peminjamanItem.sarprasItem.lokasi',
-            'statusPinjam',
+            'items.sarprasItem.sarpras.kategori',
+            'items.sarprasItem.lokasi',
             'pengembalian'
         ])->findOrFail($id);
 
-        if ($peminjaman->statusPinjam->nama !== 'Dipinjam') {
+        if ($peminjaman->status !== 'disetujui') {
             return redirect()->route('pengembalian.index')->withErrors('Peminjaman ini tidak dalam status dipinjam');
         }
 
@@ -85,7 +87,7 @@ class PengembalianController extends Controller
 
         $kondisiAlat = KondisiAlat::all();
 
-        return view('pages.public.pengembalian.form', [
+        return view('pages.pengembalian.form', [
             'title' => 'Konfirmasi Pengembalian',
             'peminjaman' => $peminjaman,
             'kondisiAlat' => $kondisiAlat
@@ -96,81 +98,97 @@ class PengembalianController extends Controller
     {
         $request->validate([
             'peminjaman_id' => 'required|exists:peminjaman,id',
-            'kondisi_alat_id' => 'required|exists:kondisi_alat,id',
-            'deskripsi_kerusakan' => 'nullable|string',
             'catatan_petugas' => 'nullable|string',
-            'foto_url' => 'nullable|images|mimes:jpg,jpeg,png|max:2048'
+            'items' => 'required|array',
+            'items.*.sarpras_item_id' => 'required|exists:sarpras_items,id',
+            'items.*.kondisi_alat_id' => 'required|exists:kondisi_alat,id',
+            'items.*.deskripsi_kerusakan' => 'nullable|string',
+            'items.*.foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
-        $peminjaman = Peminjaman::findOrFail($request->peminjaman_id);
+        $peminjaman = Peminjaman::with('items.sarprasItem')->findOrFail($request->peminjaman_id);
 
         if ($peminjaman->pengembalian) {
             return back()->withErrors('Peminjaman ini sudah dikembalikan');
         }
 
-        $kondisiAlat = KondisiAlat::findOrFail($request->kondisi_alat_id);
-
-        DB::transaction(function () use ($request, $peminjaman, $kondisiAlat) {
-            $fotoPath = null;
-
-            if ($request->hasFile('foto')) {
-                $fotoPath = $request->file('foto')
-                    ->store('pengembalian', 'public');
-            }
-
-
+        DB::transaction(function () use ($request, $peminjaman) {
+            // 1. Create main Pengembalian record
             $pengembalian = Pengembalian::create([
                 'peminjaman_id' => $peminjaman->id,
-                'kondisi_alat_id' => $request->kondisi_alat_id,
-                'deskripsi_kerusakan' => $request->deskripsi_kerusakan,
                 'catatan_petugas' => $request->catatan_petugas,
-                'foto_url' => $fotoPath,
                 'approved_by' => Auth::id(),
                 'tanggal_pengembalian' => now()
             ]);
 
-            Peminjaman::where('id', $peminjaman->id)->update([
-                'tanggal_kembali' => now()
+            // 2. Update Peminjaman status
+            $peminjaman->update([
+                'tanggal_kembali_actual' => now(),
+                'status' => 'dikembalikan'
             ]);
 
-            $statusTersedia = StatusPinjam::where('nama', 'Tersedia')->first();
-            $statusButuhMaintenance = StatusPinjam::where('nama', 'Butuh Maintenance')->first();
+            $statusTersedia = StatusPeminjaman::where('nama', 'tersedia')->first();
+            $statusButuhMaintenance = StatusPeminjaman::where('nama', 'butuh maintenance')->first();
 
-            $newStatus = $statusTersedia;
-
-            if (in_array($kondisiAlat->nama, ['Rusak Ringan', 'Rusak Berat'])) {
-                if ($statusButuhMaintenance) {
-                    $newStatus = $statusButuhMaintenance;
+            // 3. Process each item
+            foreach ($request->items as $itemId => $itemData) {
+                $fotoPath = null;
+                if ($request->hasFile("items.$itemId.foto")) {
+                    $fotoPath = $request->file("items.$itemId.foto")
+                        ->store('pengembalian', 'public');
                 }
-            }
 
-            foreach ($peminjaman->peminjamanItem as $item) {
-                if ($item->sarprasItem) {
-                    $item->sarprasItem->update(['status_pinjam_id' => $newStatus->id]);
+                // Create PengembalianItem
+                PengembalianItem::create([
+                    'pengembalian_id' => $pengembalian->id,
+                    'sarpras_item_id' => $itemData['sarpras_item_id'],
+                    'kondisi_alat_id' => $itemData['kondisi_alat_id'],
+                    'deskripsi_kerusakan' => $itemData['deskripsi_kerusakan'] ?? null,
+                    'foto_url' => $fotoPath,
+                ]);
+
+                // Update SarprasItem
+                $sarprasItem = SarprasItem::findOrFail($itemData['sarpras_item_id']);
+                $kondisiAlat = KondisiAlat::findOrFail($itemData['kondisi_alat_id']);
+
+                $newStatusId = $statusTersedia?->id;
+                if (in_array($kondisiAlat->nama, ['Rusak Ringan', 'Rusak Berat'])) {
+                    $newStatusId = $statusButuhMaintenance?->id ?? $newStatusId;
                 }
-            }
 
-            $statusDikembalikan = StatusPinjam::where('nama', 'Dikembalikan')->first();
-            if ($statusDikembalikan) {
-                $peminjaman->update(['status_pinjam_id' => $statusDikembalikan->id]);
+                $sarprasItem->update([
+                    'kondisi_alat_id' => $itemData['kondisi_alat_id'],
+                    'status_peminjaman_id' => $newStatusId
+                ]);
             }
         });
 
-        ActivityLogger::log(
-            'Pengembalian Sarpras',
-            'Menerima pengembalian peminjaman dengan KODE ' . $peminjaman->kode_peminjaman . ' - Kondisi: ' . $kondisiAlat->nama
-        );
-
-        return back()->with('success', 'Pengembalian berhasil dicatat');
+        return redirect()->route('pengembalian.index')->with('success', 'Pengembalian berhasil dicatat');
     }
 
     public function riwayat()
     {
-        return view('pages.public.pengembalian.riwayat', [
-            'pengembalian' => Pengembalian::with('approvedBy', 'peminjaman', 'kondisiAlat')
+        return view('pages.pengembalian.riwayat', [
+            'pengembalian' => Pengembalian::with(['approvedBy', 'peminjaman.user', 'items.sarprasItem.sarpras', 'items.kondisiAlat'])
                 ->latest('tanggal_pengembalian')
                 ->get(),
             'title' => 'Riwayat Pengembalian'
+        ]);
+    }
+
+    public function detail($id)
+    {
+        $pengembalian = Pengembalian::with([
+            'approvedBy',
+            'peminjaman.user',
+            'items.sarprasItem.sarpras',
+            'items.sarprasItem.lokasi',
+            'items.kondisiAlat'
+        ])->findOrFail($id);
+
+        return view('pages.pengembalian.detail', [
+            'title' => 'Detail Pengembalian',
+            'pengembalian' => $pengembalian
         ]);
     }
 
