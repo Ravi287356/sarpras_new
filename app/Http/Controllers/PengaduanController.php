@@ -129,7 +129,7 @@ class PengaduanController extends Controller
         );
 
         return redirect()
-            ->route('admin.pengaduan.index')
+            ->route(auth()->user()->role->nama . '.pengaduan.index')
             ->with('success', 'Status pengaduan berhasil diperbarui ✅');
     }
 
@@ -160,27 +160,52 @@ class PengaduanController extends Controller
     }
 
     /**
-     * ADMIN / OPERATOR - tanggapi pengaduan (simpan catatan)
+     * ADMIN / OPERATOR - export data pengaduan ke CSV
      */
-    public function storeCatatan(Request $request, Pengaduan $pengaduan)
+    public function exportCSV()
     {
-        $request->validate([
-            'catatan' => 'required|string',
-        ]);
+        $filename = 'pengaduan-' . date('Y-m-d-H-i-s') . '.csv';
 
-        CatatanPengaduan::create([
-            'pengaduan_id' => $pengaduan->id,
-            'user_id'      => auth()->id(),
-            'catatan'      => $request->catatan,
-        ]);
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
 
-        $this->logActivity(
-            aksi: 'PENGADUAN_TANGGAP',
-            deskripsi: 'Tanggapi pengaduan "' . $pengaduan->judul . '" - oleh ' . auth()->user()->username
-        );
+        $columns = array('ID', 'User', 'Judul', 'Lokasi', 'Kategori', 'Status', 'Tanggal', 'Deskripsi');
 
-        return redirect()
-            ->route('admin.pengaduan.index')
-            ->with('success', 'Tanggapan berhasil disimpan ✅');
+        $callback = function() use ($columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            $query = Pengaduan::with(['user', 'lokasi', 'kategori'])->latest();
+
+            // Filter logic same as index if needed, but usually export checks all or filtered via query params
+            // For now, let's just export all or maybe reuse filter logic if requested.
+            // Simplified: export ALL for now as per minimal implementation.
+            
+            // If user filtered in index, they might expect filtered export, but 
+            // the route is separate and doesn't pass params by default in the view link.
+            // The view link in index.blade.php is just route('...export').
+            
+            foreach ($query->cursor() as $item) {
+                $row['ID']        = $item->id;
+                $row['User']      = $item->user->username ?? '-';
+                $row['Judul']     = $item->judul;
+                $row['Lokasi']    = $item->lokasi->nama ?? '-';
+                $row['Kategori']  = $item->kategori->nama ?? '-';
+                $row['Status']    = $item->status;
+                $row['Tanggal']   = $item->created_at->format('Y-m-d H:i:s');
+                $row['Deskripsi'] = $item->deskripsi;
+
+                fputcsv($file, array($row['ID'], $row['User'], $row['Judul'], $row['Lokasi'], $row['Kategori'], $row['Status'], $row['Tanggal'], $row['Deskripsi']));
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

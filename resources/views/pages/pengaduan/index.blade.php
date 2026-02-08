@@ -12,30 +12,37 @@
             </p>
         </div>
 
-        <!-- Filter -->
-        <form method="GET" class="flex gap-2">
-            <select name="lokasi_id" class="px-3 py-2 rounded-lg bg-slate-950 text-white ring-1 ring-slate-700">
-                <option value="">Semua Lokasi</option>
-                @foreach($lokasi as $lok)
-                    <option value="{{ $lok->id }}" {{ request('lokasi_id') == $lok->id ? 'selected' : '' }}>
-                        {{ $lok->nama }}
-                    </option>
-                @endforeach
-            </select>
+        <!-- Filter & Export -->
+        <div class="flex items-center gap-3">
+            <form method="GET" class="flex gap-2">
+                <select name="lokasi_id" class="px-3 py-2 rounded-lg bg-slate-950 text-white ring-1 ring-slate-700">
+                    <option value="">Semua Lokasi</option>
+                    @foreach($lokasi as $lok)
+                        <option value="{{ $lok->id }}" {{ request('lokasi_id') == $lok->id ? 'selected' : '' }}>
+                            {{ $lok->nama }}
+                        </option>
+                    @endforeach
+                </select>
 
-            <select name="status" class="px-3 py-2 rounded-lg bg-slate-950 text-white ring-1 ring-slate-700">
-                <option value="">Semua Status</option>
-                @foreach(['Belum Ditindaklanjuti','Sedang Diproses','Selesai','Ditutup'] as $st)
-                    <option value="{{ $st }}" {{ request('status') == $st ? 'selected' : '' }}>
-                        {{ $st }}
-                    </option>
-                @endforeach
-            </select>
+                <select name="status" class="px-3 py-2 rounded-lg bg-slate-950 text-white ring-1 ring-slate-700">
+                    <option value="">Semua Status</option>
+                    @foreach(['Belum Ditindaklanjuti','Sedang Diproses','Selesai','Ditutup'] as $st)
+                        <option value="{{ $st }}" {{ request('status') == $st ? 'selected' : '' }}>
+                            {{ $st }}
+                        </option>
+                    @endforeach
+                </select>
 
-            <button class="px-4 py-2 bg-emerald-600/20 ring-1 ring-emerald-500/30 rounded-lg">
-                Filter
-            </button>
-        </form>
+                <button class="px-4 py-2 bg-emerald-600/20 ring-1 ring-emerald-500/30 rounded-lg">
+                    Filter
+                </button>
+            </form>
+            
+            <a href="{{ route(auth()->user()->role->nama . '.pengaduan.export') }}" 
+               class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-medium transition shadow-lg shadow-emerald-500/20">
+                <i class="fa-solid fa-file-csv mr-2"></i> Export CSV
+            </a>
+        </div>
     </div>
 
     <!-- Table -->

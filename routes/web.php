@@ -16,6 +16,7 @@ use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\PengembalianController;
 use App\Http\Controllers\MaintenanceAlatController;
+use App\Http\Controllers\LaporanController;
 
 Route::get('/', function () {
     return redirect()->route('login.form');
@@ -54,6 +55,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/pengembalian/{pengembalian}/detail', [PengembalianController::class, 'detail'])->name('pengembalian.detail');
         Route::get('/pengembalian/{id}', [PengembalianController::class, 'show'])->name('pengembalian.show');
         Route::post('/pengembalian/store', [PengembalianController::class, 'store'])->name('pengembalian.store');
+
+        // Activity Logs (shared between admin & operator)
+        Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity_logs.index');
+
+        // LAPORAN (shared between admin & operator)
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/laporan/export', [LaporanController::class, 'exportExcel'])->name('laporan.export');
     });
 
     // =========================
@@ -62,10 +70,6 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/', [DashboardController::class, 'adminDashboard'])->name('dashboard');
-
-        // Activity Logs (kalau mau dihiraukan, boleh hapus bagian ini)
-        Route::get('/activity-logs', [ActivityLogController::class, 'index'])
-            ->name('activity_logs.index');
 
         // profil
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -126,6 +130,8 @@ Route::middleware('auth')->group(function () {
         // PENGADUAN
         Route::get('/pengaduan', [PengaduanController::class, 'index'])
             ->name('pengaduan.index'); // list semua pengaduan
+        Route::get('/pengaduan/export', [PengaduanController::class, 'exportCSV'])
+            ->name('pengaduan.export');
 
         Route::put('/pengaduan/{pengaduan}', [PengaduanController::class, 'updateStatus'])
             ->name('pengaduan.updateStatus'); // update status
@@ -140,10 +146,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/maintenance', [MaintenanceAlatController::class, 'index'])->name('maintenance.index');
         Route::post('/maintenance/{item}/start', [MaintenanceAlatController::class, 'startMaintenance'])->name('maintenance.start');
         Route::post('/maintenance/{item}/finish', [MaintenanceAlatController::class, 'finishMaintenance'])->name('maintenance.finish');
-
-        // LAPORAN
-        Route::get('/laporan', [\App\Http\Controllers\LaporanController::class, 'index'])->name('laporan.index');
-        Route::get('/laporan/export', [\App\Http\Controllers\LaporanController::class, 'exportExcel'])->name('laporan.export');
     });
 
 
@@ -168,11 +170,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/peminjaman-aktif', [PeminjamanController::class, 'indexAktif'])->name('peminjaman.aktif');
         Route::put('/peminjaman/{peminjaman}/kembalikan', [PeminjamanController::class, 'kembalikan'])->name('peminjaman.kembalikan');
         Route::get('/peminjaman/{id}/struk', [PeminjamanController::class, 'struk'])->name('peminjaman.struk');
+        Route::get('/peminjaman/export', [PeminjamanController::class, 'exportCSV'])->name('peminjaman.export');
         Route::get('/riwayat-peminjaman', [PeminjamanController::class, 'riwayat'])->name('peminjaman.riwayat');
 
         // PENGADUAN
         Route::get('/pengaduan', [PengaduanController::class, 'index'])
             ->name('pengaduan.index'); // list semua pengaduan
+        Route::get('/pengaduan/export', [PengaduanController::class, 'exportCSV'])
+            ->name('pengaduan.export');
         Route::get('/pengaduan/{pengaduan}/respond', [PengaduanController::class, 'respond'])
             ->name('pengaduan.respond'); // halaman respond
         Route::put('/pengaduan/{pengaduan}', [PengaduanController::class, 'updateStatus'])

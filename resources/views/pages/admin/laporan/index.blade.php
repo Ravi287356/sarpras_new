@@ -15,7 +15,7 @@
 
     {{-- FILTER FORM --}}
     <div class="bg-slate-900/40 ring-1 ring-white/10 rounded-2xl p-6 mb-8">
-        <form action="{{ route('admin.laporan.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <form action="{{ route('laporan.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
             <div>
                 <label class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">Jenis Laporan</label>
                 <select name="type" class="w-full bg-slate-800 border-white/10 rounded-xl text-sm text-slate-100 focus:ring-emerald-500/50">
@@ -38,7 +38,7 @@
                     Preview
                 </button>
                 @if($startDate && $endDate)
-                    <a href="{{ route('admin.laporan.export', request()->all()) }}" 
+                    <a href="{{ route('laporan.export', request()->all()) }}" 
                        class="flex-1 bg-slate-700 hover:bg-slate-600 text-white text-sm font-semibold py-2.5 rounded-xl transition text-center border border-white/10">
                         Export Excel
                     </a>

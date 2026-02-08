@@ -1,0 +1,38 @@
+
+   Symfony\Component\ErrorHandler\Error\FatalError 
+
+  Declaration of App\Http\Controllers\PengaduanController::logActivity($aksi, $deskripsi) must be compatible with App\Http\Controllers\Controller::logActivity(string $aksi, ?string $deskripsi = null): void
+
+  at app\Http\Controllers\PengaduanController.php:227
+    223Γûò 
+    224Γûò         return response()->stream($callback, 200, $headers);
+    225Γûò     }
+    226Γûò 
+  Γ₧£ 227Γûò     protected function logActivity($aksi, $deskripsi)
+    228Γûò     {
+    229Γûò         // Check if ActivityLogger helper exists (it was in composer.json autoload)
+    230Γûò         if (class_exists(\App\Helpers\ActivityLogger::class)) {
+    231Γûò              \App\Helpers\ActivityLogger::log($aksi, $deskripsi);
+
+
+   Whoops\Exception\ErrorException 
+
+  Declaration of App\Http\Controllers\PengaduanController::logActivity($aksi, $deskripsi) must be compatible with App\Http\Controllers\Controller::logActivity(string $aksi, ?string $deskripsi = null): void
+
+  at app\Http\Controllers\PengaduanController.php:227
+    223Γûò 
+    224Γûò         return response()->stream($callback, 200, $headers);
+    225Γûò     }
+    226Γûò 
+  Γ₧£ 227Γûò     protected function logActivity($aksi, $deskripsi)
+    228Γûò     {
+    229Γûò         // Check if ActivityLogger helper exists (it was in composer.json autoload)
+    230Γûò         if (class_exists(\App\Helpers\ActivityLogger::class)) {
+    231Γûò              \App\Helpers\ActivityLogger::log($aksi, $deskripsi);
+
+  1   vendor\filp\whoops\src\Whoops\Run.php:520
+      Whoops\Run::handleError("Declaration of App\Http\Controllers\PengaduanController::logActivity($aksi, $deskripsi) must be compatible with App\Http\Controllers\Controller::logActivity(string $aksi, ?string $deskripsi = null): void", "D:\laragon\www\sarpras\app\Http\Controllers\PengaduanController.php")
+
+  2   [internal]:0
+      Whoops\Run::handleShutdown()
+

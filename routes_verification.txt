@@ -1,0 +1,98 @@
+
+  GET|HEAD  / ...... 
+  GET|HEAD  activity-logs activity_logs.index ΓÇ║ ActivityLogControlleΓÇª
+  GET|HEAD  admin aΓÇª
+  GET|HEAD  admin/create_user admin.users.create ΓÇ║ UserControΓÇª
+  GET|HEAD  admin/kategori_sarpras admin.kategori_sarpras.index ΓÇ║ KategoriSarprasΓÇª
+  POST      admin/kategori_sarpras admin.kategori_sarpras.store ΓÇ║ KategoriSarprasΓÇª
+  GET|HEAD  admin/kategori_sarpras/create admin.kategori_sarpras.create ΓÇ║ KategoriSΓÇª
+  PUT       admin/kategori_sarpras/{id} admin.kategori_sarpras.update ΓÇ║ KategoriSarΓÇª
+  DELETE    admin/kategori_sarpras/{id} admin.kategori_sarpras.destroy ΓÇ║ KategoriSarpΓÇª
+  GET|HEAD  admin/kategori_sarpras/{id}/edit admin.kategori_sarpras.edit ΓÇ║ KateΓÇª
+  GET|HEAD  admin/laporan admin.laporan.index ΓÇ║ LaporanControlleΓÇª
+  GET|HEAD  admin/laporan/export admin.laporan.export ΓÇ║ LaporanControllΓÇª
+  GET|HEAD  admin/lokasi admin.lokasi.index ΓÇ║ LokasiControllerΓÇª
+  POST      admin/lokasi admin.lokasi.store ΓÇ║ LokasiControllerΓÇª
+  GET|HEAD  admin/lokasi/create admin.lokasi.create ΓÇ║ LokasiContΓÇª
+  PUT       admin/lokasi/{lokasi} admin.lokasi.update ΓÇ║ LokasiCoΓÇª
+  DELETE    admin/lokasi/{lokasi} admin.lokasi.destroy ΓÇ║ LokasiConΓÇª
+  GET|HEAD  admin/lokasi/{lokasi}/edit admin.lokasi.edit ΓÇ║ LΓÇª
+  GET|HEAD  admin/maintenance admin.maintenance.index ΓÇ║ MaintenanceAlatContrΓÇª
+  POST      admin/maintenance/{item}/finish admin.maintenance.finish ΓÇ║ MaintenanceAlatConΓÇª
+  POST      admin/maintenance/{item}/start admin.maintenance.start ΓÇ║ MaintenanceAlatConΓÇª
+  GET|HEAD  admin/manage_user admin.users.index ΓÇ║ UserContrΓÇª
+  POST      admin/manage_user admin.users.store ΓÇ║ UserContrΓÇª
+  PUT       admin/manage_user/{id} admin.users.update ΓÇ║ UserCΓÇª
+  DELETE    admin/manage_user/{id} admin.users.destroy ΓÇ║ UserCoΓÇª
+  GET|HEAD  admin/manage_user/{id}/edit admin.users.edit ΓÇª
+  GET|HEAD  admin/peminjaman-aktif admin.peminjaman.aktif ΓÇ║ PeminjamanContrΓÇª
+  GET|HEAD  admin/peminjaman-permintaan admin.peminjaman.permintaan ΓÇ║ PeminjamanContrΓÇª
+  GET|HEAD  admin/peminjaman/export admin.peminjaman.export ΓÇ║ PeminjamanConΓÇª
+  GET|HEAD  admin/peminjaman/{id}/struk admin.peminjaman.struk ΓÇ║ PeminΓÇª
+  PUT       admin/peminjaman/{peminjaman}/kembalikan admin.peminjaman.kembalikanΓÇª
+  PUT       admin/peminjaman/{peminjaman}/setujui admin.peminjaman.setujuiΓÇª
+  PUT       admin/peminjaman/{peminjaman}/tolak admin.peminjaman.tolakΓÇª
+  GET|HEAD  admin/pengaduan admin.pengaduan.index ΓÇ║ PengaduanControlΓÇª
+  GET|HEAD  admin/pengaduan/export admin.pengaduan.export ΓÇ║ PengaduanContΓÇª
+  PUT       admin/pengaduan/{pengaduan} admin.pengaduan.updateStatus ΓÇ║ PengaduanCoΓÇª
+  GET|HEAD  admin/pengaduan/{pengaduan} admin.pengaduan.show ΓÇ║ PenΓÇª
+  GET|HEAD  admin/pengaduan/{pengaduan}/respond admin.pengaduan.respond ΓÇª
+  GET|HEAD  admin/profile admin.profile.edit ΓÇ║ ProfileControllΓÇª
+  PUT       admin/profile admin.profile.update ΓÇ║ ProfileControllerΓÇª
+  GET|HEAD  admin/riwayat-peminjaman admin.peminjaman.riwayat ΓÇ║ PeminjamanΓÇª
+  GET|HEAD  admin/sarpras admin.sarpras.index ΓÇ║ SarprasControlleΓÇª
+  POST      admin/sarpras admin.sarpras.store ΓÇ║ SarprasControlleΓÇª
+  PUT       admin/sarpras-item/{sarprasItem} admin.sarpras_item.update ΓÇ║ SaΓÇª
+  DELETE    admin/sarpras-item/{sarprasItem} admin.sarpras_item.destroy ΓÇ║ SarΓÇª
+  GET|HEAD  admin/sarpras-item/{sarprasItem}/edit admin.sarpras_item.edΓÇª
+  GET|HEAD  admin/sarpras/create admin.sarpras.create ΓÇ║ SarprasConΓÇª
+  PUT       admin/sarpras/{sarpras} admin.sarpras.update ΓÇ║ SarprasΓÇª
+  DELETE    admin/sarpras/{sarpras} admin.sarpras.destroy ΓÇ║ SarprasCΓÇª
+  GET|HEAD  admin/sarpras/{sarpras}/edit admin.sarpras.edit ΓÇ║ ΓÇª
+  GET|HEAD  admin/sarpras/{sarpras}/items admin.sarpras.items ΓÇ║ ΓÇª
+  POST      admin/sarpras/{sarpras}/items admin.sarpras_item.store ΓÇ║ SarpΓÇª
+  GET|HEAD  admin/sarpras/{sarpras}/items/create admin.sarpras_item.create ΓÇª
+  GET|HEAD  dashboard dashboΓÇª
+  GET|HEAD  login lΓÇª
+  POST      login lΓÇª
+  POST      logout ΓÇª
+  GET|HEAD  operator operator.dashboard ΓÇ║ DashboardController@operatorDashboaΓÇª
+  GET|HEAD  operator/peminjaman-aktif operator.peminjaman.aktif ΓÇ║ PeminjamanCoΓÇª
+  GET|HEAD  operator/peminjaman-permintaan operator.peminjaman.permintaan ΓÇ║ PeminjamanCoΓÇª
+  GET|HEAD  operator/peminjaman/export operator.peminjaman.export ΓÇ║ PeminjamanΓÇª
+  GET|HEAD  operator/peminjaman/{id}/struk operator.peminjaman.struk ΓÇ║ PeΓÇª
+  PUT       operator/peminjaman/{peminjaman}/kembalikan operator.peminjaman.kembaliΓÇª
+  PUT       operator/peminjaman/{peminjaman}/setujui operator.peminjaman.setuΓÇª
+  PUT       operator/peminjaman/{peminjaman}/tolak operator.peminjaman.toΓÇª
+  GET|HEAD  operator/pengaduan operator.pengaduan.index ΓÇ║ PengaduanContΓÇª
+  GET|HEAD  operator/pengaduan/export operator.pengaduan.export ΓÇ║ PengaduanCΓÇª
+  PUT       operator/pengaduan/{pengaduan} operator.pengaduan.updateStatus ΓÇ║ PengaduaΓÇª
+  GET|HEAD  operator/pengaduan/{pengaduan} operator.pengaduan.show ΓÇ║ ΓÇª
+  GET|HEAD  operator/pengaduan/{pengaduan}/respond operator.pengaduan.respoΓÇª
+  GET|HEAD  operator/profile operator.profile.edit ΓÇ║ ProfileContrΓÇª
+  PUT       operator/profile operator.profile.update ΓÇ║ ProfileControlΓÇª
+  GET|HEAD  operator/riwayat-peminjaman operator.peminjaman.riwayat ΓÇ║ PeminjaΓÇª
+  GET|HEAD  pengembalian pengembalian.index ΓÇ║ PengembalianControllerΓÇª
+  GET|HEAD  pengembalian/export pengembalian.export ΓÇ║ PengembalianControlΓÇª
+  GET|HEAD  pengembalian/riwayat pengembalian.riwayat ΓÇ║ PengembalianContΓÇª
+  POST      pengembalian/search pengembalian.search ΓÇ║ PengembalianController@seaΓÇª
+  POST      pengembalian/store pengembalian.store ΓÇ║ PengembalianContΓÇª
+  GET|HEAD  pengembalian/{id} pengembalian.show ΓÇ║ PengembalianContΓÇª
+  GET|HEAD  pengembalian/{pengembalian}/detail pengembalian.detail ΓÇ║ PΓÇª
+  GET|HEAD  sarpras-tersedia sarpras.available ΓÇ║ SarprasAvailableControΓÇª
+  GET|HEAD  storage/{path} storaΓÇª
+  GET|HEAD  up ..... 
+  GET|HEAD  user usΓÇª
+  POST      user/peminjaman user.peminjaman.store ΓÇ║ PeminjamanControlΓÇª
+  GET|HEAD  user/peminjaman/create/{sarpras_id} user.peminjaman.create ΓÇª
+  GET|HEAD  user/peminjaman/{id}/struk user.peminjaman.struk ΓÇ║ PeminjΓÇª
+  POST      user/pengaduan user.pengaduan.store ΓÇ║ PengaduanControllΓÇª
+  GET|HEAD  user/pengaduan/create user.pengaduan.create ΓÇ║ PengaduanCoΓÇª
+  GET|HEAD  user/pengaduan/riwayat user.pengaduan.riwayat ΓÇ║ PengaduanControΓÇª
+  GET|HEAD  user/profile user.profile.edit ΓÇ║ ProfileControlleΓÇª
+  PUT       user/profile user.profile.update ΓÇ║ ProfileController@ΓÇª
+  GET|HEAD  user/riwayat-peminjaman user.peminjaman.riwayat ΓÇ║ PeminjamanContrΓÇª
+  GET|HEAD  user/sarpras-bisa-dipinjam user.peminjaman.available ΓÇ║ PeminjamanΓÇª
+
+ Showing [94] routes
+

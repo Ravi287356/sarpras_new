@@ -130,13 +130,19 @@ class MenuServiceProvider extends ServiceProvider
                         // (Kalau activity log mau dihiraukan, boleh dihapus dari sini)
                         [
                             'label' => 'Activity Log',
-                            'route' => route('admin.activity_logs.index'),
-                            'active' => 'admin/activity-logs*',
+                            'route' => route('activity_logs.index'),
+                            'active' => 'activity-logs*',
+                        ],
+
+                        [
+                            'label' => 'Pengaduan',
+                            'route' => route('admin.pengaduan.index'),
+                            'active' => 'admin/pengaduan*',
                         ],
                         [
                             'label' => 'Laporan',
-                            'route' => route('admin.laporan.index'),
-                            'active' => 'admin/laporan*',
+                            'route' => route('laporan.index'),
+                            'active' => 'laporan*',
                         ],
                     ];
                 } elseif ($roleName === 'operator') {
@@ -191,6 +197,23 @@ class MenuServiceProvider extends ServiceProvider
                                     'active' => 'pengembalian/riwayat*',
                                 ],
                             ],
+                        ],
+
+                        [
+                            'label' => 'Activity Log',
+                            'route' => route('activity_logs.index'),
+                            'active' => 'activity-logs*',
+                        ],
+
+                        [
+                            'label' => 'Pengaduan',
+                            'route' => route('operator.pengaduan.index'),
+                            'active' => 'operator/pengaduan*',
+                        ],
+                        [
+                            'label' => 'Laporan',
+                            'route' => route('laporan.index'),
+                            'active' => 'laporan*',
                         ],
                     ];
                 } elseif ($roleName === 'user') {
