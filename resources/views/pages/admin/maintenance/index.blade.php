@@ -83,6 +83,8 @@
                                             Mulai Maintenance
                                         </button>
                                     </form>
+                                @elseif($status === 'HILANG')
+                                    <span class="text-xs text-rose-400 font-bold uppercase tracking-wider">Hilang</span>
                                 @else
                                     <span class="text-xs text-slate-500 italic">Sedang Dipinjam</span>
                                 @endif

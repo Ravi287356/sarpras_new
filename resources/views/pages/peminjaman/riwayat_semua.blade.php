@@ -51,11 +51,33 @@
                             </td>
 
                             <td class="px-5 py-4">
-                                {{ strtoupper($row->status) }}
+                                @php
+                                    $statusColor = match($row->status) {
+                                        'dipinjam' => 'text-amber-400 bg-amber-400/10 border-amber-400/20',
+                                        'disetujui' => 'text-blue-400 bg-blue-400/10 border-blue-400/20',
+                                        'dikembalikan' => 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
+                                        'ditolak' => 'text-rose-400 bg-rose-400/10 border-rose-400/20',
+                                        'menunggu' => 'text-slate-400 bg-slate-400/10 border-slate-400/20',
+                                        default => 'text-slate-400 bg-slate-400/10 border-slate-400/20',
+                                    };
+                                @endphp
+                                <div class="flex flex-col gap-1">
+                                    <span class="inline-flex items-center w-fit px-2 py-0.5 rounded text-xs font-medium border {{ $statusColor }}">
+                                        {{ strtoupper($row->status) }}
+                                    </span>
+                                    @if($row->status === 'ditolak' && $row->alasan_penolakan)
+                                        <div class="text-[10px] text-rose-300/70 italic leading-tight max-w-[150px]">
+                                            Ket: {{ $row->alasan_penolakan }}
+                                        </div>
+                                    @endif
+                                </div>
                             </td>
 
                             <td class="px-5 py-4">
-                                {{ $row->approver?->username ?? '-' }}
+                                <div class="text-xs">
+                                    <div class="font-medium text-slate-200">{{ $row->approver?->username ?? '-' }}</div>
+                                    <div class="text-slate-500">{{ $row->status === 'ditolak' ? 'Penolak' : 'Approver' }}</div>
+                                </div>
                             </td>
 
                             <td class="px-5 py-4 text-center">

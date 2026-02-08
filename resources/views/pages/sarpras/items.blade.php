@@ -17,11 +17,6 @@
         </a>
     </div>
 
-    @if (session('success'))
-        <div class="mb-5 rounded-xl bg-emerald-500/10 ring-1 ring-emerald-500/30 p-4 text-emerald-200 text-sm">
-            {{ session('success') }}
-        </div>
-    @endif
 
     <div class="rounded-2xl bg-slate-900/40 ring-1 ring-white/10 overflow-hidden">
         <div class="overflow-x-auto">
@@ -50,8 +45,7 @@
                                     Edit
                                 </a>
 
-                                <form action="{{ route('admin.sarpras_item.destroy', $item->id) }}" method="POST"
-                                      onsubmit="return confirm('Hapus item ini?')">
+                                <form action="{{ route('admin.sarpras_item.destroy', $item->id) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <button class="px-3 py-2 rounded-lg bg-red-500/10 text-red-200

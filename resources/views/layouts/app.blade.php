@@ -60,5 +60,104 @@
 </div>
 
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const swalConfig = {
+            showClass: { popup: '', backdrop: '' },
+            hideClass: { popup: '', backdrop: '' },
+            background: '#0f172a',
+            color: '#f8fafc',
+            buttonsStyling: true,
+            reverseButtons: true,
+            backdrop: 'rgba(2, 6, 23, 0.6)',
+            width: '24rem',
+            padding: '1.5rem',
+            customClass: {
+                popup: 'rounded-xl border border-white/10 shadow-lg',
+                confirmButton: 'rounded-lg px-6 py-2 text-sm font-semibold',
+                cancelButton: 'rounded-lg px-6 py-2 text-sm font-semibold'
+            }
+        };
+
+        // Flash Messages (Fast & Auto-dismiss)
+        @if(session('success'))
+            Swal.fire({
+                ...swalConfig,
+                title: 'Berhasil',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        @endif
+
+        @if(session('error'))
+            Swal.fire({
+                ...swalConfig,
+                title: 'Gagal',
+                text: "{{ session('error') }}",
+                icon: 'error',
+                confirmButtonText: 'Tutup',
+                confirmButtonColor: '#ef4444'
+            });
+        @endif
+
+        // Global Confirmation
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+            
+            // Skip already confirmed or GET forms or logout
+            if (form.dataset.swalOk === 'true' || form.method.toLowerCase() === 'get' || form.action.includes('logout')) {
+                return;
+            }
+
+            e.preventDefault();
+
+            const submitBtn = e.submitter;
+            const btnText = submitBtn ? submitBtn.innerText.trim() : 'Simpan';
+            const actionLower = btnText.toLowerCase();
+            
+            let color = '#3b82f6';
+            if (actionLower.includes('hapus') || actionLower.includes('tolak')) color = '#ef4444';
+            if (actionLower.includes('tambah') || actionLower.includes('setujui') || actionLower.includes('selesai')) color = '#10b981';
+
+            Swal.fire({
+                ...swalConfig,
+                title: btnText + '?',
+                text: 'Lanjutkan tindakan ini?',
+                showCancelButton: true,
+                confirmButtonText: btnText,
+                cancelButtonText: 'Batal',
+                confirmButtonColor: color,
+                cancelButtonColor: '#334155',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.dataset.swalOk = 'true';
+                    // Trigger native submission more robustly
+                    const newSubmitter = document.createElement('input');
+                    newSubmitter.type = 'hidden';
+                    newSubmitter.name = submitBtn?.name || '_submit_confirmed';
+                    newSubmitter.value = submitBtn?.value || 'true';
+                    form.appendChild(newSubmitter);
+                    
+                    form.submit();
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    /* Absolute reset for SweetAlert2 movement */
+    .swal2-container, .swal2-popup, .swal2-backdrop-show, .swal2-backdrop-hide {
+        transition: none !important;
+        animation: none !important;
+    }
+    div:where(.swal2-container) div:where(.swal2-popup) {
+        animation: none !important;
+    }
+</style>
 </body>
 </html>

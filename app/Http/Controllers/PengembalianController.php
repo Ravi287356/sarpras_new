@@ -124,8 +124,8 @@ class PengembalianController extends Controller
             // 2. Update Peminjaman status
             $peminjaman->update([
                 'tanggal_kembali_actual' => now(),
-                'status' => 'dikembalikan'
             ]);
+            $peminjaman->syncStatus('dikembalikan');
 
             $statusTersedia = StatusPeminjaman::where('nama', 'tersedia')->first();
             $statusButuhMaintenance = StatusPeminjaman::where('nama', 'butuh maintenance')->first();

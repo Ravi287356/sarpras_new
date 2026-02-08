@@ -15,11 +15,6 @@
         </a>
     </div>
 
-    @if (session('success'))
-        <div class="mb-4 rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-4 text-emerald-200">
-            {{ session('success') }}
-        </div>
-    @endif
 
     <div class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
         <table class="w-full text-sm">
@@ -50,8 +45,7 @@
                                 Edit
                             </a>
 
-                            <form action="{{ route('admin.users.destroy', $u->id) }}" method="POST"
-                                  onsubmit="return confirm('Yakin hapus user ini?')">
+                            <form action="{{ route('admin.users.destroy', $u->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"

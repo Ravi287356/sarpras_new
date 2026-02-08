@@ -9,11 +9,6 @@
         </div>
     </div>
 
-    @if (session('success'))
-        <div class="mb-5 rounded-xl bg-emerald-500/10 ring-1 ring-emerald-500/30 p-4 text-emerald-200 text-sm">
-            {{ session('success') }}
-        </div>
-    @endif
 
     @if ($errors->any())
         <div class="mb-5 rounded-xl bg-red-500/10 ring-1 ring-red-500/30 p-4 text-red-200 text-sm">

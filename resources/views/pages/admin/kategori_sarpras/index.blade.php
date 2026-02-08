@@ -14,17 +14,6 @@
         </a>
     </div>
 
-    @if(session('success'))
-        <div class="mb-5 rounded-xl bg-emerald-500/10 ring-1 ring-emerald-500/30 p-4 text-emerald-200">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="mb-5 rounded-xl bg-red-500/10 ring-1 ring-red-500/30 p-4 text-red-200">
-            {{ session('error') }}
-        </div>
-    @endif
 
     <div class="rounded-2xl bg-slate-900/40 ring-1 ring-slate-800 overflow-hidden">
         <table class="w-full text-sm">
@@ -50,8 +39,7 @@
                                 Edit
                             </a>
 
-                            <form action="{{ route('admin.kategori_sarpras.destroy', $k->id) }}" method="POST"
-                                  onsubmit="return confirm('Yakin hapus kategori ini?')">
+                            <form action="{{ route('admin.kategori_sarpras.destroy', $k->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button

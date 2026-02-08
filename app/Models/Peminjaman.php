@@ -80,6 +80,15 @@ class Peminjaman extends Model
         return $this->belongsTo(User::class, 'approved_by');
     }
 
+    public function syncStatus($statusStr)
+    {
+        $statusRecord = StatusPeminjaman::where('nama', $statusStr)->first();
+        $this->update([
+            'status' => $statusStr,
+            'status_peminjaman_id' => $statusRecord?->id
+        ]);
+    }
+
     public function pengembalian()
     {
         return $this->hasOne(Pengembalian::class);

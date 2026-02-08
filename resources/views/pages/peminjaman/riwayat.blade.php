@@ -46,10 +46,16 @@
                                 {{ $row->tanggal_kembali_rencana ? \Carbon\Carbon::parse($row->tanggal_kembali_rencana)->format('d-m-Y') : '-' }}
                             </td>
                             <td class="px-5 py-4">
-                                <span class="px-3 py-1 rounded-full text-xs ring-1
-                                    {{ $row->status === 'dikembalikan' || $row->status === 'disetujui'
-                                        ? 'bg-emerald-500/10 text-emerald-200 ring-emerald-500/30'
-                                        : 'bg-red-800 text-red-200 ring-red-500' }}">
+                                @php
+                                    $statusColor = match($row->status) {
+                                        'dipinjam' => 'bg-amber-500/10 text-amber-200 ring-amber-500/30',
+                                        'disetujui' => 'bg-blue-500/10 text-blue-200 ring-blue-500/30',
+                                        'dikembalikan' => 'bg-emerald-500/10 text-emerald-200 ring-emerald-500/30',
+                                        'ditolak' => 'bg-rose-500/10 text-rose-200 ring-rose-500/30',
+                                        default => 'bg-slate-500/10 text-slate-200 ring-slate-500/30',
+                                    };
+                                @endphp
+                                <span class="px-3 py-1 rounded-full text-xs ring-1 {{ $statusColor }}">
                                     {{ strtoupper($row->status) }}
                                 </span>
                             </td>

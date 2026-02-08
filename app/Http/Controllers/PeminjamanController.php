@@ -7,6 +7,7 @@ use App\Models\Sarpras;
 use App\Models\StatusPeminjaman;
 use App\Models\PeminjamanItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -134,14 +135,13 @@ class PeminjamanController extends Controller
             }
 
             $peminjaman = Peminjaman::create([
-                'user_id' => auth()->id(),
-                // 'sarpras_id' => $sarpras->id, // Removed from schema
-                // 'jumlah' => (int) $request->jumlah, // Removed from schema
+                'user_id' => Auth::id(),
                 'tujuan' => $request->tujuan,
                 'tanggal_pinjam' => $request->tanggal_pinjam,
                 'tanggal_kembali_rencana' => $request->tanggal_kembali_rencana,
-                'status' => 'menunggu',
             ]);
+
+            $peminjaman->syncStatus('menunggu');
 
             // Immediately Link Items
             foreach ($available_items as $item) {
@@ -184,7 +184,7 @@ class PeminjamanController extends Controller
                 'items.sarprasItem.lokasi',
                 'approver'
             ])
-            ->whereIn('status', ['disetujui', 'dikembalikan']) // ✅ FILTER PENTING
+            ->whereIn('status', ['disetujui', 'dikembalikan', 'ditolak']) // ✅ TERMASUK DITOLAK
             ->latest('approved_at')
             ->paginate(10);
 
@@ -254,11 +254,11 @@ class PeminjamanController extends Controller
             }
 
             $peminjaman->update([
-                'status' => 'disetujui',
-                'approved_by' => auth()->id(),
+                'approved_by' => Auth::id(),
                 'approved_at' => now(),
                 'alasan_penolakan' => null,
             ]);
+            $peminjaman->syncStatus('disetujui');
         });
 
         return back()->with('success', 'Peminjaman berhasil disetujui ');
@@ -280,11 +280,12 @@ class PeminjamanController extends Controller
         // So no manual rollback of items needed unless we want to clean up DB.
 
         $peminjaman->update([
-            'status' => 'ditolak',
-            'approved_by' => auth()->id(),
+            'approved_by' => Auth::id(),
             'approved_at' => now(),
             'alasan_penolakan' => $request->alasan_penolakan,
         ]);
+        
+        $peminjaman->syncStatus('ditolak');
 
         return back()->with('success', 'Peminjaman berhasil ditolak ');
     }
@@ -304,9 +305,10 @@ class PeminjamanController extends Controller
             }
 
             $peminjaman->update([
-                'status' => 'dikembalikan',
-                 'tanggal_kembali_actual' => now(),
+                'tanggal_kembali_actual' => now(),
             ]);
+
+            $peminjaman->syncStatus('dikembalikan');
         });
 
         return back()->with('success', 'Peminjaman berhasil dikembalikan ');

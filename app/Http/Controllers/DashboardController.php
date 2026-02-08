@@ -21,10 +21,16 @@ class DashboardController extends Controller
         // Asset Health Report Data
         $brokenConditionIds = KondisiAlat::where('nama', 'like', '%rusak%')->pluck('id');
         
-        // Rusak items
-        $rusakItems = SarprasItem::with(['sarpras.kategori', 'lokasi', 'kondisi'])
-            ->whereHas('kondisi', function ($q) {
-                $q->where('nama', 'like', '%rusak%');
+        // Rusak items / Needs Maintenance
+        $rusakItems = SarprasItem::with(['sarpras.kategori', 'lokasi', 'kondisi', 'statusPeminjaman'])
+            ->where(function($query) {
+                $query->whereHas('kondisi', function ($q) {
+                    $q->where('nama', 'like', '%rusak%')
+                      ->orWhere('nama', 'like', '%maintenance%');
+                })
+                ->orWhereHas('statusPeminjaman', function ($q) {
+                    $q->where('nama', 'like', '%maintenance%');
+                });
             })
             ->latest('updated_at')
             ->take(5) // Show top 5 in dashboard
@@ -61,10 +67,20 @@ class DashboardController extends Controller
         // Summary Counts for Overview
         $countBaik = SarprasItem::whereHas('kondisi', function ($q) {
             $q->where('nama', 'Baik');
+        })->where(function($q) {
+            $q->whereDoesntHave('statusPeminjaman', function($sq) {
+                $sq->where('nama', 'like', '%maintenance%');
+            })->orWhereNull('status_peminjaman_id');
         })->count();
 
-        $countRusak = SarprasItem::whereHas('kondisi', function ($q) {
-            $q->where('nama', 'like', '%rusak%');
+        $countRusak = SarprasItem::where(function($query) {
+            $query->whereHas('kondisi', function ($q) {
+                $q->where('nama', 'like', '%rusak%')
+                  ->orWhere('nama', 'like', '%maintenance%');
+            })
+            ->orWhereHas('statusPeminjaman', function ($q) {
+                $q->where('nama', 'like', '%maintenance%');
+            });
         })->count();
 
         $countHilang = SarprasItem::whereHas('statusPeminjaman', function ($q) {

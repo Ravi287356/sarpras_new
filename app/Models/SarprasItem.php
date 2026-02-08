@@ -117,11 +117,16 @@ class SarprasItem extends Model
     public function scopeAvailable($query)
     {
         return $query->where(function ($q) {
-            $q->whereNull('status_peminjaman_id') // Keep for safety if DB allows null in future or legacy
+            $q->whereNull('status_peminjaman_id')
               ->orWhereHas('statusPeminjaman', function ($sq) {
-                  $sq->whereIn('nama', ['tersedia', 'dikembalikan', 'sedang maintenance', 'butuh maintenance']);
+                  $sq->whereIn('nama', ['tersedia', 'dikembalikan']);
               });
-        })->whereDoesntHave('peminjamanItems', function ($q) {
+        })
+        ->whereHas('kondisi', function ($q) {
+            $q->where('nama', 'NOT LIKE', '%hilang%')
+              ->where('nama', 'NOT LIKE', '%rusak berat%'); // Allow Rusak Ringan
+        })
+        ->whereDoesntHave('peminjamanItems', function ($q) {
             $q->whereHas('peminjaman', function ($pq) {
                 $pq->whereIn('status', ['menunggu', 'disetujui', 'dipinjam']);
             });
@@ -139,6 +144,11 @@ class SarprasItem extends Model
      */
     public function getDisplayStatus()
     {
+        // If condition is lost
+        if (stripos($this->kondisi?->nama ?? '', 'hilang') !== false) {
+            return 'HILANG';
+        }
+
         // If currently being borrowed
         if ($this->statusPeminjaman?->nama === 'dipinjam') {
             return 'DIPINJAM';
@@ -156,9 +166,6 @@ class SarprasItem extends Model
             return 'BUTUH MAINTENANCE';
         }
 
-        // Check if item is in "menunggu" state (booked but not yet approved)
-        // Note: This might be expensive for lists, better to use eager loading or generic availability check
-        // But for single item display it's fine.
         $isPending = $this->peminjamanItems()
             ->whereHas('peminjaman', function ($q) {
                 $q->where('status', 'menunggu');
@@ -168,16 +175,16 @@ class SarprasItem extends Model
             return 'DIPESAN'; 
         }
 
-        // If condition is damaged
+        // If condition is damaged (Only Rusak Berat requires maintenance before borrowing)
         $kondisiNama = $this->kondisi?->nama ?? '';
         if (
-            stripos($kondisiNama, 'rusak') !== false ||
+            stripos($kondisiNama, 'rusak berat') !== false ||
             stripos($kondisiNama, 'maintenance') !== false
         ) {
             return 'BUTUH MAINTENANCE';
         }
 
-        // Default to available
+        // Default to available (Includes Baik and Rusak Ringan)
         return 'TERSEDIA';
     }
 
@@ -192,6 +199,7 @@ class SarprasItem extends Model
             'TERSEDIA' => 'emerald',
             'DIPINJAM' => 'amber',
             'DIPESAN' => 'blue',
+            'HILANG' => 'rose',
             'BUTUH MAINTENANCE' => 'rose',
             'MAINTENANCE' => 'slate',
             'SEDANG MAINTENANCE' => 'indigo',
