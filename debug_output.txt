@@ -1,0 +1,9 @@
+Kode | Status | Kondisi | Scope Available
+------------------------------------------
+PR-EL-004 | tersedia | Baik | YES
+PR-EL-007 | tersedia | Baik | YES
+PR-EL-001 | tersedia | Baik | NO
+PR-EL-002 | butuh maintenance | Rusak Ringan | YES
+PR-EL-006 | tersedia | Baik | YES
+PR-EL-005 | butuh maintenance | Rusak Ringan | YES
+PR-EL-003 | tersedia | Baik | YES

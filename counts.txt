@@ -1,0 +1,17 @@
+--- Items Count per Status ---
+- [1] dipinjam: 0 items
+- [2] dikembalikan: 0 items
+- [3] terlambat: 0 items
+- [4] tersedia: 4 items
+- [5] butuh maintenance: 2 items
+- [6] menunggu persetujuan: 0 items
+- [7] disetujui: 0 items
+- [8] ditolak: 0 items
+- [9] hilang: 0 items
+- [10] Maintenance: 0 items
+
+--- Items Count per Condition ---
+- [1] Baik: 4 items
+- [2] Rusak Ringan: 1 items
+- [3] Rusak Berat: 1 items
+- [4] Hilang: 0 items

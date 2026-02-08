@@ -17,18 +17,23 @@
             <div class="mb-4 text-slate-200">
                 <div class="text-lg font-semibold">{{ $sarpras->nama }}</div>
                 <div class="text-sm text-slate-300 mt-1">
-                    Kode: <span class="text-slate-100">{{ $sarpras->items->first()?->kode ?? '-' }}</span> •
+                    Kode SAMPLE: <span class="text-slate-100">{{ $sarpras->sample_item?->kode ?? '-' }}</span> •
                     Kategori: <span class="text-slate-100">{{ $sarpras->kategori?->nama ?? '-' }}</span> •
-                    Lokasi: <span class="text-slate-100">{{ $sarpras->items->first()?->lokasi?->nama ?? '-' }}</span>
+                    Lokasi: <span class="text-slate-100">{{ $sarpras->sample_item?->lokasi?->nama ?? '-' }}</span>
                 </div>
                 <div class="text-sm text-slate-300 mt-1">
-                    Stok tersedia: <span class="text-slate-100 font-semibold">{{ (int) $sarpras->jumlah_stok }}</span>
+                    Kondisi yang dipilih: <span class="text-slate-100 font-bold uppercase">{{ $sarpras->selected_kondisi_nama }}</span>
+                </div>
+                <div class="text-sm text-slate-300 mt-1">
+                    Stok tersedia (kondisi ini): <span class="text-slate-100 font-semibold">{{ (int) $sarpras->jumlah_stok }}</span>
                 </div>
             </div>
 
             <form action="{{ route('user.peminjaman.store') }}" method="POST" class="space-y-4">
                 @csrf
                 <input type="hidden" name="sarpras_id" value="{{ $sarpras->id }}">
+                <input type="hidden" name="kondisi_alat_id" value="{{ $sarpras->selected_kondisi_id }}">
+                <input type="hidden" name="status_peminjaman_id" value="{{ $sarpras->selected_status_id }}">
 
                 <div>
                     <label class="text-sm text-slate-200">Jumlah</label>

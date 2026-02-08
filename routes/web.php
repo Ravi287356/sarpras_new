@@ -15,6 +15,7 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\PengembalianController;
+use App\Http\Controllers\MaintenanceAlatController;
 
 Route::get('/', function () {
     return redirect()->route('login.form');
@@ -134,6 +135,15 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/pengaduan/{pengaduan}/respond', [PengaduanController::class, 'respond'])
             ->name('pengaduan.respond'); // halaman respond
+
+        // MAINTENANCE ALAT
+        Route::get('/maintenance', [MaintenanceAlatController::class, 'index'])->name('maintenance.index');
+        Route::post('/maintenance/{item}/start', [MaintenanceAlatController::class, 'startMaintenance'])->name('maintenance.start');
+        Route::post('/maintenance/{item}/finish', [MaintenanceAlatController::class, 'finishMaintenance'])->name('maintenance.finish');
+
+        // LAPORAN
+        Route::get('/laporan', [\App\Http\Controllers\LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/laporan/export', [\App\Http\Controllers\LaporanController::class, 'exportExcel'])->name('laporan.export');
     });
 
 

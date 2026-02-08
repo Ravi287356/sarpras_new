@@ -45,7 +45,7 @@
                         <td class="px-4 py-3">
                             <div class="font-semibold">{{ $row->sarpras?->nama ?? '-' }}</div>
                             <div class="text-xs text-slate-300">
-                                {{ $row->sarpras?->kategori?->nama ?? '-' }} • {{ $row->sarpras?->lokasi?->nama ?? '-' }}
+                                {{ $row->sarpras?->kategori?->nama ?? '-' }}
                             </div>
                         </td>
 
@@ -65,7 +65,7 @@
                                    class="px-3 py-2 rounded-xl border border-blue-400/50 bg-blue-500/10 hover:bg-blue-500/20 transition text-blue-300 text-xs">
                                     📄 Struk
                                 </a>
-                                
+
                             </div>
                         </td>
                     </tr>

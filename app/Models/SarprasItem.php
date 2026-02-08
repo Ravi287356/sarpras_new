@@ -119,7 +119,7 @@ class SarprasItem extends Model
         return $query->where(function ($q) {
             $q->whereNull('status_peminjaman_id') // Keep for safety if DB allows null in future or legacy
               ->orWhereHas('statusPeminjaman', function ($sq) {
-                  $sq->whereIn('nama', ['tersedia', 'dikembalikan']);
+                  $sq->whereIn('nama', ['tersedia', 'dikembalikan', 'sedang maintenance', 'butuh maintenance']);
               });
         })->whereDoesntHave('peminjamanItems', function ($q) {
             $q->whereHas('peminjaman', function ($pq) {
@@ -142,6 +142,18 @@ class SarprasItem extends Model
         // If currently being borrowed
         if ($this->statusPeminjaman?->nama === 'dipinjam') {
             return 'DIPINJAM';
+        }
+
+        if ($this->statusPeminjaman?->nama === 'Maintenance' || $this->statusPeminjaman?->nama === 'maintenance') {
+            return 'MAINTENANCE';
+        }
+
+        if ($this->statusPeminjaman?->nama === 'sedang maintenance') {
+            return 'SEDANG MAINTENANCE';
+        }
+
+        if ($this->statusPeminjaman?->nama === 'butuh maintenance') {
+            return 'BUTUH MAINTENANCE';
         }
 
         // Check if item is in "menunggu" state (booked but not yet approved)
@@ -181,6 +193,8 @@ class SarprasItem extends Model
             'DIPINJAM' => 'amber',
             'DIPESAN' => 'blue',
             'BUTUH MAINTENANCE' => 'rose',
+            'MAINTENANCE' => 'slate',
+            'SEDANG MAINTENANCE' => 'indigo',
             default => 'slate',
         };
     }

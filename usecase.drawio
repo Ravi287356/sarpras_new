@@ -1,0 +1,170 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Use Case Sistem Sarpras">
+    <mxGraphModel grid="1" gridSize="10">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- SYSTEM -->
+        <mxCell id="sys" value="Sistem Sarana dan Prasarana"
+          style="rounded=1;strokeWidth=2;whiteSpace=wrap;"
+          vertex="1" parent="1">
+          <mxGeometry x="200" y="40" width="620" height="540" as="geometry"/>
+        </mxCell>
+
+        <!-- ACTORS -->
+        <mxCell id="pengguna" value="Pengguna Umum"
+          style="shape=umlActor;"
+          vertex="1" parent="1">
+          <mxGeometry x="40" y="240" width="60" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="admin" value="Admin"
+          style="shape=umlActor;"
+          vertex="1" parent="1">
+          <mxGeometry x="860" y="160" width="60" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="petugas" value="Petugas"
+          style="shape=umlActor;"
+          vertex="1" parent="1">
+          <mxGeometry x="860" y="360" width="60" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- USE CASE UMUM -->
+        <mxCell id="ucLogin" value="Login / Logout"
+          style="ellipse;" vertex="1" parent="1">
+          <mxGeometry x="520" y="80" width="200" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- USE CASE PENGGUNA -->
+        <mxCell id="uc1" value="Lihat Daftar Sarpras"
+          style="ellipse;" vertex="1" parent="1">
+          <mxGeometry x="260" y="140" width="220" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="uc2" value="Ajukan Peminjaman"
+          style="ellipse;" vertex="1" parent="1">
+          <mxGeometry x="260" y="200" width="220" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="uc3" value="Lihat Riwayat Peminjaman"
+          style="ellipse;" vertex="1" parent="1">
+          <mxGeometry x="260" y="260" width="240" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="uc4" value="Ajukan Pengaduan"
+          style="ellipse;" vertex="1" parent="1">
+          <mxGeometry x="260" y="320" width="220" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="uc5" value="Lihat Riwayat Pengaduan"
+          style="ellipse;" vertex="1" parent="1">
+          <mxGeometry x="260" y="380" width="240" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- USE CASE ADMIN & PETUGAS -->
+        <mxCell id="uc7" value="Kelola User"
+          style="ellipse;" vertex="1" parent="1">
+          <mxGeometry x="520" y="140" width="200" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="uc8" value="Kelola Kategori &amp; Lokasi Sarpras"
+          style="ellipse;" vertex="1" parent="1">
+          <mxGeometry x="480" y="200" width="300" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="uc9" value="Kelola Sarpras"
+          style="ellipse;" vertex="1" parent="1">
+          <mxGeometry x="520" y="260" width="220" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="uc10" value="Setujui / Tolak Peminjaman"
+          style="ellipse;" vertex="1" parent="1">
+          <mxGeometry x="480" y="320" width="300" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="uc11" value="Pengembalian Sarpras"
+          style="ellipse;" vertex="1" parent="1">
+          <mxGeometry x="500" y="380" width="260" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="uc12" value="Kelola Pengaduan"
+          style="ellipse;" vertex="1" parent="1">
+          <mxGeometry x="520" y="440" width="240" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="uc13" value="Lihat Laporan"
+          style="ellipse;" vertex="1" parent="1">
+          <mxGeometry x="540" y="500" width="200" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- CONNECTIONS LOGIN (SEMUA USER) -->
+        <mxCell edge="1" source="pengguna" target="ucLogin" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell edge="1" source="admin" target="ucLogin" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell edge="1" source="petugas" target="ucLogin" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- CONNECTIONS PENGGUNA -->
+        <mxCell edge="1" source="pengguna" target="uc1" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell edge="1" source="pengguna" target="uc2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell edge="1" source="pengguna" target="uc3" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell edge="1" source="pengguna" target="uc4" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell edge="1" source="pengguna" target="uc5" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- CONNECTIONS ADMIN -->
+        <mxCell edge="1" source="admin" target="uc7" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell edge="1" source="admin" target="uc8" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell edge="1" source="admin" target="uc9" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell edge="1" source="admin" target="uc10" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell edge="1" source="admin" target="uc11" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell edge="1" source="admin" target="uc12" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell edge="1" source="admin" target="uc13" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- CONNECTIONS PETUGAS -->
+        <mxCell edge="1" source="petugas" target="uc10" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell edge="1" source="petugas" target="uc11" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell edge="1" source="petugas" target="uc12" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell edge="1" source="petugas" target="uc13" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

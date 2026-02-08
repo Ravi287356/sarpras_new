@@ -35,7 +35,7 @@
                             <td class="px-5 py-4">
                                 <div class="font-medium">{{ $row->sarpras?->nama ?? '-' }}</div>
                                 <div class="text-xs text-slate-400">
-                                    {{ $row->sarpras?->kategori?->nama ?? '-' }} • {{ $row->sarpras?->lokasi?->nama ?? '-' }}
+                                    {{ $row->sarpras?->kategori?->nama ?? '-' }} 
                                 </div>
                             </td>
                             <td class="px-5 py-4">{{ (int)$row->jumlah }}</td>

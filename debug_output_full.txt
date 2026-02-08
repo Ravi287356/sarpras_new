@@ -1,0 +1,12 @@
+Kode | Status | Sarpras | Sarpras Deleted | Available Scope
+----------------------------------------------------------
+PR-EL-004 | tersedia | PROYEKTOR | NO | YES
+PR-EL-007 | tersedia | PROYEKTOR | NO | YES
+PR-EL-001 | tersedia | PROYEKTOR | NO | NO
+PR-EL-002 | butuh maintenance | PROYEKTOR | NO | YES
+PR-EL-006 | tersedia | PROYEKTOR | NO | YES
+PR-EL-005 | butuh maintenance | PROYEKTOR | NO | YES
+PR-EL-003 | tersedia | PROYEKTOR | NO | YES
+
+--- Sarpras Lists ---
+Sarpras: PROYEKTOR, Deleted: NULL

@@ -1,0 +1,17 @@
+--- Status Peminjaman ---
+- [1] dipinjam
+- [2] dikembalikan
+- [3] terlambat
+- [4] tersedia
+- [5] butuh maintenance
+- [6] menunggu persetujuan
+- [7] disetujui
+- [8] ditolak
+- [9] hilang
+- [10] Maintenance
+
+--- Kondisi Alat ---
+- [1] Baik
+- [2] Rusak Ringan
+- [3] Rusak Berat
+- [4] Hilang

@@ -15,28 +15,45 @@ class PeminjamanController extends Controller
 {
     public function available()
     {
-        $items = Sarpras::with(['kategori', 'items'])
+        $sarpras_list = Sarpras::with(['kategori', 'items'])
             ->whereNull('deleted_at')
             ->orderBy('nama', 'asc')
-            ->get()
-            ->filter(function ($sarpras) {
-                // Count available items using the new scope logic manually or via relation
-                // Ideally we use the scope on the relation, but here we loaded all items.
-                // Let's filter the loaded items collection to minimize N+1 or reloading.
-                
-                // However, scopeAvailable() uses complex where clauses that are best executed in SQL.
-                // Re-querying might be safer for accuracy, but let's try to replicate the logic in PHP for the preloaded collection 
-                // OR better: load count with closure.
-                
-                // Let's rely on a fresh count using the scope for accuracy
-                $count = $sarpras->items()->available()->count();
+            ->get();
 
-                // Add count to object for view
-                $sarpras->jumlah_stok = $count;
+        $grouped_items = collect();
 
-                return $count > 0;
-            })
-            ->values();
+        foreach ($sarpras_list as $sarpras) {
+             // Get available items grouped by condition AND status
+             $availableGroups = $sarpras->items()
+                ->available()
+                ->with(['kondisi', 'lokasi', 'statusPeminjaman'])
+                ->get()
+                ->groupBy(function($item) {
+                    return $item->kondisi_alat_id . '-' . ($item->status_peminjaman_id ?? 'null');
+                });
+
+            foreach ($availableGroups as $key => $itemsByGroup) {
+                $firstItem = $itemsByGroup->first();
+                
+                // Clone sarpras to hold condition-specific info
+                $group = clone $sarpras;
+                $group->jumlah_stok = $itemsByGroup->count();
+                $group->kondisi_saat_ini = $firstItem->kondisi?->nama ?? '-';
+                $group->kondisi_id = $firstItem->kondisi_alat_id;
+                $group->status_peminjaman_id = $firstItem->status_peminjaman_id;
+                $group->lokasi_saat_ini = $firstItem->lokasi?->nama ?? '-';
+                $group->sample_item = $firstItem;
+
+                $grouped_items->push($group);
+            }
+        }
+
+        // Sort: BUTUH MAINTENANCE at the top
+        $grouped_items = $grouped_items->sortByDesc(function ($item) {
+            return $item->sample_item?->getDisplayStatus() === 'BUTUH MAINTENANCE';
+        });
+
+        $items = $grouped_items->values();
 
         // ✅ sesuaikan dengan folder kamu (resources/views/pages/peminjaman/available.blade.php)
         return view('pages.peminjaman.available', [
@@ -45,13 +62,34 @@ class PeminjamanController extends Controller
         ]);
     }
 
-    public function create(string $sarpras_id)
+    public function create(string $sarpras_id, Request $request)
     {
         $sarpras = Sarpras::whereNull('deleted_at')->findOrFail($sarpras_id);
+        $kondisi_id = $request->query('kondisi_id');
+        $status_id = $request->query('status_id');
 
-        // Calculate available items using scope
-        $available_count = $sarpras->items()->available()->count();
+        // Calculate available items using scope and specific condition/status if provided
+        $query = $sarpras->items()->available();
+        
+        if ($kondisi_id) {
+            $query->where('kondisi_alat_id', $kondisi_id);
+        }
+
+        if ($status_id !== null && $status_id !== 'null') {
+            $query->where('status_peminjaman_id', $status_id);
+        } elseif ($status_id === 'null') {
+            $query->whereNull('status_peminjaman_id');
+        }
+
+        $available_count = $query->count();
         $sarpras->jumlah_stok = $available_count;
+        
+        // Get sample item for location and condition display
+        $sampleItem = (clone $query)->with(['kondisi', 'lokasi', 'statusPeminjaman'])->first();
+        $sarpras->selected_kondisi_nama = $sampleItem?->kondisi?->nama ?? '-';
+        $sarpras->selected_kondisi_id = $kondisi_id;
+        $sarpras->selected_status_id = $status_id;
+        $sarpras->sample_item = $sampleItem;
 
         // ✅ sesuaikan (resources/views/pages/peminjaman/create.blade.php)
         return view('pages.peminjaman.create', [
@@ -65,6 +103,8 @@ class PeminjamanController extends Controller
         $request->validate([
             'sarpras_id' => ['required', 'exists:sarpras,id'],
             'jumlah' => ['required', 'integer', 'min:1'],
+            'kondisi_alat_id' => ['nullable', 'exists:kondisi_alat,id'],
+            'status_peminjaman_id' => ['nullable'], // Dynamic check
             'tujuan' => ['nullable', 'string'],
             'tanggal_pinjam' => ['required', 'date'],
             'tanggal_kembali_rencana' => ['required', 'date', 'after_or_equal:tanggal_pinjam'],
@@ -74,7 +114,19 @@ class PeminjamanController extends Controller
             $sarpras = Sarpras::whereNull('deleted_at')->lockForUpdate()->findOrFail($request->sarpras_id);
 
             // Get exact available items using the scope and lock them
-            $available_items = $sarpras->items()->available()->lockForUpdate()->limit($request->jumlah)->get();
+            $query = $sarpras->items()->available();
+            
+            if ($request->kondisi_alat_id) {
+                $query->where('kondisi_alat_id', $request->kondisi_alat_id);
+            }
+
+            if ($request->status_peminjaman_id !== null && $request->status_peminjaman_id !== 'null') {
+                $query->where('status_peminjaman_id', $request->status_peminjaman_id);
+            } elseif ($request->status_peminjaman_id === 'null') {
+                $query->whereNull('status_peminjaman_id');
+            }
+
+            $available_items = $query->lockForUpdate()->limit($request->jumlah)->get();
 
             if ($available_items->count() < $request->jumlah) {
                 // Throw validation exception manually to rollback transaction

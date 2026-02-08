@@ -15,33 +15,45 @@ class SarprasAvailableController extends Controller
 
         $sarpras_list = $query->get();
 
-        // Map sarpras with available items count
-        $items = $sarpras_list->map(function ($sarpras) use ($role) {
-            // Count available items using scope
-            // Note: Since items are preloaded, we could filter in PHP, 
-            // but scopeAvailable uses complex queries that are hard to replicate on collection perfectly without loading more data.
-            // Let's rely on the query for accuracy (N+1 query per sarpras is acceptable for small datasets, 
-            // but for larger ones we should use withCount with scope if Laravel supported it easily on relation, 
-            // or just manual count like below).
-            
-            $available_count = $sarpras->items()->available()->count();
+        // Group by Sarpras + Condition
+        $items = collect();
+        
+        foreach ($sarpras_list as $sarpras) {
+            // Get available items for this sarpras, grouped by condition AND status
+            $groupedItems = $sarpras->items()
+                ->available()
+                ->with(['kondisi', 'lokasi', 'statusPeminjaman'])
+                ->get()
+                ->groupBy(function($item) {
+                    return $item->kondisi_alat_id . '-' . ($item->status_peminjaman_id ?? 'null');
+                });
 
-            // For users, only show sarpras with available items
-            if ($role === 'user' && $available_count === 0) {
-                return null;
+            foreach ($groupedItems as $key => $itemsByGroup) {
+                $firstItem = $itemsByGroup->first();
+                
+                // Clone the sarpras object to store group-specific data
+                $group = clone $sarpras;
+                $group->jumlah_stok = $itemsByGroup->count();
+                $group->kondisi_saat_ini = $firstItem->kondisi?->nama ?? '-';
+                $group->lokasi_saat_ini = $firstItem->lokasi?->nama ?? '-';
+                $group->sample_item = $firstItem;
+                $group->group_status_id = $firstItem->status_peminjaman_id;
+                $group->group_kondisi_id = $firstItem->kondisi_alat_id;
+                
+                $items->push($group);
             }
+        }
 
-            // Add available count to sarpras object
-            $sarpras->jumlah_stok = $available_count;
-            
-            // Get kondisi from first available item (fetch one to display sample condition)
-            $firstAvailable = $sarpras->items()->available()->first();
-            $sarpras->kondisi_saat_ini = $firstAvailable?->kondisi?->nama ?? '-';
+        // Sort: BUTUH MAINTENANCE at the top, then by nama ascending
+        $items = $items->sortBy(function ($item) {
+            // Return array for multi-criteria sort: [primary, secondary]
+            // 0 for BUTUH MAINTENANCE (sorts first), 1 for others (sorts after)
+            $priority = $item->sample_item?->getDisplayStatus() === 'BUTUH MAINTENANCE' ? 0 : 1;
+            return [$priority, $item->nama];
+        });
 
-            return $sarpras;
-        })->filter(function ($item) {
-            return $item !== null;
-        })->values();
+        // For users, the filtering is already implicit because we only push if $groupedItems is not empty
+        // But let's be explicit and re-filter if needed (though foreach naturally handles empty)
 
         return view('pages.sarpras.available', [
             'title' => 'Sarpras Tersedia',

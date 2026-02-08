@@ -111,9 +111,20 @@ class MenuServiceProvider extends ServiceProvider
                             'active' => 'admin/lokasi*',
                         ],
                         [
-                            'label' => 'Data Sarpras',
-                            'route' => route('admin.sarpras.index'),
-                            'active' => 'admin/sarpras*',
+                            'label' => 'Manajemen Sarpras',
+                            'active' => 'admin/sarpras*|admin/maintenance*',
+                            'children' => [
+                                [
+                                    'label' => 'Data Sarpras',
+                                    'route' => route('admin.sarpras.index'),
+                                    'active' => 'admin/sarpras*',
+                                ],
+                                [
+                                    'label' => 'Maintenance Alat',
+                                    'route' => route('admin.maintenance.index'),
+                                    'active' => 'admin/maintenance*',
+                                ],
+                            ],
                         ],
 
                         // (Kalau activity log mau dihiraukan, boleh dihapus dari sini)
@@ -121,6 +132,11 @@ class MenuServiceProvider extends ServiceProvider
                             'label' => 'Activity Log',
                             'route' => route('admin.activity_logs.index'),
                             'active' => 'admin/activity-logs*',
+                        ],
+                        [
+                            'label' => 'Laporan',
+                            'route' => route('admin.laporan.index'),
+                            'active' => 'admin/laporan*',
                         ],
                     ];
                 } elseif ($roleName === 'operator') {
@@ -151,7 +167,7 @@ class MenuServiceProvider extends ServiceProvider
                                     'route' => route('operator.peminjaman.aktif'),
                                     'active' => 'operator/peminjaman-aktif*',
                                 ],
-                                 [
+                                [
                                     'label' => 'Riwayat Peminjaman',
                                     'route' => route('operator.peminjaman.riwayat'),
                                     'active' => 'operator/peminjaman-riwayat*',
