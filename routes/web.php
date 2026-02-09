@@ -56,8 +56,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/pengembalian/{id}', [PengembalianController::class, 'show'])->name('pengembalian.show');
         Route::post('/pengembalian/store', [PengembalianController::class, 'store'])->name('pengembalian.store');
 
-        // Activity Logs (shared between admin & operator)
-        Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity_logs.index');
 
         // LAPORAN (shared between admin & operator)
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
@@ -74,6 +72,9 @@ Route::middleware('auth')->group(function () {
         // profil
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+        // Activity Logs
+        Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity_logs.index');
 
         // user
         Route::get('/manage_user', [UserController::class, 'index'])->name('users.index');

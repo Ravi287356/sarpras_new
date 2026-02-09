@@ -119,7 +119,7 @@ class SarprasItem extends Model
         return $query->where(function ($q) {
             $q->whereNull('status_peminjaman_id')
               ->orWhereHas('statusPeminjaman', function ($sq) {
-                  $sq->whereIn('nama', ['tersedia', 'dikembalikan']);
+                  $sq->whereIn('nama', ['tersedia', 'dikembalikan', 'butuh maintenance']);
               });
         })
         ->whereHas('kondisi', function ($q) {
@@ -175,16 +175,25 @@ class SarprasItem extends Model
             return 'DIPESAN'; 
         }
 
-        // If condition is damaged (Only Rusak Berat requires maintenance before borrowing)
+        // If condition is damaged
         $kondisiNama = $this->kondisi?->nama ?? '';
-        if (
-            stripos($kondisiNama, 'rusak berat') !== false ||
-            stripos($kondisiNama, 'maintenance') !== false
-        ) {
+        
+        // Rusak Berat implies strictly maintenance
+        if (stripos($kondisiNama, 'rusak berat') !== false) {
+             return 'BUTUH MAINTENANCE';
+        }
+
+        // Rusak Ringan is borrowable but displayed distinctly
+        if (stripos($kondisiNama, 'rusak ringan') !== false) {
+             return 'RUSAK RINGAN';
+        }
+
+        // Generic 'Maintenance' condition
+        if (stripos($kondisiNama, 'maintenance') !== false) {
             return 'BUTUH MAINTENANCE';
         }
 
-        // Default to available (Includes Baik and Rusak Ringan)
+        // Default to available (Includes Baik)
         return 'TERSEDIA';
     }
 
@@ -197,12 +206,13 @@ class SarprasItem extends Model
 
         return match ($status) {
             'TERSEDIA' => 'emerald',
-            'DIPINJAM' => 'amber',
-            'DIPESAN' => 'blue',
+            'RUSAK RINGAN' => 'amber', // Amber for Rusak Ringan
+            'DIPINJAM' => 'blue',      
+            'DIPESAN' => 'indigo',     
             'HILANG' => 'rose',
             'BUTUH MAINTENANCE' => 'rose',
             'MAINTENANCE' => 'slate',
-            'SEDANG MAINTENANCE' => 'indigo',
+            'SEDANG MAINTENANCE' => 'slate',
             default => 'slate',
         };
     }

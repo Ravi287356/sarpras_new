@@ -261,6 +261,12 @@ class PeminjamanController extends Controller
             $peminjaman->syncStatus('disetujui');
         });
 
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'PEMINJAMAN_SETUJUI',
+            deskripsi: 'Menyetujui peminjaman: ' . $peminjaman->kode_peminjaman . ' (User: ' . $peminjaman->user->username . ')'
+        );
+
         return back()->with('success', 'Peminjaman berhasil disetujui ');
     }
 
@@ -287,6 +293,12 @@ class PeminjamanController extends Controller
         
         $peminjaman->syncStatus('ditolak');
 
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'PEMINJAMAN_TOLAK',
+            deskripsi: 'Menolak peminjaman: ' . $peminjaman->kode_peminjaman . '. Alasan: ' . ($request->alasan_penolakan ?? '-')
+        );
+
         return back()->with('success', 'Peminjaman berhasil ditolak ');
     }
 
@@ -310,6 +322,12 @@ class PeminjamanController extends Controller
 
             $peminjaman->syncStatus('dikembalikan');
         });
+
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'PEMINJAMAN_KEMBALIKAN',
+            deskripsi: 'Memproses pengembalian peminjaman: ' . $peminjaman->kode_peminjaman
+        );
 
         return back()->with('success', 'Peminjaman berhasil dikembalikan ');
     }

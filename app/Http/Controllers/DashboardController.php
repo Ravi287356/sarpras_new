@@ -90,17 +90,19 @@ class DashboardController extends Controller
         })->count();
 
         // Top 5 frequent breakdowns (for overview)
-        $topItems = SarprasItem::select('sarpras_items.*')
+        // Top 10 products with most broken items (Historical based on returns)
+        $topItems = \App\Models\Sarpras::select('sarpras.*')
             ->selectSub(function ($query) use ($brokenConditionIds) {
                 $query->selectRaw('count(*)')
                     ->from('pengembalian_items')
-                    ->whereColumn('pengembalian_items.sarpras_item_id', 'sarpras_items.id')
-                    ->whereIn('pengembalian_items.kondisi_alat_id', $brokenConditionIds);
-            }, 'breakdown_count')
-            ->having('breakdown_count', '>', 0)
-            ->orderByDesc('breakdown_count')
-            ->limit(5)
-            ->with(['sarpras.kategori', 'lokasi'])
+                    ->join('sarpras_items', 'sarpras_items.id', '=', 'pengembalian_items.sarpras_item_id')
+                    ->whereColumn('sarpras_items.sarpras_id', 'sarpras.id')
+                    ->whereIn('pengembalian_items.kondisi_alat_id', $brokenConditionIds); 
+            }, 'rusak_count')
+            ->having('rusak_count', '>', 0)
+            ->orderByDesc('rusak_count')
+            ->limit(10)
+            ->with(['kategori'])
             ->get();
 
         return view('pages.admin.dashboard', [

@@ -163,6 +163,12 @@ class PengembalianController extends Controller
             }
         });
 
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'PENGEMBALIAN_CATAT',
+            deskripsi: 'Mencatat pengembalian untuk: ' . $peminjaman->kode_peminjaman
+        );
+
         return redirect()->route('pengembalian.index')->with('success', 'Pengembalian berhasil dicatat');
     }
 

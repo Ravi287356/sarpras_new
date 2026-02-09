@@ -1,7 +1,15 @@
-Condition: 'Baik' (ID: 1) -> Item Count: 37
-Condition: 'Rusak Ringan' (ID: 2) -> Item Count: 0
-Condition: 'Rusak Berat' (ID: 3) -> Item Count: 0
-Condition: 'Hilang' (ID: 4) -> Item Count: 1
+Condition: 'Baik' (ID: 1)
+  - Current Items: 37
+  - History Returns: 5
+Condition: 'Rusak Ringan' (ID: 2)
+  - Current Items: 0
+  - History Returns: 5
+Condition: 'Rusak Berat' (ID: 3)
+  - Current Items: 0
+  - History Returns: 1
+Condition: 'Hilang' (ID: 4)
+  - Current Items: 1
+  - History Returns: 1
 
 --- BY STATUS PEMINJAMAN ---
 Status: 'butuh maintenance' (ID: 5) -> Item Count: 0

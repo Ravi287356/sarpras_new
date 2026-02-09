@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Lokasi;
 use App\Models\Sarpras;
+use App\Models\SarprasItem;
 use Illuminate\Http\Request;
 
 class LokasiController extends Controller
@@ -77,15 +78,15 @@ class LokasiController extends Controller
 
     public function destroy(Lokasi $lokasi)
     {
-        // CEK DULU apakah lokasi dipakai sarpras
-        $sarprasAktif = Sarpras::where('lokasi_id', $lokasi->id)
+        // CEK DULU apakah lokasi dipakai sarpras item
+        $itemsAktif = SarprasItem::where('lokasi_id', $lokasi->id)
             ->whereNull('deleted_at')
             ->count();
 
-        if ($sarprasAktif > 0) {
+        if ($itemsAktif > 0) {
             return back()->with(
                 'error',
-                'Lokasi tidak bisa dihapus karena masih digunakan oleh ' . $sarprasAktif . ' sarpras.'
+                'Lokasi tidak bisa dihapus karena masih digunakan oleh ' . $itemsAktif . ' item sarpras.'
             );
         }
 

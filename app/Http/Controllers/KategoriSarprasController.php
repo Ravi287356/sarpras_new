@@ -49,16 +49,19 @@ class KategoriSarprasController extends Controller
             ->with('success', 'Kategori berhasil ditambahkan ✅');
     }
 
-    public function edit(KategoriSarpras $kategori)
+    public function edit($id)
     {
+        $kategori = KategoriSarpras::findOrFail($id);
+
         return view('pages.admin.kategori_sarpras.edit', [
             'title' => 'Edit Kategori Sarpras',
             'kategori' => $kategori,
         ]);
     }
 
-    public function update(Request $request, KategoriSarpras $kategori)
+    public function update(Request $request, $id)
     {
+        $kategori = KategoriSarpras::findOrFail($id);
         $request->validate([
             'nama' => 'required|string|max:255|unique:kategori_sarpras,nama,' . $kategori->id,
             'deskripsi' => 'nullable|string',

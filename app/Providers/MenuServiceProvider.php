@@ -130,8 +130,8 @@ class MenuServiceProvider extends ServiceProvider
                         // (Kalau activity log mau dihiraukan, boleh dihapus dari sini)
                         [
                             'label' => 'Activity Log',
-                            'route' => route('activity_logs.index'),
-                            'active' => 'activity-logs*',
+                            'route' => route('admin.activity_logs.index'),
+                            'active' => 'admin/activity-logs*',
                         ],
 
                         [
@@ -157,6 +157,8 @@ class MenuServiceProvider extends ServiceProvider
                             'route' => route('sarpras.available'),
                             'active' => 'sarpras-tersedia*',
                         ],
+
+
 
                         // ✅ MENU PEMINJAMAN (OPERATOR)
                         [
@@ -199,11 +201,6 @@ class MenuServiceProvider extends ServiceProvider
                             ],
                         ],
 
-                        [
-                            'label' => 'Activity Log',
-                            'route' => route('activity_logs.index'),
-                            'active' => 'activity-logs*',
-                        ],
 
                         [
                             'label' => 'Pengaduan',

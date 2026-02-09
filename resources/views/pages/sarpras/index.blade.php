@@ -42,10 +42,7 @@
                                     Inventory
                                 </a>
 
-                                <a href="{{ route('admin.sarpras.edit', $row->id) }}"
-                                   class="px-4 py-2 rounded-xl ring-1 ring-white/10 hover:bg-white/5 transition">
-                                    Edit
-                                </a>
+                                
 
                                 <form action="{{ route('admin.sarpras.destroy', $row->id) }}" method="POST">
                                     @csrf

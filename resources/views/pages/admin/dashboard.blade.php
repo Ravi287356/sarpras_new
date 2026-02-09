@@ -29,22 +29,22 @@
     <div x-data="{ activeTab: 'overview' }" class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden">
         {{-- TABS NAVIGATION --}}
         <div class="flex border-b border-white/10 bg-slate-950/50">
-            <button @click="activeTab = 'overview'" 
+            <button @click="activeTab = 'overview'"
                 :class="activeTab === 'overview' ? 'border-blue-500 text-blue-400 bg-white/5' : 'border-transparent text-slate-400 hover:text-slate-200'"
                 class="flex items-center gap-2 px-6 py-4 text-sm font-semibold border-b-2 transition-all">
                 <i class="fa-solid fa-chart-pie"></i> Overview
             </button>
-            <button @click="activeTab = 'rusak'" 
+            <button @click="activeTab = 'rusak'"
                 :class="activeTab === 'rusak' ? 'border-rose-500 text-rose-400 bg-white/5' : 'border-transparent text-slate-400 hover:text-slate-200'"
                 class="flex items-center gap-2 px-6 py-4 text-sm font-semibold border-b-2 transition-all">
                 <span class="w-2 h-2 rounded-full bg-rose-500"></span> Alat Rusak ({{ $countRusak }})
             </button>
-            <button @click="activeTab = 'top'" 
+            <button @click="activeTab = 'top'"
                 :class="activeTab === 'top' ? 'border-yellow-500 text-yellow-400 bg-white/5' : 'border-transparent text-slate-400 hover:text-slate-200'"
                 class="flex items-center gap-2 px-6 py-4 text-sm font-semibold border-b-2 transition-all">
                 <i class="fa-solid fa-trophy text-yellow-500"></i> Top 10 Rusak
             </button>
-            <button @click="activeTab = 'hilang'" 
+            <button @click="activeTab = 'hilang'"
                 :class="activeTab === 'hilang' ? 'border-red-500 text-red-400 bg-white/5' : 'border-transparent text-slate-400 hover:text-slate-200'"
                 class="flex items-center gap-2 px-6 py-4 text-sm font-semibold border-b-2 transition-all">
                 <i class="fa-solid fa-question text-red-500"></i> Alat Hilang ({{ $countHilang }})
@@ -96,12 +96,12 @@
                                 {{ $index + 1 }}
                             </div>
                             <div class="flex-1">
-                                <div class="text-white font-semibold text-sm">{{ $item->sarpras->nama }}</div>
-                                <div class="text-xs text-slate-500">{{ $item->sarpras->kategori->nama ?? '-' }}</div>
+                                <div class="text-white font-semibold text-sm">{{ $item->nama }}</div>
+                                <div class="text-xs text-slate-500">{{ $item->kategori->nama ?? '-' }}</div>
                             </div>
                             <div class="flex-none">
                                 <span class="px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 font-bold text-xs">
-                                    {{ $item->breakdown_count }}x
+                                    {{ $item->rusak_count }} item
                                 </span>
                             </div>
                         </div>
@@ -172,23 +172,21 @@
                         <thead class="bg-slate-950 text-slate-200 text-xs uppercase border-b border-white/10">
                             <tr>
                                 <th class="px-4 py-3 text-left">Rank</th>
-                                <th class="px-4 py-3 text-left">Kode</th>
                                 <th class="px-4 py-3 text-left">Nama Barang</th>
                                 <th class="px-4 py-3 text-center">Jumlah Kerusakan</th>
-                                <th class="px-4 py-3 text-left">Lokasi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-white/5">
                             @forelse($topItems as $index => $item)
                             <tr class="hover:bg-white/5 transition">
                                 <td class="px-4 py-3">#{{ $index + 1 }}</td>
-                                <td class="px-4 py-3 font-mono text-xs text-slate-300">{{ $item->kode }}</td>
+
                                 <td class="px-4 py-3">
-                                    <div class="font-medium text-white text-sm">{{ $item->sarpras->nama }}</div>
-                                    <div class="text-xs text-slate-500">{{ $item->sarpras->kategori->nama ?? '-' }}</div>
+                                    <div class="font-medium text-white text-sm">{{ $item->nama }}</div>
+                                    <div class="text-xs text-slate-500">{{ $item->kategori->nama ?? '-' }}</div>
                                 </td>
-                                <td class="px-4 py-3 text-center text-rose-400 font-bold">{{ $item->breakdown_count }}x</td>
-                                <td class="px-4 py-3">{{ $item->lokasi->nama ?? '-' }}</td>
+                                <td class="px-4 py-3 text-center text-rose-400 font-bold">{{ $item->rusak_count }} item</td>
+                                    
                             </tr>
                             @empty
                             <tr><td colspan="5" class="px-4 py-8 text-center text-slate-500 italic">Belum ada data</td></tr>
