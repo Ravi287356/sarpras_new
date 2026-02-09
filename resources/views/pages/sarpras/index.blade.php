@@ -8,11 +8,13 @@
             <p class="text-slate-400 text-sm mt-1">Kelola data sarpras</p>
         </div>
 
-        <a href="{{ route(name: 'admin.sarpras.create') }}"
-           class="px-5 py-3 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/25
-                  text-emerald-200 ring-1 ring-emerald-500/30 transition font-medium">
-            + Tambah Sarpras
-        </a>
+        @if (auth()->user()->role->nama === 'admin')
+            <a href="{{ route('admin.sarpras.create') }}"
+               class="px-5 py-3 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/25
+                      text-emerald-200 ring-1 ring-emerald-500/30 transition font-medium">
+                + Tambah Sarpras
+            </a>
+        @endif
     </div>
 
 
@@ -37,21 +39,10 @@
                             <td class="px-5 py-4">{{ $row->kategori?->nama ?? '-' }}</td>
                             <td class="px-5 py-4">{{ $row->items->count() ?? 0 }}</td>
                             <td class="px-5 py-4 flex gap-2">
-                                <a href="{{ route('admin.sarpras.items', $row->id) }}"
+                                <a href="{{ route(auth()->user()->role->nama . '.sarpras.items', $row->id) }}"
                                    class="px-4 py-2 rounded-xl ring-1 ring-white/10 hover:bg-white/5 transition">
-                                    Inventory
+                                    {{ auth()->user()->role->nama === 'admin' ? 'Inventory' : 'Lihat Selengkapnya' }}
                                 </a>
-
-                                
-
-                                <form action="{{ route('admin.sarpras.destroy', $row->id) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="px-4 py-2 rounded-xl bg-red-500/10 text-red-200
-                                                   ring-1 ring-red-500/30 hover:bg-red-500/15 transition">
-                                        Hapus
-                                    </button>
-                                </form>
                             </td>
                         </tr>
                     @empty

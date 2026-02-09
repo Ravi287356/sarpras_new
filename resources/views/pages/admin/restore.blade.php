@@ -5,21 +5,14 @@
 
     <div class="flex items-start justify-between gap-4 mb-6">
         <div>
-            <h1 class="text-2xl font-semibold">Daftar User</h1>
-            <p class="text-slate-300 text-sm mt-1">Kelola akun user</p>
+            <h1 class="text-2xl font-semibold">User Terhapus</h1>
+            <p class="text-slate-300 text-sm mt-1">Daftar user yang telah dihapus dan bisa dipulihkan</p>
         </div>
 
-        <div class="flex gap-2">
-            <a href="{{ route('admin.users.trashed') }}"
-               class="px-5 py-2 rounded-xl border border-amber-400/30 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20 transition">
-                User Terhapus
-            </a>
-
-            <a href="{{ route('admin.users.create') }}"
-               class="px-5 py-2 rounded-xl border border-emerald-400/30 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20 transition">
-                Tambah User
-            </a>
-        </div>
+        <a href="{{ route('admin.users.index') }}"
+           class="px-5 py-2 rounded-xl border border-slate-400/30 bg-slate-500/10 text-slate-200 hover:bg-slate-500/20 transition">
+            Kembali ke Daftar User
+        </a>
     </div>
 
 
@@ -31,7 +24,8 @@
                     <th class="text-left px-6 py-4">Username</th>
                     <th class="text-left px-6 py-4">Email</th>
                     <th class="text-left px-6 py-4">Role</th>
-                    <th class="text-left px-6 py-4 w-56">Aksi</th>
+                    <th class="text-left px-6 py-4">Dihapus Pada</th>
+                    <th class="text-left px-6 py-4 w-40">Aksi</th>
                 </tr>
             </thead>
 
@@ -46,18 +40,15 @@
                                 {{ $u->role?->nama ?? '-' }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 flex gap-2">
-                            <a href="{{ route('admin.users.edit', $u->id) }}"
-                               class="px-4 py-2 rounded-xl border border-white/10 hover:bg-white/5 transition">
-                                Edit
-                            </a>
-
-                            <form action="{{ route('admin.users.destroy', $u->id) }}" method="POST">
+                        <td class="px-6 py-4 text-slate-300">
+                            {{ $u->deleted_at?->format('d M Y H:i') }}
+                        </td>
+                        <td class="px-6 py-4">
+                            <form action="{{ route('admin.users.restore', $u->id) }}" method="POST">
                                 @csrf
-                                @method('DELETE')
                                 <button type="submit"
-                                    class="px-4 py-2 rounded-xl border border-rose-500/40 text-rose-200 hover:bg-rose-500/10 transition">
-                                    Hapus
+                                    class="px-4 py-2 rounded-xl border border-emerald-500/40 text-emerald-200 hover:bg-emerald-500/10 transition">
+                                    Pulihkan
                                 </button>
                             </form>
                         </td>
@@ -66,8 +57,8 @@
 
                 @if($users->count() === 0)
                     <tr>
-                        <td colspan="5" class="px-6 py-8 text-center text-slate-400">
-                            Data user masih kosong.
+                        <td colspan="6" class="px-6 py-8 text-center text-slate-400">
+                            Tidak ada user yang terhapus.
                         </td>
                     </tr>
                 @endif

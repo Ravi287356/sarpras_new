@@ -78,9 +78,14 @@
 
                             <td class="px-5 py-4 space-y-2">
                                 {{-- ✅ SETUJUI --}}
-                                <form action="{{ route(auth()->user()?->role?->nama . '.peminjaman.setujui', $row->id) }}" method="POST">
+                                <form action="{{ route(auth()->user()?->role?->nama . '.peminjaman.setujui', $row->id) }}" method="POST" class="space-y-2">
                                     @csrf
                                     @method('PUT')
+
+                                    <input type="text" name="alasan_persetujuan" placeholder="Alasan persetujuan (opsional)"
+                                        class="w-full rounded-xl bg-slate-950/60 text-white ring-1 ring-slate-800 px-4 py-2
+                                               focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition">
+
                                     <button type="submit"
                                         class="w-full px-4 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30
                                                text-emerald-200 ring-1 ring-emerald-500/30 transition">
@@ -89,11 +94,11 @@
                                 </form>
 
                                 {{-- ❌ TOLAK + ALASAN --}}
-                                <form action="{{ route(auth()->user()?->role?->nama . '.peminjaman.tolak', $row->id) }}" method="POST">
+                                <form action="{{ route(auth()->user()?->role?->nama . '.peminjaman.tolak', $row->id) }}" method="POST" class="space-y-2">
                                     @csrf
                                     @method('PUT')
 
-                                    <input type="text" name="alasan_penolakan" placeholder="Alasan penolakan (opsional)"
+                                    <input type="text" name="alasan_penolakan" placeholder="Alasan penolakan (Wajib)" required
                                         class="w-full rounded-xl bg-slate-950/60 text-white ring-1 ring-slate-800 px-4 py-2
                                                focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition">
 

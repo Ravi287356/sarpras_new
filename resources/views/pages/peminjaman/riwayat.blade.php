@@ -55,9 +55,20 @@
                                         default => 'bg-slate-500/10 text-slate-200 ring-slate-500/30',
                                     };
                                 @endphp
-                                <span class="px-3 py-1 rounded-full text-xs ring-1 {{ $statusColor }}">
-                                    {{ strtoupper($row->status) }}
-                                </span>
+                                <div class="flex flex-col gap-1">
+                                    <span class="inline-flex items-center w-fit px-3 py-1 rounded-full text-xs ring-1 {{ $statusColor }}">
+                                        {{ strtoupper($row->status) }}
+                                    </span>
+                                    @if($row->status === 'ditolak' && $row->alasan_penolakan)
+                                        <div class="text-[10px] text-rose-300/70 italic leading-tight max-w-[150px]">
+                                            Ket: {{ $row->alasan_penolakan }}
+                                        </div>
+                                    @elseif(in_array($row->status, ['disetujui', 'dipinjam', 'dikembalikan']) && $row->alasan_persetujuan)
+                                        <div class="text-[10px] text-emerald-300/70 italic leading-tight max-w-[150px]">
+                                            Ket: {{ $row->alasan_persetujuan }}
+                                        </div>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @empty

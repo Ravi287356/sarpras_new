@@ -1,8 +1,30 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-6xl">
-    <h1 class="text-2xl font-semibold mb-4">Peminjaman Aktif</h1>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <h1 class="text-2xl font-semibold">Peminjaman Aktif</h1>
+        
+        <form action="{{ url()->current() }}" method="GET" class="flex flex-wrap items-center gap-2">
+            <div class="relative">
+                <input type="text" name="user_search" value="{{ request('user_search') }}" 
+                       placeholder="Cari user..." 
+                       class="w-48 rounded-xl bg-slate-900/60 border border-white/10 px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500/50">
+            </div>
+            <div class="relative">
+                <input type="text" name="alat_search" value="{{ request('alat_search') }}" 
+                       placeholder="Cari alat..." 
+                       class="w-48 rounded-xl bg-slate-900/60 border border-white/10 px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500/50">
+            </div>
+            <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm transition font-medium">
+                Cari
+            </button>
+            @if(request('user_search') || request('alat_search'))
+                <a href="{{ url()->current() }}" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition">
+                    Clear
+                </a>
+            @endif
+        </form>
+    </div>
 
     @if (session('success'))
         <div class="mb-4 rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-3 text-emerald-200">

@@ -8,26 +8,46 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </head>
 
-<body class="bg-slate-950 text-white overflow-hidden">
+<body class="bg-slate-950 text-white overflow-hidden" x-data="{ sidebarOpen: false }">
 
-<div class="h-screen flex">
+<div class="h-screen flex relative">
 
-    {{-- SIDEBAR (FIXED, TANPA SCROLLBAR) --}}
-    <aside class="w-72 fixed inset-y-0 left-0 bg-slate-950">
+    {{-- BACKDROP (Mobile Only) --}}
+    <div x-show="sidebarOpen" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         @click="sidebarOpen = false"
+         class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 lg:hidden">
+    </div>
+
+    {{-- SIDEBAR --}}
+    <aside class="w-72 fixed inset-y-0 left-0 bg-slate-950 z-[60] transform transition-transform duration-300 ease-in-out lg:translate-x-0"
+           :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
         <x-sidebar :menus="$menus" :panelTitle="$panelTitle" />
     </aside>
 
     {{-- CONTENT --}}
-    <div class="flex-1 flex flex-col ml-72 h-screen">
+    <div class="flex-1 flex flex-col min-w-0 h-screen lg:ml-72">
 
         {{-- HEADER --}}
         <header class="shrink-0 border-b border-white/10 bg-slate-950/80 backdrop-blur z-40">
             <div class="flex items-center justify-between px-6 py-4">
 
-                <div class="text-sm text-slate-300">
-                    Login sebagai
-                    <b class="text-white">{{ auth()->user()->username }}</b>
-                    <span class="text-emerald-300">• {{ auth()->user()->role->nama }}</span>
+                <div class="flex items-center gap-4">
+                    {{-- Hamburger Menu (Mobile Only) --}}
+                    <button @click="sidebarOpen = true" class="lg:hidden text-white/70 hover:text-white transition">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+
+                    <div class="text-sm text-slate-300">
+                        Login sebagai
+                        <b class="text-white">{{ auth()->user()->username }}</b>
+                        <span class="text-emerald-300">• {{ auth()->user()->role->nama }}</span>
+                    </div>
                 </div>
 
                 <div class="flex items-center gap-3">

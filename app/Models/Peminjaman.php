@@ -30,6 +30,7 @@ class Peminjaman extends Model
         'approved_by',
         'approved_at',
         'alasan_penolakan',
+        'alasan_persetujuan',
     ];
 
     protected static function boot()

@@ -22,11 +22,18 @@
             flex flex-col">
 
     {{-- HEADER --}}
-    <div class="p-6 border-b border-white/10">
-        <div class="text-xl font-bold tracking-wide">SARPRAS</div>
-        <div class="text-sm text-slate-400 mt-1">
-            {{ $panelTitle ?? 'Dashboard' }}
+    <div class="p-6 border-b border-white/10 flex items-center justify-between">
+        <div>
+            <div class="text-xl font-bold tracking-wide text-white">SARPRAS</div>
+            <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">
+                {{ $panelTitle ?? 'Dashboard' }}
+            </div>
         </div>
+        
+        {{-- Close Button (Mobile Only) --}}
+        <button @click="sidebarOpen = false" class="lg:hidden text-slate-400 hover:text-white transition">
+            <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
     </div>
 
     @php

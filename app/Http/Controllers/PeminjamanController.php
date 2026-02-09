@@ -212,9 +212,22 @@ class PeminjamanController extends Controller
 
     public function indexAktif()
     {
+        $userSearch = request('user_search');
+        $alatSearch = request('alat_search');
+
         $items = Peminjaman::query()
             ->with(['user.role', 'items.sarprasItem.sarpras'])
             ->where('status', 'disetujui')
+            ->when($userSearch, function ($query, $term) {
+                $query->whereHas('user', function ($uq) use ($term) {
+                    $uq->where('username', 'like', "%{$term}%");
+                });
+            })
+            ->when($alatSearch, function ($query, $term) {
+                $query->whereHas('items.sarprasItem.sarpras', function ($sq) use ($term) {
+                    $sq->where('nama', 'like', "%{$term}%");
+                });
+            })
             ->latest('approved_at')
             ->get();
 
@@ -230,13 +243,17 @@ class PeminjamanController extends Controller
         ]);
     }
 
-    public function setujui(Peminjaman $peminjaman)
+    public function setujui(Request $request, Peminjaman $peminjaman)
     {
         if ($peminjaman->status !== 'menunggu') {
             return back()->withErrors(['status' => 'Peminjaman ini sudah diproses.']);
         }
 
-        DB::transaction(function () use ($peminjaman) {
+        $request->validate([
+            'alasan_persetujuan' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        DB::transaction(function () use ($peminjaman, $request) {
             // Items are already linked in store()
             // We just need to mark them as 'dipinjam' in master data
             
@@ -257,6 +274,7 @@ class PeminjamanController extends Controller
                 'approved_by' => Auth::id(),
                 'approved_at' => now(),
                 'alasan_penolakan' => null,
+                'alasan_persetujuan' => $request->alasan_persetujuan,
             ]);
             $peminjaman->syncStatus('disetujui');
         });
@@ -277,7 +295,9 @@ class PeminjamanController extends Controller
         }
 
         $request->validate([
-            'alasan_penolakan' => ['nullable', 'string', 'max:500'],
+            'alasan_penolakan' => ['required', 'string', 'max:500'],
+        ], [
+            'alasan_penolakan.required' => 'Alasan penolakan harus diisi.',
         ]);
         
         // Note: Items were pre-reserved in `store`.
@@ -289,6 +309,7 @@ class PeminjamanController extends Controller
             'approved_by' => Auth::id(),
             'approved_at' => now(),
             'alasan_penolakan' => $request->alasan_penolakan,
+            'alasan_persetujuan' => null,
         ]);
         
         $peminjaman->syncStatus('ditolak');

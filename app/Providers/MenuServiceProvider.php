@@ -212,6 +212,11 @@ class MenuServiceProvider extends ServiceProvider
                             'route' => route('laporan.index'),
                             'active' => 'laporan*',
                         ],
+                        [
+                            'label' => 'Data Sarpras',
+                            'route' => route('operator.sarpras.index'),
+                            'active' => 'operator/sarpras*',
+                        ],
                     ];
                 } elseif ($roleName === 'user') {
                     $menus = [
@@ -236,6 +241,11 @@ class MenuServiceProvider extends ServiceProvider
                             'label' => 'Riwayat Peminjaman',
                             'route' => route('user.peminjaman.riwayat'),
                             'active' => 'user/riwayat-peminjaman*',
+                        ],
+                        [
+                            'label' => 'Data Sarpras',
+                            'route' => route('user.sarpras.index'),
+                            'active' => 'user/sarpras*',
                         ],
                     ];
                 }

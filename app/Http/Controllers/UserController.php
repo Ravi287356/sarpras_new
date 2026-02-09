@@ -117,4 +117,38 @@ class UserController extends Controller
 
         return back()->with('success', 'User berhasil dihapus ✅');
     }
+
+    public function trashed()
+    {
+        // Ambil user yang sudah dihapus (soft deleted)
+        $users = User::onlyTrashed()
+            ->with('role')
+            ->orderBy('deleted_at', 'desc')
+            ->get();
+
+        return view('pages.admin.restore', [
+            'title' => 'User Terhapus',
+            'users' => $users,
+        ]);
+    }
+
+    public function restore($id)
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        
+        if (!$user->trashed()) {
+            return back()->with('error', 'User tidak berada di tempat sampah');
+        }
+
+        $username = $user->username;
+        $user->restore();
+
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'USER_RESTORE',
+            deskripsi: 'Restore user: ' . $username . ' (' . $user->email . ')'
+        );
+
+        return back()->with('success', 'User berhasil dipulihkan ✅');
+    }
 }

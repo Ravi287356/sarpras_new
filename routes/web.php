@@ -83,6 +83,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/manage_user/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/manage_user/{id}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/manage_user/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::get('/manage_user/trashed', [UserController::class, 'trashed'])->name('users.trashed');
+        Route::post('/manage_user/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
 
         // kategori sarpras
         Route::get('/kategori_sarpras', [KategoriSarprasController::class, 'index'])->name('kategori_sarpras.index');
@@ -187,6 +189,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/pengaduan/{pengaduan}', [PengaduanController::class, 'show'])
             ->name('pengaduan.show'); // detail pengaduan (opsional)
 
+        // Data Sarpras (read-only untuk operator)
+        Route::get('/sarpras', [SarprasController::class, 'index'])->name('sarpras.index');
+        Route::get('/sarpras/{sarpras}/items', [SarprasController::class, 'items'])->name('sarpras.items');
+
     });
 
     // =========================
@@ -217,6 +223,10 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/pengaduan/riwayat', [PengaduanController::class, 'riwayatUser'])
             ->name('pengaduan.riwayat');
+
+        // Data Sarpras (read-only untuk user)
+        Route::get('/sarpras', [SarprasController::class, 'index'])->name('sarpras.index');
+        Route::get('/sarpras/{sarpras}/items', [SarprasController::class, 'items'])->name('sarpras.items');
 
     });
 });

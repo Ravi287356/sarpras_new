@@ -24,9 +24,9 @@
         {{-- KODE --}}
         <div>
             <label class="text-sm text-slate-300">Kode Item</label>
-            <input type="text" name="kode" value="{{ old('kode', $item->kode) }}" required
-                   class="mt-2 w-full rounded-xl bg-slate-950/60 text-white ring-1 ring-slate-800 px-4 py-3
-                          focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
+            <input type="text" name="kode" value="{{ old('kode', $item->kode) }}" required readonly
+                   class="mt-2 w-full rounded-xl bg-slate-950/60 text-slate-400 ring-1 ring-slate-800 px-4 py-3
+                          focus:outline-none cursor-not-allowed">
         </div>
 
         {{-- LOKASI --}}
