@@ -26,7 +26,7 @@
                     </h3>
                     <p class="text-sm text-gray-600">
                         <i class="fa-solid fa-calendar mr-1"></i>
-                        {{ \Carbon\Carbon::parse($pengembalian->created_at)->format('d M Y H:i') }}
+                        {{ \Carbon\Carbon::parse($pengembalian->created_at)->format('d-m-Y H:i') }}
                     </p>
                     <p class="text-sm text-gray-600">
                         <i class="fa-solid fa-user mr-1"></i>

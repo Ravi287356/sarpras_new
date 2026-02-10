@@ -9,10 +9,17 @@
             <p class="text-slate-300 text-sm mt-1">Kelola lokasi penyimpanan sarpras</p>
         </div>
 
-        <a href="{{ route('admin.lokasi.create') }}"
-           class="px-5 py-2 rounded-xl border border-emerald-400/30 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20 transition">
-            Tambah Lokasi
-        </a>
+        <div class="flex gap-2">
+            <a href="{{ route('admin.lokasi.trashed') }}"
+               class="px-5 py-2 rounded-xl border border-amber-400/30 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20 transition">
+                Lokasi Terhapus
+            </a>
+
+            <a href="{{ route('admin.lokasi.create') }}"
+               class="px-5 py-2 rounded-xl border border-emerald-400/30 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20 transition">
+                Tambah Lokasi
+            </a>
+        </div>
     </div>
 
 

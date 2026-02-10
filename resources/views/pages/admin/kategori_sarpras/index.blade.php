@@ -7,11 +7,19 @@
             <h1 class="text-2xl font-semibold">Sarpras</h1>
         </div>
 
-        <a href="{{ route('admin.kategori_sarpras.create') }}"
-           class="px-4 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/25
-                  text-emerald-200 ring-1 ring-emerald-500/30 transition font-medium">
-            + Tambah Kategori
-        </a>
+        <div class="flex gap-2">
+            <a href="{{ route('admin.kategori_sarpras.trashed') }}"
+               class="px-4 py-2 rounded-xl bg-amber-600/20 hover:bg-amber-600/25
+                      text-amber-200 ring-1 ring-amber-500/30 transition font-medium">
+                Kategori Terhapus
+            </a>
+
+            <a href="{{ route('admin.kategori_sarpras.create') }}"
+               class="px-4 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/25
+                      text-emerald-200 ring-1 ring-emerald-500/30 transition font-medium">
+                + Tambah Kategori
+            </a>
+        </div>
     </div>
 
 

@@ -48,19 +48,31 @@
                 </select>
             </div>
 
-            <div>
+            <div x-data="{ showPassword: false }">
                 <label class="text-sm text-slate-200">Password (Opsional)</label>
-                <input type="password" name="password" placeholder="Kosongkan jika tidak ganti"
-                       class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-950/40 border border-white/10
-                              focus:outline-none focus:ring-2 focus:ring-emerald-500/40">
+                <div class="mt-2 relative">
+                    <input :type="showPassword ? 'text' : 'password'" name="password" placeholder="Kosongkan jika tidak ganti"
+                           class="w-full px-4 py-3 rounded-xl bg-slate-950/40 border border-white/10
+                                  focus:outline-none focus:ring-2 focus:ring-emerald-500/40 pr-12">
+                    <button type="button" @click="showPassword = !showPassword"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition">
+                        <i class="fa-solid" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                    </button>
+                </div>
                 <div class="text-xs text-slate-400 mt-1">Kalau tidak ingin mengganti password, biarkan kosong.</div>
             </div>
 
-            <div>
+            <div x-data="{ showPassword: false }">
                 <label class="text-sm text-slate-200">Konfirmasi Password</label>
-                <input type="password" name="password_confirmation"
-                       class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-950/40 border border-white/10
-                              focus:outline-none focus:ring-2 focus:ring-emerald-500/40">
+                <div class="mt-2 relative">
+                    <input :type="showPassword ? 'text' : 'password'" name="password_confirmation"
+                           class="w-full px-4 py-3 rounded-xl bg-slate-950/40 border border-white/10
+                                  focus:outline-none focus:ring-2 focus:ring-emerald-500/40 pr-12">
+                    <button type="button" @click="showPassword = !showPassword"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition">
+                        <i class="fa-solid" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="flex gap-2 pt-2">

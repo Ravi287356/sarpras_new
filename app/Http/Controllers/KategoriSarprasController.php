@@ -110,4 +110,36 @@ class KategoriSarprasController extends Controller
 
         return back()->with('success', 'Kategori berhasil dihapus ✅');
     }
+
+    public function trashed()
+    {
+        $categories = KategoriSarpras::onlyTrashed()
+            ->orderBy('deleted_at', 'desc')
+            ->get();
+
+        return view('pages.admin.kategori_sarpras.restore', [
+            'title' => 'Kategori Sarpras Terhapus',
+            'categories' => $categories,
+        ]);
+    }
+
+    public function restore($id)
+    {
+        $category = KategoriSarpras::withTrashed()->findOrFail($id);
+        
+        if (!$category->trashed()) {
+            return back()->with('error', 'Kategori tidak berada di tempat sampah');
+        }
+
+        $nama = $category->nama;
+        $category->restore();
+
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'KATEGORI_SARPRAS_RESTORE',
+            deskripsi: 'Restore kategori sarpras: ' . $nama
+        );
+
+        return back()->with('success', 'Kategori berhasil dipulihkan ✅');
+    }
 }

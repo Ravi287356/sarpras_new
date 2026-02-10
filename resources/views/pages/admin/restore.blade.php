@@ -41,7 +41,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-slate-300">
-                            {{ $u->deleted_at?->format('d M Y H:i') }}
+                            {{ $u->deleted_at?->format('d-m-Y H:i') }}
                         </td>
                         <td class="px-6 py-4">
                             <form action="{{ route('admin.users.restore', $u->id) }}" method="POST">

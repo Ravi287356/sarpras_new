@@ -39,8 +39,7 @@
                             </td>
 
                             <td class="px-5 py-4 whitespace-nowrap">
-                                <div class="text-white">{{ \Carbon\Carbon::parse($row->tanggal_pengembalian)->format('d-m-Y') }}</div>
-                                <div class="text-[10px] text-slate-500">{{ \Carbon\Carbon::parse($row->tanggal_pengembalian)->format('H:i') }}</div>
+                                <div class="text-white">{{ \Carbon\Carbon::parse($row->tanggal_pengembalian)->format('d-m-Y H:i') }}</div>
                             </td>
 
                             <td class="px-5 py-4">

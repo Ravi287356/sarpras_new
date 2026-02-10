@@ -16,7 +16,7 @@
         <p><b>User:</b> {{ $pengaduan->user->username ?? '-' }}</p>
         <p><b>Lokasi:</b> {{ $pengaduan->lokasi->nama ?? '-' }}</p>
         <p><b>Status:</b> {{ $pengaduan->status }}</p>
-        <p><b>Tanggal:</b> {{ $pengaduan->created_at->format('d M Y H:i') }}</p>
+        <p><b>Tanggal:</b> {{ $pengaduan->created_at->format('d-m-Y H:i') }}</p>
     </div>
 
     <!-- Riwayat Tanggapan -->
@@ -27,7 +27,7 @@
             <div class="rounded-lg bg-slate-950/60 p-4">
                 <div class="flex justify-between text-sm text-slate-400">
                     <span>{{ $catatan->user->username }}</span>
-                    <span>{{ $catatan->created_at->format('d M Y H:i') }}</span>
+                    <span>{{ $catatan->created_at->format('d-m-Y H:i') }}</span>
                 </div>
                 <p class="mt-2 text-slate-200">{{ $catatan->catatan }}</p>
             </div>

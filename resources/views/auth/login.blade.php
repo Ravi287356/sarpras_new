@@ -6,6 +6,8 @@
   <title>Login - Sarpras</title>
 
   @vite(['resources/css/app.css', 'resources/js/app.js'])
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
 
 <body class="min-h-screen bg-slate-950 text-white flex items-center justify-center px-4">
@@ -37,11 +39,17 @@
                    placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
         </div>
 
-        <div>
+        <div x-data="{ showPassword: false }">
           <label class="text-sm text-slate-300">Password</label>
-          <input type="password" name="password" required
-            class="mt-2 w-full rounded-xl bg-slate-950/60 ring-1 ring-slate-800 px-4 py-3
-                   placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
+          <div class="mt-2 relative">
+            <input :type="showPassword ? 'text' : 'password'" name="password" required
+              class="w-full rounded-xl bg-slate-950/60 ring-1 ring-slate-800 px-4 py-3 pr-12
+                     placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
+            <button type="button" @click="showPassword = !showPassword"
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition">
+              <i class="fa-solid" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
         </div>
 
         <div class="flex items-center justify-between">

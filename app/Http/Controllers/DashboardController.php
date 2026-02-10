@@ -33,7 +33,7 @@ class DashboardController extends Controller
                 });
             })
             ->latest('updated_at')
-            ->take(5) // Show top 5 in dashboard
+            ->take(50) // Show top 50 in dashboard
             ->get();
 
         // Append last return info
@@ -52,7 +52,7 @@ class DashboardController extends Controller
             ->orWhereHas('kondisi', function ($q) {
                 $q->where('nama', 'like', '%hilang%');
             })
-            ->take(5)
+            ->take(50)
             ->get();
 
         foreach ($hilangItems as $item) {

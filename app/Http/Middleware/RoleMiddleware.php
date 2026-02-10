@@ -36,7 +36,7 @@ class RoleMiddleware
         $allowedRoles = explode('|', $role);
 
         if (!in_array($userRole, $allowedRoles)) {
-            abort(403, 'Akses ditolak.');
+           return redirect()->route('dashboard');
         }
 
         return $next($request);

@@ -9,11 +9,19 @@
         </div>
 
         @if (auth()->user()->role->nama === 'admin')
-            <a href="{{ route('admin.sarpras.create') }}"
-               class="px-5 py-3 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/25
-                      text-emerald-200 ring-1 ring-emerald-500/30 transition font-medium">
-                + Tambah Sarpras
-            </a>
+            <div class="flex gap-2">
+                <a href="{{ route('admin.sarpras_item.trashed') }}"
+                   class="px-5 py-3 rounded-xl bg-amber-600/20 hover:bg-amber-600/25
+                          text-amber-200 ring-1 ring-amber-500/30 transition font-medium">
+                    Item Terhapus
+                </a>
+
+                <a href="{{ route('admin.sarpras.create') }}"
+                   class="px-5 py-3 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/25
+                          text-emerald-200 ring-1 ring-emerald-500/30 transition font-medium">
+                    + Tambah Sarpras
+                </a>
+            </div>
         @endif
     </div>
 

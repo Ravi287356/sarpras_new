@@ -67,7 +67,7 @@
                     <td class="px-5 py-3">{{ $item->lokasi->nama ?? '-' }}</td>
                     <td class="px-5 py-3">{{ $item->status }}</td>
                     <td class="px-5 py-3 text-slate-400">
-                        {{ $item->created_at->format('d M Y H:i') }}
+                        {{ $item->created_at->format('d-m-Y H:i') }}
                     </td>
                     <td class="px-5 py-3">
                         <a href="{{ auth()->user()->role->nama === 'admin'

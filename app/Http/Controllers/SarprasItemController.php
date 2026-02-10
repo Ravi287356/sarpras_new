@@ -143,4 +143,37 @@ class SarprasItemController extends Controller
             ->route('admin.sarpras.items', $sarprasId)
             ->with('success', 'Item berhasil dihapus ✅');
     }
+
+    public function trashed()
+    {
+        $items = SarprasItem::onlyTrashed()
+            ->with(['sarpras', 'lokasi', 'kondisi'])
+            ->orderBy('deleted_at', 'desc')
+            ->get();
+
+        return view('pages.admin.sarpras_item.restore', [
+            'title' => 'Item Sarpras Terhapus',
+            'items' => $items,
+        ]);
+    }
+
+    public function restore($id)
+    {
+        $item = SarprasItem::withTrashed()->findOrFail($id);
+        
+        if (!$item->trashed()) {
+            return back()->with('error', 'Item tidak berada di tempat sampah');
+        }
+
+        $kode = $item->kode;
+        $item->restore();
+
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'ITEM_SARPRAS_RESTORE',
+            deskripsi: 'Restore item sarpras: ' . $kode
+        );
+
+        return back()->with('success', 'Item berhasil dipulihkan ✅');
+    }
 }

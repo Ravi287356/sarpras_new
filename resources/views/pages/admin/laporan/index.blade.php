@@ -116,7 +116,7 @@
                                         {{ strtoupper($row->status) }}
                                     </span>
                                 </td>
-                                <td class="px-5 py-4 text-xs">{{ $row->created_at->format('d M Y') }}</td>
+                                <td class="px-5 py-4 text-xs">{{ $row->created_at->format('d-m-Y H:i') }}</td>
                             </tr>
                         @empty
                             <tr><td colspan="6" class="px-5 py-10 text-center text-slate-500 italic">Tidak ada data untuk periode ini.</td></tr>

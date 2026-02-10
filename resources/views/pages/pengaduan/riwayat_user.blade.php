@@ -63,7 +63,7 @@
                         </td>
 
                         <td class="px-5 py-3 text-center text-slate-400">
-                            {{ $item->created_at->format('d M Y') }}
+                            {{ $item->created_at->format('d-m-Y H:i') }}
                         </td>
                     </tr>
                 @empty

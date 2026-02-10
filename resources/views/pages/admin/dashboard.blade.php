@@ -20,7 +20,7 @@
 
             <div class="rounded-2xl border border-white/10 bg-slate-950/40 p-5 hover:bg-slate-950/60 transition">
                 <div class="text-slate-300 text-sm">Total Aset Rusak</div>
-                <div class="text-2xl font-bold mt-2 text-rose-400">{{ $rusakItems->count() }}</div>
+                <div class="text-2xl font-bold mt-2 text-rose-400">{{ $countRusak }}</div>
             </div>
         </div>
     </div>
@@ -129,7 +129,7 @@
                                 <th class="px-4 py-3 text-left">Kondisi</th>
                                 <th class="px-4 py-3 text-left">Sejak Kapan</th>
                                 <th class="px-4 py-3 text-left">Lokasi</th>
-                                <th class="px-4 py-3 text-left">Catatan</th>
+                                <th class="px-4 py-3 text-left">Deskripsi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-white/5">
@@ -186,7 +186,7 @@
                                     <div class="text-xs text-slate-500">{{ $item->kategori->nama ?? '-' }}</div>
                                 </td>
                                 <td class="px-4 py-3 text-center text-rose-400 font-bold">{{ $item->rusak_count }} item</td>
-                                    
+
                             </tr>
                             @empty
                             <tr><td colspan="5" class="px-4 py-8 text-center text-slate-500 italic">Belum ada data</td></tr>

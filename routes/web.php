@@ -93,6 +93,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/kategori_sarpras/{id}/edit', [KategoriSarprasController::class, 'edit'])->name('kategori_sarpras.edit');
         Route::put('/kategori_sarpras/{id}', [KategoriSarprasController::class, 'update'])->name('kategori_sarpras.update');
         Route::delete('/kategori_sarpras/{id}', [KategoriSarprasController::class, 'destroy'])->name('kategori_sarpras.destroy');
+        Route::get('/kategori_sarpras/trashed', [KategoriSarprasController::class, 'trashed'])->name('kategori_sarpras.trashed');
+        Route::post('/kategori_sarpras/{id}/restore', [KategoriSarprasController::class, 'restore'])->name('kategori_sarpras.restore');
 
         // sarpras
         Route::get('/sarpras', [SarprasController::class, 'index'])->name('sarpras.index');
@@ -104,6 +106,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/sarpras/{sarpras}/items', [SarprasController::class, 'items'])->name('sarpras.items');
 
         // sarpras items
+        Route::get('/sarpras-item/trashed', [SarprasItemController::class, 'trashed'])->name('sarpras_item.trashed');
+        Route::post('/sarpras-item/{id}/restore', [SarprasItemController::class, 'restore'])->name('sarpras_item.restore');
         Route::get('/sarpras/{sarpras}/items/create', [SarprasItemController::class, 'create'])->name('sarpras_item.create');
         Route::post('/sarpras/{sarpras}/items', [SarprasItemController::class, 'store'])->name('sarpras_item.store');
         Route::get('/sarpras-item/{sarprasItem}/edit', [SarprasItemController::class, 'edit'])->name('sarpras_item.edit');
@@ -117,6 +121,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/lokasi/{lokasi}/edit', [LokasiController::class, 'edit'])->name('lokasi.edit');
         Route::put('/lokasi/{lokasi}', [LokasiController::class, 'update'])->name('lokasi.update');
         Route::delete('/lokasi/{lokasi}', [LokasiController::class, 'destroy'])->name('lokasi.destroy');
+        Route::get('/lokasi/trashed', [LokasiController::class, 'trashed'])->name('lokasi.trashed');
+        Route::post('/lokasi/{id}/restore', [LokasiController::class, 'restore'])->name('lokasi.restore');
 
         // =========================
         // PEMINJAMAN (ADMIN) ✅ sekali saja, tidak duplikat

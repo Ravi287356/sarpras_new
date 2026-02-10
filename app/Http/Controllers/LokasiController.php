@@ -100,4 +100,36 @@ class LokasiController extends Controller
 
         return back()->with('success', 'Lokasi berhasil dihapus ✅');
     }
+
+    public function trashed()
+    {
+        $items = Lokasi::onlyTrashed()
+            ->orderBy('deleted_at', 'desc')
+            ->get();
+
+        return view('pages.admin.lokasi.restore', [
+            'title' => 'Lokasi Terhapus',
+            'items' => $items,
+        ]);
+    }
+
+    public function restore($id)
+    {
+        $lokasi = Lokasi::withTrashed()->findOrFail($id);
+        
+        if (!$lokasi->trashed()) {
+            return back()->with('error', 'Lokasi tidak berada di tempat sampah');
+        }
+
+        $nama = $lokasi->nama;
+        $lokasi->restore();
+
+        // ✅ Log activity
+        $this->logActivity(
+            aksi: 'LOKASI_RESTORE',
+            deskripsi: 'Restore lokasi: ' . $nama
+        );
+
+        return back()->with('success', 'Lokasi berhasil dipulihkan ✅');
+    }
 }

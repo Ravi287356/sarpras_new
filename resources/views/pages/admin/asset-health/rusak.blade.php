@@ -22,7 +22,7 @@
                     <th class="px-6 py-4">Kondisi</th>
                     <th class="px-6 py-4">Sejak Kapan</th>
                     <th class="px-6 py-4">Lokasi</th>
-                    <th class="px-6 py-4">Catatan</th>
+                    <th class="px-6 py-4">deskripsi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-white/5">

@@ -42,19 +42,47 @@
             </div>
 
             <div class="grid md:grid-cols-2 gap-4">
-                <div>
+                <div x-data="{ showPassword: false }">
+                    <label class="text-sm text-slate-300">Password Lama</label>
+                    <div class="mt-2 relative">
+                        <input :type="showPassword ? 'text' : 'password'" name="password_lama"
+                            class="w-full rounded-xl bg-slate-950/60 ring-1 ring-slate-800 px-4 py-3 pr-12
+                                   placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
+                        <button type="button" @click="showPassword = !showPassword"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition">
+                            <i class="fa-solid" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2">Wajib diisi jika ingin ganti password.</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div x-data="{ showPassword: false }">
                     <label class="text-sm text-slate-300">Password Baru (opsional)</label>
-                    <input type="password" name="password"
-                        class="mt-2 w-full rounded-xl bg-slate-950/60 ring-1 ring-slate-800 px-4 py-3
-                               placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
+                    <div class="mt-2 relative">
+                        <input :type="showPassword ? 'text' : 'password'" name="password"
+                            class="w-full rounded-xl bg-slate-950/60 ring-1 ring-slate-800 px-4 py-3 pr-12
+                                   placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
+                        <button type="button" @click="showPassword = !showPassword"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition">
+                            <i class="fa-solid" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
+                    </div>
                     <p class="text-xs text-slate-500 mt-2">Kosongkan jika tidak ingin ganti password.</p>
                 </div>
 
-                <div>
+                <div x-data="{ showPassword: false }">
                     <label class="text-sm text-slate-300">Konfirmasi Password Baru</label>
-                    <input type="password" name="password_confirmation"
-                        class="mt-2 w-full rounded-xl bg-slate-950/60 ring-1 ring-slate-800 px-4 py-3
-                               placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
+                    <div class="mt-2 relative">
+                        <input :type="showPassword ? 'text' : 'password'" name="password_confirmation"
+                            class="w-full rounded-xl bg-slate-950/60 ring-1 ring-slate-800 px-4 py-3 pr-12
+                                   placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
+                        <button type="button" @click="showPassword = !showPassword"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition">
+                            <i class="fa-solid" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
