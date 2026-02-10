@@ -11,11 +11,19 @@
         </div>
 
         @if (auth()->user()->role->nama === 'admin')
-            <a href="{{ route('admin.sarpras_item.create', $sarpras->id) }}"
-               class="px-5 py-3 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/25
-                      text-emerald-200 ring-1 ring-emerald-500/30 transition font-medium">
-                + Tambah Item
-            </a>
+            <div class="flex gap-2">
+                <a href="{{ route('admin.sarpras.edit', $sarpras->id) }}"
+                   class="px-5 py-3 rounded-xl bg-blue-600/20 hover:bg-blue-600/25
+                          text-blue-200 ring-1 ring-blue-500/30 transition font-medium">
+                    Edit Sarpras
+                </a>
+
+                <a href="{{ route('admin.sarpras_item.create', $sarpras->id) }}"
+                   class="px-5 py-3 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/25
+                          text-emerald-200 ring-1 ring-emerald-500/30 transition font-medium">
+                    + Tambah Item
+                </a>
+            </div>
         @endif
     </div>
 

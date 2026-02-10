@@ -96,11 +96,17 @@ class PeminjamanController extends Controller
         return view('pages.peminjaman.create', [
             'title' => 'Ajukan Peminjaman',
             'sarpras' => $sarpras,
+            'isWeekend' => now()->isWeekend()
         ]);
     }
 
     public function store(Request $request)
     {
+        // 🛑 Cegah peminjaman pada hari Sabtu dan Minggu
+        if (now()->isWeekend()) {
+            return back()->with('error', 'Peminjaman tidak dilayani pada hari Sabtu dan Minggu.');
+        }
+
         $request->validate([
             'sarpras_id' => ['required', 'exists:sarpras,id'],
             'jumlah' => ['required', 'integer', 'min:1'],
@@ -249,9 +255,7 @@ class PeminjamanController extends Controller
             return back()->withErrors(['status' => 'Peminjaman ini sudah diproses.']);
         }
 
-        $request->validate([
-            'alasan_persetujuan' => ['nullable', 'string', 'max:500'],
-        ]);
+        // Remove alasan_persetujuan validation
 
         DB::transaction(function () use ($peminjaman, $request) {
             // Items are already linked in store()
@@ -274,7 +278,7 @@ class PeminjamanController extends Controller
                 'approved_by' => Auth::id(),
                 'approved_at' => now(),
                 'alasan_penolakan' => null,
-                'alasan_persetujuan' => $request->alasan_persetujuan,
+                'alasan_persetujuan' => null, // Set to null
             ]);
             $peminjaman->syncStatus('disetujui');
         });
@@ -295,9 +299,10 @@ class PeminjamanController extends Controller
         }
 
         $request->validate([
-            'alasan_penolakan' => ['required', 'string', 'max:500'],
+            'alasan_penolakan' => ['required', 'string', 'min:20', 'max:500'],
         ], [
-            'alasan_penolakan.required' => 'Alasan penolakan harus diisi.',
+            'alasan_penolakan.required' => 'Alasan penolakan wajib diisi.',
+            'alasan_penolakan.min' => 'Alasan penolakan minimal 20 karakter.',
         ]);
         
         // Note: Items were pre-reserved in `store`.

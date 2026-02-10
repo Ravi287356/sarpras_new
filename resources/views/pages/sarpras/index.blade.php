@@ -46,11 +46,31 @@
                             <td class="px-5 py-4 font-medium">{{ $row->nama }}</td>
                             <td class="px-5 py-4">{{ $row->kategori?->nama ?? '-' }}</td>
                             <td class="px-5 py-4">{{ $row->items->count() ?? 0 }}</td>
-                            <td class="px-5 py-4 flex gap-2">
+                             <td class="px-5 py-4 flex gap-2">
                                 <a href="{{ route(auth()->user()->role->nama . '.sarpras.items', $row->id) }}"
                                    class="px-4 py-2 rounded-xl ring-1 ring-white/10 hover:bg-white/5 transition">
                                     {{ auth()->user()->role->nama === 'admin' ? 'Inventory' : 'Lihat Selengkapnya' }}
                                 </a>
+
+                                @if (auth()->user()->role->nama === 'admin')
+                                    <a href="{{ route('admin.sarpras.edit', $row->id) }}"
+                                       class="px-4 py-2 rounded-xl bg-blue-600/20 hover:bg-blue-600/25
+                                              text-blue-200 ring-1 ring-blue-500/30 transition">
+                                        Edit
+                                    </a>
+
+                                    <form action="{{ route('admin.sarpras.destroy', $row->id) }}" method="POST"
+                                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus sarpras ini? Semua item di dalamnya akan ikut terhapus.')"
+                                          class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="px-4 py-2 rounded-xl bg-red-600/20 hover:bg-red-600/25
+                                                       text-red-200 ring-1 ring-red-500/30 transition">
+                                            Hapus
+                                        </button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @empty

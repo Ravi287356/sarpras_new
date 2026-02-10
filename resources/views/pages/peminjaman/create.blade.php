@@ -14,6 +14,16 @@
         @endif
 
         <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+            @if($isWeekend)
+                <div class="mb-6 p-4 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-200 text-sm flex items-start gap-3">
+                    <i class="fa-solid fa-circle-exclamation mt-1"></i>
+                    <div>
+                        <span class="font-bold block uppercase tracking-wide text-xs mb-1">Layanan Libur</span>
+                        Peminjaman tidak tersedia pada hari Sabtu dan Minggu. Terimakasih.
+                    </div>
+                </div>
+            @endif
+
             <div class="mb-4 text-slate-200">
                 <div class="text-lg font-semibold">{{ $sarpras->nama }}</div>
                 <div class="text-sm text-slate-300 mt-1">
@@ -38,8 +48,8 @@
                 <div>
                     <label class="text-sm text-slate-200">Jumlah</label>
                     <input type="number" name="jumlah" min="1" max="{{ (int) $sarpras->jumlah_stok }}"
-                        value="{{ old('jumlah', 1) }}"
-                        class="mt-2 w-full rounded-xl bg-slate-950/40 border border-white/10 px-4 py-3 text-slate-100 outline-none">
+                        value="{{ old('jumlah', 1) }}" {{ $isWeekend ? 'disabled' : '' }}
+                        class="mt-2 w-full rounded-xl bg-slate-950/40 border border-white/10 px-4 py-3 text-slate-100 outline-none disabled:opacity-50">
                     @error('jumlah')
                         <div class="text-rose-300 text-sm mt-1">{{ $message }}</div>
                     @enderror
@@ -49,7 +59,8 @@
                     <div>
                         <label class="text-sm text-slate-200">Tanggal Pinjam</label>
                         <input type="date" name="tanggal_pinjam" value="{{ old('tanggal_pinjam', date('Y-m-d')) }}"
-                            class="mt-2 w-full rounded-xl bg-slate-950/40 border border-white/10 px-4 py-3 text-slate-100 outline-none">
+                            {{ $isWeekend ? 'disabled' : '' }}
+                            class="mt-2 w-full rounded-xl bg-slate-950/40 border border-white/10 px-4 py-3 text-slate-100 outline-none disabled:opacity-50">
                         @error('tanggal_pinjam')
                             <div class="text-rose-300 text-sm mt-1">{{ $message }}</div>
                         @enderror
@@ -58,7 +69,8 @@
                     <div>
                         <label class="text-sm text-slate-200">Estimasi Tanggal Kembali</label>
                         <input type="date" name="tanggal_kembali_rencana" value="{{ old('tanggal_kembali_rencana') }}"
-                            class="mt-2 w-full rounded-xl bg-slate-950/40 border border-white/10 px-4 py-3 text-slate-100 outline-none">
+                            {{ $isWeekend ? 'disabled' : '' }}
+                            class="mt-2 w-full rounded-xl bg-slate-950/40 border border-white/10 px-4 py-3 text-slate-100 outline-none disabled:opacity-50">
                         @error('tanggal_kembali_rencana')
                             <div class="text-rose-300 text-sm mt-1">{{ $message }}</div>
                         @enderror
@@ -66,11 +78,9 @@
                 </div>
                 <div>
                     <label class="text-sm text-slate-200">Tujuan Peminjaman</label>
-                    <textarea name="tujuan" rows="3" required
-                        class="mt-2 w-full rounded-xl bg-slate-950/40 border border-white/10 px-4 py-3 text-slate-100 outline-none"
-                        placeholder="Contoh: Digunakan untuk kegiatan praktik lab">
-        {{ old('tujuan') }}
-    </textarea>
+                    <textarea name="tujuan" rows="3" required {{ $isWeekend ? 'disabled' : '' }}
+                        class="mt-2 w-full rounded-xl bg-slate-950/40 border border-white/10 px-4 py-3 text-slate-100 outline-none disabled:opacity-50"
+                        placeholder="Contoh: Digunakan untuk kegiatan praktik lab">{{ old('tujuan') }}</textarea>
                     @error('tujuan')
                         <div class="text-rose-300 text-sm mt-1">{{ $message }}</div>
                     @enderror
@@ -84,7 +94,8 @@
                     </a>
 
                     <button type="submit"
-                        class="px-4 py-3 rounded-xl bg-emerald-500/10 text-emerald-200 ring-1 ring-emerald-500/30 hover:bg-emerald-500/15 transition">
+                        {{ $isWeekend ? 'disabled' : '' }}
+                        class="px-4 py-3 rounded-xl bg-emerald-500/10 text-emerald-200 ring-1 ring-emerald-500/30 hover:bg-emerald-500/15 transition disabled:opacity-50 disabled:cursor-not-allowed">
                         Kirim Peminjaman
                     </button>
                 </div>

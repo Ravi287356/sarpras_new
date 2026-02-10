@@ -22,12 +22,18 @@ class PengembalianController extends Controller
         $kondisiAlat = KondisiAlat::all();
         return view('pages.pengembalian.pengembalian', [
             'title' => 'Pengembalian Sarpras',
-            'kondisiAlat' => $kondisiAlat
+            'kondisiAlat' => $kondisiAlat,
+            'isWeekend' => now()->isWeekend()
         ]);
     }
 
     public function searchPeminjaman(Request $request)
     {
+        // 🛑 Cegah pencarian pada hari Sabtu dan Minggu
+        if (now()->isWeekend()) {
+            return response()->json(['error' => 'Pengembalian tidak dilayani pada hari Sabtu dan Minggu.'], 403);
+        }
+
         $request->validate([
             'kode_peminjaman' => 'required|string'
         ]);
@@ -90,12 +96,18 @@ class PengembalianController extends Controller
         return view('pages.pengembalian.form', [
             'title' => 'Konfirmasi Pengembalian',
             'peminjaman' => $peminjaman,
-            'kondisiAlat' => $kondisiAlat
+            'kondisiAlat' => $kondisiAlat,
+            'isWeekend' => now()->isWeekend()
         ]);
     }
 
     public function store(Request $request)
     {
+        // 🛑 Cegah pengembalian pada hari Sabtu dan Minggu
+        if (now()->isWeekend()) {
+            return back()->with('error', 'Pengembalian tidak dilayani pada hari Sabtu dan Minggu.');
+        }
+
         $request->validate([
             'peminjaman_id' => 'required|exists:peminjaman,id',
             'catatan_petugas' => 'nullable|string',

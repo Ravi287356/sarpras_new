@@ -59,6 +59,16 @@
                     </div>
                     
                     <div class="p-6">
+                        @if($isWeekend)
+                            <div class="mb-6 p-4 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-200 text-sm flex items-start gap-3">
+                                <i class="fa-solid fa-circle-exclamation mt-1"></i>
+                                <div>
+                                    <span class="font-bold block uppercase tracking-wide text-xs mb-1">Layanan Libur</span>
+                                    Pengembalian tidak tersedia pada hari Sabtu dan Minggu. Terimakasih.
+                                </div>
+                            </div>
+                        @endif
+
                         @if ($errors->any())
                             <div class="mb-6 p-4 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm">
                                 <ul class="list-disc pl-4 space-y-1">
@@ -96,8 +106,8 @@
                                                 <div>
                                                     <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Kondisi Barang</label>
                                                     <div class="relative">
-                                                        <select name="items[{{ $item->sarprasItem->id }}][kondisi_alat_id]" required
-                                                            class="w-full pl-3 pr-8 py-2.5 bg-slate-900 border border-white/10 rounded-lg text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer">
+                                                        <select name="items[{{ $item->sarprasItem->id }}][kondisi_alat_id]" required {{ $isWeekend ? 'disabled' : '' }}
+                                                            class="w-full pl-3 pr-8 py-2.5 bg-slate-900 border border-white/10 rounded-lg text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer disabled:opacity-50">
                                                             <option value="">-- Pilih Kondisi --</option>
                                                             @foreach ($kondisiAlat as $kondisi)
                                                                 <option value="{{ $kondisi->id }}">{{ $kondisi->nama }}</option>
@@ -112,16 +122,16 @@
                                                 <!-- Foto per Item -->
                                                 <div>
                                                     <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Foto Bukti (Opsional)</label>
-                                                    <input type="file" name="items[{{ $item->sarprasItem->id }}][foto]" accept="image/*" 
-                                                        class="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700 cursor-pointer"/>
+                                                    <input type="file" name="items[{{ $item->sarprasItem->id }}][foto]" accept="image/*" {{ $isWeekend ? 'disabled' : '' }}
+                                                        class="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700 cursor-pointer disabled:opacity-50"/>
                                                 </div>
                                             </div>
 
                                             <!-- Deskripsi Kerusakan per Item -->
                                             <div>
                                                 <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Deskripsi Kerusakan (Jika Ada)</label>
-                                                <textarea name="items[{{ $item->sarprasItem->id }}][deskripsi_kerusakan]" rows="2" 
-                                                    class="w-full px-3 py-2 bg-slate-900 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-700 text-sm" 
+                                                <textarea name="items[{{ $item->sarprasItem->id }}][deskripsi_kerusakan]" rows="2" {{ $isWeekend ? 'disabled' : '' }}
+                                                    class="w-full px-3 py-2 bg-slate-900 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-700 text-sm disabled:opacity-50" 
                                                     placeholder="Jelaskan detail kerusakan barang ini..."></textarea>
                                             </div>
                                         </div>
@@ -141,14 +151,18 @@
                                 <div class="grid grid-cols-1 gap-4">
                                     <div>
                                         <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Catatan Petugas <span class="text-rose-500">*</span></label>
-                                        <textarea name="catatan_petugas" required rows="2" class="w-full px-4 py-3 bg-slate-950 border border-white/10 rounded-lg text-white focus:border-blue-500 focus:outline-none placeholder-slate-700 text-sm" placeholder="Tambahkan catatan penyelesaian..."></textarea>
+                                        <textarea name="catatan_petugas" required rows="2" {{ $isWeekend ? 'disabled' : '' }}
+                                            class="w-full px-4 py-3 bg-slate-950 border border-white/10 rounded-lg text-white focus:border-blue-500 focus:outline-none placeholder-slate-700 text-sm disabled:opacity-50" 
+                                            placeholder="Tambahkan catatan penyelesaian..."></textarea>
                                     </div>
                                 </div>
                             </div>
 
                             <hr class="border-white/10 mt-6 mb-6">
 
-                            <button type="submit" class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition shadow-lg text-lg">
+                            <button type="submit" 
+                                {{ $isWeekend ? 'disabled' : '' }}
+                                class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition shadow-lg text-lg disabled:opacity-50 disabled:cursor-not-allowed">
                                 <i class="fa-solid fa-check-circle mr-2"></i> Konfirmasi Pengembalian
                             </button>
                         </form>

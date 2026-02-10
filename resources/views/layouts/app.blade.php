@@ -124,6 +124,25 @@
             });
         @endif
 
+        @if ($errors->any())
+            Swal.fire({
+                ...swalConfig,
+                title: 'Validasi Gagal',
+                html: `
+                    <div class="text-left text-sm mt-2">
+                        <ul class="list-disc list-inside space-y-1 text-slate-300">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                `,
+                icon: 'warning',
+                confirmButtonText: 'Perbaiki',
+                confirmButtonColor: '#f59e0b'
+            });
+        @endif
+
         // Global Confirmation
         document.addEventListener('submit', function(e) {
             const form = e.target;

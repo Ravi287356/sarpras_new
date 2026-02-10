@@ -82,14 +82,10 @@
                                     @csrf
                                     @method('PUT')
 
-                                    <input type="text" name="alasan_persetujuan" placeholder="Alasan persetujuan (opsional)"
-                                        class="w-full rounded-xl bg-slate-950/60 text-white ring-1 ring-slate-800 px-4 py-2
-                                               focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition">
-
                                     <button type="submit"
                                         class="w-full px-4 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30
                                                text-emerald-200 ring-1 ring-emerald-500/30 transition">
-                                        Setujui
+                                        Setujui Peminjaman
                                     </button>
                                 </form>
 
@@ -98,14 +94,16 @@
                                     @csrf
                                     @method('PUT')
 
-                                    <input type="text" name="alasan_penolakan" placeholder="Alasan penolakan (Wajib)" required
+                                    <input type="text" name="alasan_penolakan" 
+                                        placeholder="Alasan penolakan (Wajib, min 20 karakter)" 
+                                        required minlength="20"
                                         class="w-full rounded-xl bg-slate-950/60 text-white ring-1 ring-slate-800 px-4 py-2
                                                focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition">
 
                                     <button type="submit"
                                         class="w-full px-4 py-2 rounded-xl bg-rose-600/15 hover:bg-rose-600/25
                                                text-rose-200 ring-1 ring-rose-500/30 transition">
-                                        Tolak
+                                        Tolak Peminjaman
                                     </button>
                                 </form>
                             </td>

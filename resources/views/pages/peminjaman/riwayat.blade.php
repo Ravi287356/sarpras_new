@@ -63,10 +63,6 @@
                                         <div class="text-[10px] text-rose-300/70 italic leading-tight max-w-[150px]">
                                             Ket: {{ $row->alasan_penolakan }}
                                         </div>
-                                    @elseif(in_array($row->status, ['disetujui', 'dipinjam', 'dikembalikan']) && $row->alasan_persetujuan)
-                                        <div class="text-[10px] text-emerald-300/70 italic leading-tight max-w-[150px]">
-                                            Ket: {{ $row->alasan_persetujuan }}
-                                        </div>
                                     @endif
                                 </div>
                             </td>

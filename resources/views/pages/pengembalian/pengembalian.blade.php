@@ -97,6 +97,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Accept': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({
@@ -135,6 +136,16 @@
             <!-- Content -->
             <div class="p-6 space-y-6">
                 
+                @if($isWeekend)
+                    <div class="p-4 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-200 text-sm flex items-start gap-3">
+                        <i class="fa-solid fa-circle-exclamation mt-1"></i>
+                        <div>
+                            <span class="font-bold block uppercase tracking-wide text-xs mb-1">Layanan Libur</span>
+                            Pengembalian tidak tersedia pada hari Sabtu dan Minggu. Terimakasih.
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Input Manual -->
                 <div>
                      <label class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wide">Input Kode Manual</label>
@@ -144,11 +155,12 @@
                             x-model="kode_peminjaman"
                             @keyup.enter="searchPeminjaman()"
                             placeholder="Contoh: PMJ-ABC123"
-                            class="flex-1 px-4 py-3 bg-slate-950 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            {{ $isWeekend ? 'disabled' : '' }}
+                            class="flex-1 px-4 py-3 bg-slate-950 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                         <button
                             @click="searchPeminjaman()"
-                            :disabled="loading"
+                            :disabled="loading || {{ $isWeekend ? 'true' : 'false' }}"
                             class="px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 transition">
                              <i class="fa-solid fa-search" x-show="!loading"></i>
                              <i class="fa-solid fa-spinner animate-spin" x-show="loading"></i>
@@ -167,14 +179,14 @@
                     <button
                         @click="initScanner()"
                         type="button"
-                        :disabled="loading || showCamera"
-                        class="flex flex-col items-center justify-center gap-2 p-4 bg-slate-800 hover:bg-slate-700 border border-white/5 rounded-xl transition group">
+                        :disabled="loading || showCamera || {{ $isWeekend ? 'true' : 'false' }}"
+                        class="flex flex-col items-center justify-center gap-2 p-4 bg-slate-800 hover:bg-slate-700 border border-white/5 rounded-xl transition group disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fa-solid fa-qrcode text-2xl text-emerald-400"></i>
                         <span class="text-sm font-medium text-slate-300">Scan QR Code</span>
                     </button>
 
-                    <label class="flex flex-col items-center justify-center gap-2 p-4 bg-slate-800 hover:bg-slate-700 border border-white/5 rounded-xl transition cursor-pointer group">
-                        <input type="file" accept="image/*" @change="handleFileUpload" class="hidden" />
+                    <label class="flex flex-col items-center justify-center gap-2 p-4 bg-slate-800 hover:bg-slate-700 border border-white/5 rounded-xl transition cursor-pointer group {{ $isWeekend ? 'opacity-50 !cursor-not-allowed' : '' }}">
+                        <input type="file" accept="image/*" @change="handleFileUpload" class="hidden" {{ $isWeekend ? 'disabled' : '' }} />
                         <i class="fa-solid fa-image text-2xl text-purple-400"></i>
                         <span class="text-sm font-medium text-slate-300">Upload Foto</span>
                     </label>
