@@ -51,8 +51,11 @@ class SarprasItem extends Model
             ->lockForUpdate()
             ->first();
 
-        // Ambil kode terbesar yang sudah ada dan extract increment number
-        $lastItem = SarprasItem::where('sarpras_id', $sarprasyangTerkunci->id)
+        $prefix = "{$namaInisial}-{$kategoriInisial}-";
+        
+        // Ambil kode terbesar yang sudah ada dengan prefix yang sama secara GLOBAL
+        // Ini mencegah tabrakan kode jika ada dua Sarpras berbeda dengan inisial yang sama
+        $lastItem = SarprasItem::where('kode', 'like', $prefix . '%')
             ->whereNull('deleted_at')
             ->orderByRaw("CAST(SUBSTRING_INDEX(kode, '-', -1) AS UNSIGNED) DESC")
             ->select('kode')

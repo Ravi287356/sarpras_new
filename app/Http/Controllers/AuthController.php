@@ -46,10 +46,14 @@ class AuthController extends Controller
             };
         }
 
-        // ✅ opsional: catat login gagal (tanpa user_id karena belum login)
+        // ✅ Cek apakah username ada untuk membedakan alasan gagal
+        $userExists = \App\Models\User::where('username', $request->username)->exists();
+        $failReason = $userExists ? 'Password salah' : 'Username tidak ditemukan';
+
+        // ✅ catat login gagal
         $this->logActivity(
             aksi: 'LOGIN_GAGAL',
-            deskripsi: 'Login gagal untuk username: ' . ($request->username ?? '-')
+            deskripsi: "Login gagal ({$failReason}) untuk username: " . ($request->username ?? '-')
         );
 
         return back()

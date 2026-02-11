@@ -16,13 +16,13 @@
                         <th class="px-5 py-4 text-left">User</th>
                         <th class="px-5 py-4 text-left w-28">Role</th>
                         <th class="px-5 py-4 text-left w-32">Aksi</th>
-                        <th class="px-5 py-4 text-left">Deskripsi</th>
+                        <th class="px-5 py-4 text-left">Aktivitas & IP</th>
                     </tr>
                 </thead>
 
                 <tbody class="divide-y divide-white/10">
                     @forelse($logs as $log)
-                        <tr class="text-slate-100">
+                        <tr class="text-slate-100 hover:bg-white/[0.02] transition">
                             <td class="px-5 py-4 text-slate-300">
                                 {{ optional($log->timestamp)->format('d-m-Y H:i:s') }}
                             </td>
@@ -38,13 +38,28 @@
                             </td>
 
                             <td class="px-5 py-4">
-                                <span class="px-3 py-1 rounded-full text-xs ring-1 bg-emerald-500/10 text-emerald-200 ring-emerald-500/30 uppercase">
-                                    {{ $log->aksi }}
+                                <span class="px-3 py-1 rounded-full text-[10px] font-bold ring-1 
+                                    @if($log->aksi == 'LOGIN_GAGAL') bg-red-500/10 text-red-200 ring-red-500/30 
+                                    @elseif($log->aksi == 'LOGIN') bg-emerald-500/10 text-emerald-200 ring-emerald-500/30
+                                    @else bg-blue-500/10 text-blue-200 ring-blue-500/30 @endif lowercase tracking-wider">
+                                    {{ str_replace('_', ' ', strtolower($log->aksi)) }}
                                 </span>
                             </td>
 
-                            <td class="px-5 py-4 text-slate-200">
-                                {{ $log->deskripsi ?? '-' }}
+                            <td class="px-5 py-4">
+                                <div class="flex flex-col gap-1">
+                                    <span class="text-slate-200 font-medium">{{ $log->deskripsi ?? '-' }}</span>
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-[10px] font-mono text-slate-500 flex items-center gap-1">
+                                            <i class="bi bi-pc-display"></i> {{ $log->ip_address ?? '?.?.?.?' }}
+                                        </span>
+                                        @if(isset($log->metadata['user_agent']))
+                                            <span class="text-[10px] text-slate-600 truncate max-w-[200px]" title="{{ $log->metadata['user_agent'] }}">
+                                                {{ Str::limit($log->metadata['user_agent'], 40) }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     @empty

@@ -106,7 +106,9 @@
                                                 <div>
                                                     <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Kondisi Barang</label>
                                                     <div class="relative">
-                                                        <select name="items[{{ $item->sarprasItem->id }}][kondisi_alat_id]" required {{ $isWeekend ? 'disabled' : '' }}
+                                                        <select name="items[{{ $item->sarprasItem->id }}][kondisi_alat_id]" 
+                                                            required {{ $isWeekend ? 'disabled' : '' }}
+                                                            onchange="handleConditionChange(this, '{{ $item->sarprasItem->id }}')"
                                                             class="w-full pl-3 pr-8 py-2.5 bg-slate-900 border border-white/10 rounded-lg text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer disabled:opacity-50">
                                                             <option value="">-- Pilih Kondisi --</option>
                                                             @foreach ($kondisiAlat as $kondisi)
@@ -121,16 +123,24 @@
 
                                                 <!-- Foto per Item -->
                                                 <div>
-                                                    <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Foto Bukti (Opsional)</label>
-                                                    <input type="file" name="items[{{ $item->sarprasItem->id }}][foto]" accept="image/*" {{ $isWeekend ? 'disabled' : '' }}
+                                                    <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">
+                                                        Foto Bukti <span id="req-foto-{{ $item->sarprasItem->id }}" class="text-rose-500 hidden">*</span>
+                                                    </label>
+                                                    <input type="file" name="items[{{ $item->sarprasItem->id }}][foto]" 
+                                                        id="foto-{{ $item->sarprasItem->id }}"
+                                                        accept="image/*" {{ $isWeekend ? 'disabled' : '' }}
                                                         class="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700 cursor-pointer disabled:opacity-50"/>
                                                 </div>
                                             </div>
 
                                             <!-- Deskripsi Kerusakan per Item -->
                                             <div>
-                                                <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Deskripsi Kerusakan (Jika Ada)</label>
-                                                <textarea name="items[{{ $item->sarprasItem->id }}][deskripsi_kerusakan]" rows="2" {{ $isWeekend ? 'disabled' : '' }}
+                                                <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">
+                                                    Deskripsi Kerusakan <span id="req-desk-{{ $item->sarprasItem->id }}" class="text-rose-500 hidden">*</span>
+                                                </label>
+                                                <textarea name="items[{{ $item->sarprasItem->id }}][deskripsi_kerusakan]" 
+                                                    id="desk-{{ $item->sarprasItem->id }}"
+                                                    rows="2" {{ $isWeekend ? 'disabled' : '' }}
                                                     class="w-full px-3 py-2 bg-slate-900 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-700 text-sm disabled:opacity-50" 
                                                     placeholder="Jelaskan detail kerusakan barang ini..."></textarea>
                                             </div>
@@ -171,4 +181,30 @@
             </div>
         </div>
     </div>
+    <script>
+        function handleConditionChange(select, itemId) {
+            const val = select.value;
+            const reqDesk = document.getElementById('req-desk-' + itemId);
+            const reqFoto = document.getElementById('req-foto-' + itemId);
+            const inputDesk = document.getElementById('desk-' + itemId);
+            const inputFoto = document.getElementById('foto-' + itemId);
+
+            // Condition IDs: 2 (Rusak Ringan), 3 (Rusak Berat), 4 (Hilang)
+            if (val == '2' || val == '3' || val == '4') {
+                reqDesk.classList.remove('hidden');
+                inputDesk.setAttribute('required', 'required');
+            } else {
+                reqDesk.classList.add('hidden');
+                inputDesk.removeAttribute('required');
+            }
+
+            if (val == '2' || val == '3') {
+                reqFoto.classList.remove('hidden');
+                inputFoto.setAttribute('required', 'required');
+            } else {
+                reqFoto.classList.add('hidden');
+                inputFoto.removeAttribute('required');
+            }
+        }
+    </script>
 @endsection

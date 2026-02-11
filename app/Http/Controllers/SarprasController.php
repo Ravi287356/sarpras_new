@@ -55,7 +55,7 @@ class SarprasController extends Controller
             'kategori_id'       => 'required|exists:kategori_sarpras,id',
             'lokasi_id'         => 'required|exists:lokasi,id',
             'kondisi_alat_id'   => 'nullable|exists:kondisi_alat,id',
-            'jumlah'            => 'required|integer|min:1|max:100',
+            'jumlah'            => 'required|integer|min:1',
         ]);
 
         // Create sarpras

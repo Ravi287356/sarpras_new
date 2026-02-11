@@ -22,7 +22,13 @@ class ActivityLog extends Model
         'id',
         'user_id',
         'aksi',
+        'ip_address',
+        'metadata',
         'deskripsi',
+    ];
+
+    protected $casts = [
+        'metadata' => 'array',
     ];
 
     protected static function booted()

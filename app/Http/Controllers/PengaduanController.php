@@ -60,7 +60,7 @@ class PengaduanController extends Controller
     public function riwayatUser()
     {
         $pengaduan = Pengaduan::where('user_id', auth()->id())
-            ->with(['lokasi', 'kategori'])
+            ->with(['lokasi', 'kategori', 'catatanPengaduan.user'])
             ->latest()
             ->paginate(10);
 
@@ -75,7 +75,7 @@ class PengaduanController extends Controller
      */
     public function index()
     {
-        $query = Pengaduan::with(['user', 'lokasi', 'kategori', 'catatanPengaduan']);
+        $query = Pengaduan::with(['user', 'lokasi', 'kategori', 'catatanPengaduan.user']);
 
         // Filter by lokasi_id
         if (request('lokasi_id')) {
@@ -104,9 +104,14 @@ class PengaduanController extends Controller
      */
     public function updateStatus(Request $request, Pengaduan $pengaduan)
     {
+        // Restriction: If status is Selesai or Ditutup, cannot update anymore
+        if (in_array($pengaduan->status, ['Selesai', 'Ditutup'])) {
+            return redirect()->back()->with('error', 'Pengaduan ini sudah diselesaikan/ditutup dan tidak dapat diubah lagi.');
+        }
+
         $request->validate([
             'status'  => 'required|in:Belum Ditindaklanjuti,Sedang Diproses,Selesai,Ditutup',
-            'catatan' => 'nullable|string',
+            'catatan' => 'required|string',
         ]);
 
         // Update status

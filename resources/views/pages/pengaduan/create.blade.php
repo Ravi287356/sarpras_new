@@ -26,6 +26,7 @@
     <!-- Form -->
     <form action="{{ route('user.pengaduan.store') }}"
           method="POST"
+          enctype="multipart/form-data"
           class="mt-6 rounded-2xl bg-slate-900/40 ring-1 ring-slate-800 p-6 space-y-6">
         @csrf
 
@@ -43,10 +44,13 @@
                           focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
         </div>
 
+
         <!-- Deskripsi -->
         <div>
-            <label class="text-sm text-slate-300">Deskripsi Masalah</label>
-            <textarea name="deskripsi"
+            <label class="text-sm text-slate-300">
+                Deskripsi Masalah <span class="text-red-500">*</span>
+            </label>
+            <textarea name="deskripsi" id="deskripsi"
                       rows="5"
                       required
                       placeholder="Jelaskan masalah secara detail"
@@ -109,4 +113,5 @@
     </div>
 
 </div>
+
 @endsection

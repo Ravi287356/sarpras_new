@@ -18,9 +18,13 @@ class Controller extends BaseController
     {
         try {
             ActivityLog::create([
-                'user_id'   => auth()->check() ? auth()->id() : null,
-                'aksi'      => $aksi,
-                'deskripsi' => $deskripsi,
+                'user_id'    => auth()->check() ? auth()->id() : null,
+                'aksi'       => $aksi,
+                'ip_address' => request()->ip(),
+                'metadata'   => [
+                    'user_agent' => request()->header('User-Agent'),
+                ],
+                'deskripsi'  => $deskripsi,
             ]);
         } catch (\Throwable $e) {
             // jangan crash aplikasi

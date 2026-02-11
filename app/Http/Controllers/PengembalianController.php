@@ -110,12 +110,15 @@ class PengembalianController extends Controller
 
         $request->validate([
             'peminjaman_id' => 'required|exists:peminjaman,id',
-            'catatan_petugas' => 'nullable|string',
+            'catatan_petugas' => 'required|string', // Already required in form, but just in case
             'items' => 'required|array',
             'items.*.sarpras_item_id' => 'required|exists:sarpras_items,id',
             'items.*.kondisi_alat_id' => 'required|exists:kondisi_alat,id',
-            'items.*.deskripsi_kerusakan' => 'nullable|string',
-            'items.*.foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+            'items.*.deskripsi_kerusakan' => 'required_if:items.*.kondisi_alat_id,2,3,4|nullable|string',
+            'items.*.foto' => 'required_if:items.*.kondisi_alat_id,2,3|nullable|image|mimes:jpg,jpeg,png|max:2048'
+        ], [
+            'items.*.deskripsi_kerusakan.required_if' => 'Deskripsi wajib diisi jika kondisi barang rusak atau hilang.',
+            'items.*.foto.required_if' => 'Foto bukti wajib diupload jika kondisi barang rusak.',
         ]);
 
         $peminjaman = Peminjaman::with('items.sarprasItem')->findOrFail($request->peminjaman_id);

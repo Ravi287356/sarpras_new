@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('sarpras_items', function (Blueprint $table) {
-            if (!Schema::hasColumn('sarpras_items', 'deleted_at')) {
-                $table->softDeletes();
-            }
+        Schema::table('pengaduan', function (Blueprint $table) {
+            $table->dropColumn('tipe');
         });
     }
 
@@ -23,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('sarpras_items', function (Blueprint $table) {
-            $table->dropSoftDeletes();
+        Schema::table('pengaduan', function (Blueprint $table) {
+            $table->enum('tipe', ['normal', 'rusak', 'hilang'])->default('normal')->after('judul');
         });
     }
 };
