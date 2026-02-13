@@ -33,6 +33,21 @@ class Peminjaman extends Model
         'alasan_persetujuan',
     ];
 
+    public function inspeksis()
+    {
+        return $this->hasMany(Inspection::class);
+    }
+
+    public function inspeksiAwal()
+    {
+        return $this->hasOne(Inspection::class)->where('tipe_inspeksi', 'awal');
+    }
+
+    public function inspeksiKembali()
+    {
+        return $this->hasOne(Inspection::class)->where('tipe_inspeksi', 'kembali');
+    }
+
     protected static function boot()
     {
         parent::boot();

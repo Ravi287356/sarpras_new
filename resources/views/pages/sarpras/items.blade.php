@@ -47,12 +47,21 @@
                     @forelse($sarpras->items as $i => $item)
                         <tr class="text-slate-200">
                             <td class="px-5 py-4">{{ $i+1 }}</td>
-                            <td class="px-5 py-4 font-medium">{{ $item->kode }}</td>
+                             <td class="px-5 py-4 font-medium">
+                                <a href="{{ route('admin.sarpras_item.show', $item->id) }}" class="text-emerald-400 hover:text-emerald-300 transition underline underline-offset-4 decoration-emerald-500/30">
+                                    {{ $item->kode }}
+                                </a>
+                             </td>
                             <td class="px-5 py-4">{{ $item->lokasi?->nama ?? '-' }}</td>
                             <td class="px-5 py-4">{{ $item->kondisi?->nama ?? '-' }}</td>
                             <td class="px-5 py-4">{{ $item->statusPeminjaman?->nama ?? '-' }}</td>
                             @if (auth()->user()->role->nama === 'admin')
                                 <td class="px-5 py-4 flex gap-2">
+                                    <a href="{{ route('admin.inspeksi.create', $item->id) }}"
+                                       class="px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-200 ring-1 ring-emerald-500/30 hover:bg-emerald-500/15 transition text-sm">
+                                        Inspeksi
+                                    </a>
+
                                     <a href="{{ route('admin.sarpras_item.edit', $item->id) }}"
                                        class="px-3 py-2 rounded-lg ring-1 ring-white/10 hover:bg-white/5 transition text-sm">
                                         Edit

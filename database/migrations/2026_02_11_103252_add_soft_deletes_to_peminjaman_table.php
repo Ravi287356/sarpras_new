@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('sarpras', function (Blueprint $table) {
-            $table->foreign('lokasi_id')
-                    ->references('id')
-                    ->on('lokasi')
-                    ->cascadeOnDelete();
+        Schema::table('peminjaman', function (Blueprint $table) {
+            if (!Schema::hasColumn('peminjaman', 'deleted_at')) {
+                $table->softDeletes();
+            }
         });
     }
 
@@ -24,8 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('sarpras', function (Blueprint $table) {
-            $table->dropForeign(['lokasi_id']);
+        Schema::table('peminjaman', function (Blueprint $table) {
+            $table->dropSoftDeletes();
         });
     }
 };

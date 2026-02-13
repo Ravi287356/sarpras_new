@@ -67,6 +67,25 @@ class SarprasItemController extends Controller
     }
 
     /**
+     * Show internal detail of an item (History, Inspections, etc)
+     */
+    public function show(SarprasItem $sarprasItem)
+    {
+        $sarprasItem->load(['sarpras', 'lokasi', 'kondisi', 'statusPeminjaman']);
+        
+        $inspections = \App\Models\Inspection::where('sarpras_item_id', $sarprasItem->id)
+            ->with(['user', 'results.checklist'])
+            ->orderBy('tanggal_inspeksi', 'desc')
+            ->get();
+
+        return view('pages.sarpras.item_show', [
+            'title'       => 'Detail Item: ' . $sarprasItem->kode,
+            'item'        => $sarprasItem,
+            'inspections' => $inspections,
+        ]);
+    }
+
+    /**
      * Show form to edit an item
      */
     public function edit(SarprasItem $sarprasItem)

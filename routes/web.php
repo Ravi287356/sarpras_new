@@ -111,6 +111,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/sarpras/{sarpras}/items/create', [SarprasItemController::class, 'create'])->name('sarpras_item.create');
         Route::post('/sarpras/{sarpras}/items', [SarprasItemController::class, 'store'])->name('sarpras_item.store');
         Route::get('/sarpras-item/{sarprasItem}/edit', [SarprasItemController::class, 'edit'])->name('sarpras_item.edit');
+        Route::get('/sarpras-item/{sarprasItem}', [SarprasItemController::class, 'show'])->name('sarpras_item.show');
         Route::put('/sarpras-item/{sarprasItem}', [SarprasItemController::class, 'update'])->name('sarpras_item.update');
         Route::delete('/sarpras-item/{sarprasItem}', [SarprasItemController::class, 'destroy'])->name('sarpras_item.destroy');
 
@@ -155,6 +156,20 @@ Route::middleware('auth')->group(function () {
         Route::get('/maintenance', [MaintenanceAlatController::class, 'index'])->name('maintenance.index');
         Route::post('/maintenance/{item}/start', [MaintenanceAlatController::class, 'startMaintenance'])->name('maintenance.start');
         Route::post('/maintenance/{item}/finish', [MaintenanceAlatController::class, 'finishMaintenance'])->name('maintenance.finish');
+
+        // INSPEKSI SARPRAS
+        Route::get('/inspeksi/checklists', [App\Http\Controllers\InspectionController::class, 'indexChecklists'])->name('inspeksi.checklists.index');
+        Route::get('/inspeksi/checklists/{sarpras}', [App\Http\Controllers\InspectionController::class, 'showChecklist'])->name('inspeksi.checklists.show');
+        Route::post('/inspeksi/checklists/{sarpras}', [App\Http\Controllers\InspectionController::class, 'storeChecklistItem'])->name('inspeksi.checklists.store');
+        Route::put('/inspeksi/checklists/{checklist}', [App\Http\Controllers\InspectionController::class, 'updateChecklistItem'])->name('inspeksi.checklists.update');
+        Route::delete('/inspeksi/checklists/{checklist}', [App\Http\Controllers\InspectionController::class, 'destroyChecklistItem'])->name('inspeksi.checklists.destroy');
+        Route::get('/inspeksi/item/{item}', [App\Http\Controllers\InspectionController::class, 'create'])->name('inspeksi.create');
+        Route::post('/inspeksi/item/{item}', [App\Http\Controllers\InspectionController::class, 'store'])->name('inspeksi.store');
+        
+        Route::get('/inspeksi/awal/{peminjaman}', [App\Http\Controllers\InspectionController::class, 'awalForm'])->name('inspeksi.awal_form');
+        Route::post('/inspeksi/awal/{peminjaman}', [App\Http\Controllers\InspectionController::class, 'storeAwal'])->name('inspeksi.store_awal');
+
+        Route::get('/inspeksi/compare/{peminjaman}', [App\Http\Controllers\InspectionController::class, 'compare'])->name('inspeksi.compare');
     });
 
 

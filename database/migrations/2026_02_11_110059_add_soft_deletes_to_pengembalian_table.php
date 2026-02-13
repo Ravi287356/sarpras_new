@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('pengaduan', function (Blueprint $table) {
-            $table->dropColumn('tipe');
+        Schema::table('pengembalian', function (Blueprint $table) {
+            if (!Schema::hasColumn('pengembalian', 'deleted_at')) {
+                $table->softDeletes();
+            }
         });
     }
 
@@ -21,8 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('pengaduan', function (Blueprint $table) {
-            $table->enum('tipe', ['normal', 'rusak', 'hilang'])->default('normal')->after('judul');
+        Schema::table('pengembalian', function (Blueprint $table) {
+            $table->dropSoftDeletes();
         });
     }
 };

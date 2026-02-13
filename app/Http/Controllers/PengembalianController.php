@@ -79,6 +79,9 @@ class PengembalianController extends Controller
         $peminjaman = Peminjaman::with([
             'user',
             'items.sarprasItem.sarpras.kategori',
+            'items.sarprasItem.sarpras.checklists' => function($q) {
+                $q->where('is_aktif', true);
+            },
             'items.sarprasItem.lokasi',
             'pengembalian'
         ])->findOrFail($id);
@@ -162,8 +165,31 @@ class PengembalianController extends Controller
                     'foto_url' => $fotoPath,
                 ]);
 
+                // 4. Create Inspection Result (Kembali) if checklist exists
+                $sarprasItem = SarprasItem::with('sarpras')->findOrFail($itemData['sarpras_item_id']);
+                $checklists = \App\Models\InspectionChecklist::where('sarpras_id', $sarprasItem->sarpras_id)->where('is_aktif', true)->get();
+
+                if ($checklists->isNotEmpty() && isset($itemData['inspection'])) {
+                    $inspection = \App\Models\Inspection::create([
+                        'sarpras_item_id'  => $sarprasItem->id,
+                        'user_id'          => auth()->id(),
+                        'peminjaman_id'    => $peminjaman->id,
+                        'tipe_inspeksi'    => 'kembali',
+                        'tanggal_inspeksi' => now(),
+                        'catatan_umum'     => "Inspeksi saat pengembalian untuk {$peminjaman->kode_peminjaman}",
+                    ]);
+
+                    foreach ($itemData['inspection'] as $checklistId => $res) {
+                        \App\Models\InspectionResult::create([
+                            'inspection_id'           => $inspection->id,
+                            'inspection_checklist_id' => $checklistId,
+                            'status'                  => $res['status'],
+                            'catatan'                 => $res['catatan'] ?? null,
+                        ]);
+                    }
+                }
+
                 // Update SarprasItem
-                $sarprasItem = SarprasItem::findOrFail($itemData['sarpras_item_id']);
                 $kondisiAlat = KondisiAlat::findOrFail($itemData['kondisi_alat_id']);
 
                 $newStatusId = $statusTersedia?->id;

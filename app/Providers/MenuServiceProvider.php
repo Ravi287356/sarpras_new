@@ -124,6 +124,11 @@ class MenuServiceProvider extends ServiceProvider
                                     'route' => route('admin.maintenance.index'),
                                     'active' => 'admin/maintenance*',
                                 ],
+                                [
+                                    'label' => 'Inspeksi Sarpras',
+                                    'route' => route('admin.inspeksi.checklists.index'),
+                                    'active' => 'admin/inspeksi*',
+                                ],
                             ],
                         ],
 

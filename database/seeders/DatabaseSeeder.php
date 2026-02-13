@@ -20,81 +20,36 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create Roles
-        $adminRole = Role::create([
-            'id' => (string) Str::uuid(),
-            'nama' => 'admin'
-        ]);
-        $operatorRole = Role::create([
-            'id' => (string) Str::uuid(),
-            'nama' => 'operator'
-        ]);
-        $userRole = Role::create([
-            'id' => (string) Str::uuid(),
-            'nama' => 'user'
+        $this->call([
+            RoleSeeder::class,
+            UserSeeder::class,
         ]);
 
-        // Create Users
-        User::create([
-            'id' => (string) Str::uuid(),
-            'username' => 'admin',
-            'email' => 'admin@sarpras.test',
-            'password' => Hash::make('password'),
-            'role_id' => $adminRole->id,
-        ]);
+        // Create Kategori Sarpras if not exists
+        if (KategoriSarpras::count() === 0) {
+            KategoriSarpras::create([
+                'nama' => 'Alat Tulis',
+                'deskripsi' => 'Peralatan tulis kantor',
+            ]);
 
-        User::create([
-            'id' => (string) Str::uuid(),
-            'username' => 'operator',
-            'email' => 'operator@sarpras.test',
-            'password' => Hash::make('password'),
-            'role_id' => $operatorRole->id,
-        ]);
+            KategoriSarpras::create([
+                'nama' => 'Elektronik',
+                'deskripsi' => 'Peralatan elektronik',
+            ]);
 
-        User::create([
-            'id' => (string) Str::uuid(),
-            'username' => 'user',
-            'email' => 'user@sarpras.test',
-            'password' => Hash::make('password'),
-            'role_id' => $userRole->id,
-        ]);
+            KategoriSarpras::create([
+                'nama' => 'Furniture',
+                'deskripsi' => 'Peralatan furniture',
+            ]);
+        }
 
-        // Create Kategori Sarpras
-        KategoriSarpras::create([
-            'id' => (string) Str::uuid(),
-            'nama' => 'Alat Tulis',
-            'deskripsi' => 'Peralatan tulis kantor',
-        ]);
-
-        KategoriSarpras::create([
-            'id' => (string) Str::uuid(),
-            'nama' => 'Elektronik',
-            'deskripsi' => 'Peralatan elektronik',
-        ]);
-
-        KategoriSarpras::create([
-            'id' => (string) Str::uuid(),
-            'nama' => 'Furniture',
-            'deskripsi' => 'Peralatan furniture',
-        ]);
-
-        // Create Lokasi
-        Lokasi::create([
-            'id' => (string) Str::uuid(),
-            'nama' => 'Ruang 101'
-        ]);
-        Lokasi::create([
-            'id' => (string) Str::uuid(),
-            'nama' => 'Ruang 102'
-        ]);
-        Lokasi::create([
-            'id' => (string) Str::uuid(),
-            'nama' => 'Lab Komputer'
-        ]);
-        Lokasi::create([
-            'id' => (string) Str::uuid(),
-            'nama' => 'Perpustakaan'
-        ]);
+        // Create Lokasi if not exists
+        if (Lokasi::count() === 0) {
+            Lokasi::create(['nama' => 'Ruang 101']);
+            Lokasi::create(['nama' => 'Ruang 102']);
+            Lokasi::create(['nama' => 'Lab Komputer']);
+            Lokasi::create(['nama' => 'Perpustakaan']);
+        }
 
         $this->command->info('Database seeded successfully!');
     }
